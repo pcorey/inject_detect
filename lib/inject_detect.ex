@@ -12,8 +12,7 @@ defmodule InjectDetect do
       supervisor(InjectDetect.Repo, []),
       # Start the endpoint when the application starts
       supervisor(InjectDetect.Endpoint, []),
-      # Start your own worker by calling: InjectDetect.Worker.start_link(arg1, arg2, arg3)
-      # worker(InjectDetect.Worker, [arg1, arg2, arg3]),
+      worker(InjectDetect.CommandHandler, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
