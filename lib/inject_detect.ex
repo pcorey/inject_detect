@@ -12,7 +12,9 @@ defmodule InjectDetect do
       supervisor(InjectDetect.Repo, []),
       # Start the endpoint when the application starts
       supervisor(InjectDetect.Endpoint, []),
+
       worker(InjectDetect.CommandHandler, []),
+      worker(InjectDetect.State, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

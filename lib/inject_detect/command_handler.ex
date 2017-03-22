@@ -3,6 +3,10 @@ defmodule InjectDetect.CommandHandler do
 
   require Logger
 
+  import InjectDetect.Repo, only: [insert: 1]
+
+  alias InjectDetect.Event
+
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
@@ -12,7 +16,11 @@ defmodule InjectDetect.CommandHandler do
   end
 
   def persist_event(event = {type, aggregate_id, data}) do
-    IO.puts("Persisting #{type}[#{aggregate_id}](#{inspect data})")
+    insert(%Event{
+      type: Atom.to_string(type),
+      aggregate_id: aggregate_id,
+      data: data
+    })
     event
   end
 
