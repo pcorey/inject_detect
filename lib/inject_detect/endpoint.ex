@@ -44,5 +44,7 @@ defmodule InjectDetect.Endpoint do
     key: "_inject_detect_key",
     signing_salt: "epRJLAjZ"
 
+  plug CORSPlug, origin: ["http://localhost:3000", "http://localhost:4000"]
+
   plug InjectDetect.Router
 end

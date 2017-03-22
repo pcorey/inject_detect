@@ -19,6 +19,9 @@ defmodule InjectDetect.Router do
     get "/", PageController, :index
   end
 
+  forward "/graphql", Absinthe.Plug, schema: InjectDetect.Schema
+  forward "/graphiql", Absinthe.Plug.GraphiQL, schema: InjectDetect.Schema
+
   # Other scopes may use custom stacks.
   # scope "/api", InjectDetect do
   #   pipe_through :api

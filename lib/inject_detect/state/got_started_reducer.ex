@@ -5,12 +5,8 @@ defmodule InjectDetect.State.GotStartedReducer do
 
       def apply_event({:got_started, data}, state) do
         update_in(state, [:users], fn
-          nil -> [%{
-                     email: data["email"]
-                  }]
-          users -> users ++ [%{
-                                email: data["email"]
-                             }]
+          nil   -> [%{id: data["id"], email: data["email"]}]
+          users -> users ++ [%{id: data["id"], email: data["email"]}]
         end)
       end
 
