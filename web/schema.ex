@@ -40,7 +40,7 @@ defmodule InjectDetect.Schema do
 
   query do
     field :users, list_of(:user) do
-      resolve &resolve_users/2
+      resolve authenticated &resolve_users/2
     end
 
     field :current_user, :user do
@@ -52,7 +52,7 @@ defmodule InjectDetect.Schema do
     @desc "Get started"
     field :get_started, type: :user do
       arg :email, non_null(:string)
-      resolve &get_started/2
+      resolve authenticated &get_started/2
     end
   end
 

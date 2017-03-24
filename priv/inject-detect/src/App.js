@@ -5,23 +5,21 @@ import logo from './logo.svg';
 import { ApolloProvider, graphql } from 'react-apollo';
 import Users from "./Users";
 import CurrentUser from "./CurrentUser";
+import _ from "lodash";
+import gql from 'graphql-tag';
 
 const networkInterface = createNetworkInterface({
-    uri: "http://localhost:4000/graphql",
-    dataIdFromObject: object => object.id,
-    opts: {
-        credentials: "include"
-    }
+    uri: _.get(process.env, "REACT_APP_GRAPHQL_URL"),
+    dataIdFromObject: object => object.id
 });
 
 networkInterface.use([{
     applyMiddleware(req, next) {
-        if (!req.options.headers) {
-            req.options.headers = {};  // Create the header object if needed.
-        }
-        let TOKEN = localStorage.getItem("token");
-        if (TOKEN) {
-            req.options.headers.authorization = `Bearer ${TOKEN}`;
+        let token = localStorage.getItem("authToken");
+        if (token) {
+            req.options.headers = _.extend(req.options.headers, {
+                authorization: `Bearer ${token}`
+            });
         }
         next();
     }
@@ -32,16 +30,17 @@ networkInterface.useAfter([{
         console.log(response);
         if (response.status === 403) {
             console.log("Logged out")
+            localStorage.removeItem("authToken");
             if (client) {
                 client.query({
-                    query: graphql(`
+                    query: gql`
                         query {
                             current_user {
                                 id
                                 email
                             }
                         }
-                    `)
+                    `
                 });
             }
         }
