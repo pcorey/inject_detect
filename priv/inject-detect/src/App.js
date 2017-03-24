@@ -58,16 +58,17 @@ class App extends Component {
         return (
             <ApolloProvider client={client}>
                 <div className="App">
-                    <Layout/>
-                    <div className="App-header">
+                    <Layout>
+                        <div className="App-header">
                         <img src={logo} className="App-logo" alt="logo" />
                         <h2>Welcome to React</h2>
                         <CurrentUser/>
-                    </div>
-                    <p className="App-intro">
+                        </div>
+                        <p className="App-intro">
                         To get started, edit <code>src/App.js</code> and save to reload.
-                    </p>
-                    <Users/>
+                        </p>
+                        <Users/>
+                    </Layout>
                 </div>
             </ApolloProvider>
         );

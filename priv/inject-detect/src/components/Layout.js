@@ -3,9 +3,14 @@ import React from 'react';
 import "./Layout.css";
 import Header from "./Header";
 
-function Layout() {
+function Layout(props) {
     return (
-        <Header/>
+        <div className="ij-layout">
+            <Header/>
+            <div id="maincontent" className="ui main container">
+                {props.children}
+            </div>
+        </div>
     );
 }
 
