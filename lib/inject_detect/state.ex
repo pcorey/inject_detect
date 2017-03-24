@@ -1,12 +1,16 @@
 defmodule InjectDetect.State do
   use GenServer
 
-  use InjectDetect.State.GotStartedReducer
+  use InjectDetect.State.UserReducer
 
   import Ecto.Query
 
+  @initial %{
+    users: %{}
+  }
+
   def start_link do
-    GenServer.start_link(__MODULE__, {0, %{}}, name: __MODULE__)
+    GenServer.start_link(__MODULE__, {0, @initial}, name: __MODULE__)
   end
 
   def get do
@@ -14,7 +18,6 @@ defmodule InjectDetect.State do
   end
 
   defp get_events_since(version) do
-    IO.puts("getting from #{version}")
     InjectDetect.Event
     |> where([event], event.id > ^version)
     |> order_by([event], event.id)
@@ -22,9 +25,13 @@ defmodule InjectDetect.State do
     |> Enum.to_list
   end
 
+  defp transform_data(data) do
+    for {key, val} <- data, into: %{}, do: {String.to_atom(key), val}
+  end
+
   defp transform_events(events) do
     Enum.map(events, fn
-      %{type: type, data: data} -> {String.to_atom(type), data}
+      %{type: type, data: data} -> {String.to_atom(type), transform_data(data)}
     end)
   end
 
@@ -51,6 +58,18 @@ defmodule InjectDetect.State do
     version = get_next_version(events, version)
 
     {:reply, {:ok, state}, {version, state}}
+  end
+
+  def find_user(field, value) do
+    {:ok, state} = InjectDetect.State.get()
+    Enum.find(state.users, fn
+      {_, %{^field => ^value}} -> true
+      _ -> false
+    end)
+    |> case do
+         {id, user} -> user
+         _ -> nil
+       end
   end
 
 end

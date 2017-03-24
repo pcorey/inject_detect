@@ -13,14 +13,25 @@ defmodule InjectDetect.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :graphql do
+    plug :fetch_session
+    plug :fetch_flash
+    plug InjectDetect.Web.Context
+  end
+
   scope "/", InjectDetect do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
   end
 
-  forward "/graphql", Absinthe.Plug, schema: InjectDetect.Schema
   forward "/graphiql", Absinthe.Plug.GraphiQL, schema: InjectDetect.Schema
+
+  scope "/graphql" do
+    pipe_through :graphql
+
+    forward "/", Absinthe.Plug, schema: InjectDetect.Schema
+  end
 
   # Other scopes may use custom stacks.
   # scope "/api", InjectDetect do

@@ -20,7 +20,17 @@ defmodule InjectDetect.InjectDetectTest do
                                      agreed_to_tos: true
                                    })
 
-    {:ok, [{_, id, _}]} = events
+    state = InjectDetect.State.get()
+    IO.inspect(state)
+    errors = CommandHandler.handle(%GetStarted{
+                                     email: "email@example.com",
+                                     application_name: "Foo Application",
+                                     application_size: "Medium",
+                                     agreed_to_tos: true
+                                   })
+    assert errors == {:error, :email_taken}
+
+    {:ok, [{_, id, %{token: token}}]} = events
     assert events == {
       :ok,
       [
@@ -32,7 +42,8 @@ defmodule InjectDetect.InjectDetectTest do
             email: "email@example.com",
             application_name: "Foo Application",
             application_size: "Medium",
-            agreed_to_tos: true
+            agreed_to_tos: true,
+            token: token
           }
         }
       ]
@@ -49,25 +60,21 @@ defmodule InjectDetect.InjectDetectTest do
       "email" => "email@example.com",
       "application_name" => "Foo Application",
       "application_size" => "Medium",
-      "agreed_to_tos" => true
+      "agreed_to_tos" => true,
+      "token" => token
     }
 
-    state = InjectDetect.State.get()
-    IO.inspect(state)
+    InjectDetect.State.get()
 
-    events = CommandHandler.handle(%GetStarted{
-          email: "email2@example.com",
-          application_name: "Foo Application",
-          application_size: "Medium",
-          agreed_to_tos: true
-                                   })
+    CommandHandler.handle(%GetStarted{
+      email: "email2@example.com",
+      application_name: "Foo Application",
+      application_size: "Medium",
+      agreed_to_tos: true
+    })
 
-    state = InjectDetect.State.get()
-    IO.inspect(state)
-
-    state = InjectDetect.State.get()
-    IO.inspect(state)
-
+    InjectDetect.State.get()
+    InjectDetect.State.get()
     state = InjectDetect.State.get()
     IO.inspect(state)
   end

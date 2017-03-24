@@ -20,15 +20,18 @@ const GetStartedWrapped = graphql(gql`
 
 // The data prop, which is provided by the wrapper below contains,
 // a `loading` key while the query is in flight and posts when it is ready
-function Users({ data: { loading, users, refetch } }) {
-    if (loading) {
+function Users({ data: { loading, error, users, refetch } }) {
+    if (error) {
+        console.log(arguments[0]);
+    }
+    else if (loading) {
         return <div>Loading</div>;
     } else {
         let onGetStarted = () => refetch();
         return (
             <div>
                 <ul>
-                    {users.map(user => <li key={user.id}>{user.email}</li>)}
+                    {(users || []).map(user => <li key={user.id}>{user.email}</li>)}
                 </ul>
                 <GetStartedWrapped onGetStarted={onGetStarted}/>
             </div>

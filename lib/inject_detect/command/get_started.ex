@@ -6,22 +6,23 @@ defmodule InjectDetect.Command.GetStarted do
             agreed_to_tos: nil
 
   alias Ecto.UUID
+  alias Phoenix.Token
+  alias InjectDetect.State
 
-  def handle(arguments = %{
-        email: email,
-        application_name: application_name,
-        application_size: appliation_size,
-        agreed_to_tos: agreed_to_tos
-      }) do
+  def handle(arguments = %{email: email}) do
+    unless State.find_user(:email, email) do
+      id = UUID.generate()
+      token = Token.sign(InjectDetect.Endpoint, "token", id)
 
-    id = UUID.generate()
+      data = arguments
+      |> Map.from_struct
+      |> Map.put(:id, id)
+      |> Map.put(:token, token)
 
-    data = arguments
-    |> Map.from_struct
-    |> Map.put(:id, id)
-
-    [{:got_started, id, data}]
-
+      {:ok, [{:got_started, id, data}]}
+    else
+      {:error, :email_taken}
+    end
   end
 
 end
