@@ -7,6 +7,7 @@ import Users from "./Users";
 import CurrentUser from "./CurrentUser";
 import _ from "lodash";
 import gql from 'graphql-tag';
+import Layout from "./components/Layout";
 
 const networkInterface = createNetworkInterface({
     uri: _.get(process.env, "REACT_APP_GRAPHQL_URL"),
@@ -57,6 +58,7 @@ class App extends Component {
         return (
             <ApolloProvider client={client}>
                 <div className="App">
+                    <Layout/>
                     <div className="App-header">
                         <img src={logo} className="App-logo" alt="logo" />
                         <h2>Welcome to React</h2>
