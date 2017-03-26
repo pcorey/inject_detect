@@ -2,8 +2,6 @@ import React from 'react';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 
-import "./Header.css";
-
 function Header({ data: { loading, currentUser } }) {
     if (currentUser) {
         return (
@@ -47,7 +45,9 @@ function Header({ data: { loading, currentUser } }) {
 
                     <div className="right menu">
                         <div className="borderless item">
-                            <a href="#">Sign in</a>
+                            <button id="userbutton" className="ui right red button">
+                                Sign in
+                            </button>
                         </div>
                     </div>
                 </div>
