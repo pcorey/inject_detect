@@ -9,7 +9,7 @@ defmodule InjectDetect.Schema do
   import_types InjectDetect.Schema.Types
 
   def authenticated(resolver) do
-    error = {:error, %{error: :not_authenticated, code: 403, message: "Not authenticated"}}
+    error = {:error, %{error: "Not authenticated", code: :not_authenticated, message: "Not authenticated"}}
     fn
       (_args, %{context: %{current_user: nil}})     -> error
       (args, info = %{context: %{current_user: _}}) -> resolver.(args, info)
@@ -51,6 +51,12 @@ defmodule InjectDetect.Schema do
   mutation do
     @desc "Get started"
     field :get_started, type: :user do
+      arg :email, non_null(:string)
+      resolve authenticated &get_started/2
+    end
+
+    @desc "Get started"
+    field :request_sign_in_link, type: :user do
       arg :email, non_null(:string)
       resolve authenticated &get_started/2
     end

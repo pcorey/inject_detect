@@ -1,19 +1,24 @@
 import ApolloClient, { createNetworkInterface } from 'apollo-client';
-import CurrentUser from "./CurrentUser";
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import Users from "./Users";
 import _ from "lodash";
 import gql from 'graphql-tag';
-import logo from './logo.svg';
-import { ApolloProvider, graphql } from 'react-apollo';
+import { ApolloProvider } from 'react-apollo';
+import { BrowserRouter, Route } from 'react-router-dom';
 
-import Layout from "./components/Layout";
 import "./styles/index.styl";
+import CurrentUser from "./CurrentUser";
+import Header from "./components/Header";
+import SignIn from "./components/SignIn";
+import Users from "./Users";
 
 const networkInterface = createNetworkInterface({
     uri: _.get(process.env, "REACT_APP_GRAPHQL_URL"),
     dataIdFromObject: object => object.id
+});
+
+const client = new ApolloClient({
+    networkInterface,
 });
 
 networkInterface.use([{
@@ -30,9 +35,8 @@ networkInterface.use([{
 
 networkInterface.useAfter([{
     applyAfterware({ response }, next) {
-        console.log(response);
+        // console.log(response);
         if (response.status === 403) {
-            console.log("Logged out")
             localStorage.removeItem("authToken");
             if (client) {
                 client.query({
@@ -51,17 +55,19 @@ networkInterface.useAfter([{
     }
 }]);
 
-const client = new ApolloClient({
-    networkInterface,
-});
-
-
 ReactDOM.render(
     (
         <ApolloProvider client={client}>
-            <Layout>
-                <p>Hi</p>
-            </Layout>
+            <BrowserRouter>
+                <div className="ij-layout">
+                    <Header/>
+                    <div className="ij-layout-content ui main container">
+                        <Route exact path="/" component={Users}/>
+                        <Route path="/user" component={CurrentUser}/>
+                        <Route path="/sign-in" component={SignIn}/>
+                    </div>
+                </div>
+            </BrowserRouter>
         </ApolloProvider>
     ),
     document.getElementById('root')

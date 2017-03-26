@@ -1,5 +1,6 @@
 import React from 'react';
 import gql from 'graphql-tag';
+import { Link } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 
 function Header({ data: { loading, currentUser } }) {
@@ -7,10 +8,10 @@ function Header({ data: { loading, currentUser } }) {
         return (
             <div className="ui fixed menu ij-header">
                 <div className="ui container">
-                    <a href="#" className="header borderless item">
-                        <img src="https://s3.amazonaws.com/www.injectdetect.com/logo.png" className="icon"/>
+                    <Link to="/" className="header borderless item">
+                        <img alt="Inject Detect Logo" src="https://s3.amazonaws.com/www.injectdetect.com/logo.png" className="icon"/>
                         Inject Detect
-                    </a>
+                    </Link>
 
                     <a href="#" className="active borderless item">Dashboard</a>
 
@@ -24,9 +25,9 @@ function Header({ data: { loading, currentUser } }) {
 
                     <div className="right menu">
                         <div className="borderless item">
-                            <button id="userbutton" className="ui right labeled icon red button">
+                            <button id="userbutton" className="ui right labeled icon brand button">
                                 <i className="caret down icon"></i>
-                                petefoo@email.com
+                                {currentUser.email}
                             </button>
                         </div>
                     </div>
@@ -38,16 +39,16 @@ function Header({ data: { loading, currentUser } }) {
         return (
             <div className="ui fixed menu ij-header">
                 <div className="ui container">
-                    <a href="#" className="header borderless item">
-                        <img src="https://s3.amazonaws.com/www.injectdetect.com/logo.png" className="icon"/>
+                    <Link to="/" className="header borderless item">
+                        <img alt="Inject Detect Logo" src="https://s3.amazonaws.com/www.injectdetect.com/logo.png" className="icon"/>
                         Inject Detect
-                    </a>
+                    </Link>
 
                     <div className="right menu">
                         <div className="borderless item">
-                            <button id="userbutton" className="ui right red button">
+                            <Link to="/sign-in" className="ui right brand button">
                                 Sign in
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
