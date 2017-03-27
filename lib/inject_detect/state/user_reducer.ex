@@ -6,7 +6,7 @@ defmodule InjectDetect.State.UserReducer do
       def apply_event({:got_started, user}, state) do
         put_in(state, [:users, user.id], %{
           id: user.id,
-          token: user.token,
+          auth_token: user.token,
           email: user.email,
         })
         # update_in(state, [:users], fn
@@ -15,8 +15,12 @@ defmodule InjectDetect.State.UserReducer do
         # end)
       end
 
-      def apply_event({:requested_new_token, data}, state) do
+      def apply_event({:requested_sign_in_link, data}, state) do
         put_in(state, [:users, data.id, :requested_token], data.requested_token)
+      end
+
+      def apply_event({:signed_out, data}, state) do
+        put_in(state, [:users, data.user_id, :auth_token], nil)
       end
 
     end

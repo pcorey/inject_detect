@@ -15,12 +15,16 @@ defmodule InjectDetect do
 
       worker(InjectDetect.CommandHandler, []),
       worker(InjectDetect.State, []),
+      worker(InjectDetect.Listener.UserListener, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: InjectDetect.Supervisor]
-    Supervisor.start_link(children, opts)
+    result = Supervisor.start_link(children, opts)
+
+    InjectDetect.CommandHandler.register(&InjectDetect.Listener.UserListener.notify/1)
+    result
   end
 
   # Tell Phoenix to update the endpoint configuration

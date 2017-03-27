@@ -1,7 +1,11 @@
 defmodule InjectDetect.Schema do
   use Absinthe.Schema
 
-  alias InjectDetect.Command.GetStarted
+  alias InjectDetect.Command.{
+    GetStarted,
+    RequestSignInLink,
+    SignOut,
+  }
   alias InjectDetect.CommandHandler
 
   import Plug.Conn
@@ -28,7 +32,6 @@ defmodule InjectDetect.Schema do
   end
 
   def get_started(%{email: email}, _info) do
-    IO.puts("getting started #{email}")
     {:ok, [{_, id, _}]} = CommandHandler.handle(%GetStarted{
       email: email,
       application_name: "Foo Application",
@@ -55,10 +58,13 @@ defmodule InjectDetect.Schema do
       resolve authenticated &get_started/2
     end
 
-    @desc "Get started"
     field :request_sign_in_link, type: :user do
       arg :email, non_null(:string)
-      resolve authenticated &get_started/2
+      resolve authenticated &RequestSignInLink.resolve/2
+    end
+
+    field :sign_out, type: :user do
+      resolve authenticated &SignOut.resolve/2
     end
   end
 
