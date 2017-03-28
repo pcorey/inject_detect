@@ -13,6 +13,13 @@ class SignIn extends React.Component {
         };
     }
 
+    componentDidMount() {
+        let token = _.get(this.props, "match.params.token");
+        if (token) {
+            this.verifyRequestedToken(token);
+        }
+    }
+
     requestSignInLink(e) {
         e.preventDefault();
 
@@ -34,8 +41,27 @@ class SignIn extends React.Component {
             });
     }
 
+    verifyRequestedToken(token) {
+        this.setState({ errors: false, loading: true });
+
+        this.props.verify(token)
+            .then(() => {
+                this.setState({ success: true });
+            })
+            .catch((error) => {
+                let errors = _.isEmpty(error.graphQLErrors) ?
+                              [{error: "Unexpected error"}] :
+                              error.graphQLErrors;
+                this.setState({ errors });
+            })
+            .then(() => {
+                this.setState({ loading: false });
+            });
+    }
+
     render() {
         const { errors, loading, success } = this.state;
+
         return (
             <div className="ij-signin ui middle aligned center aligned grid">
                 <div className="column">
@@ -77,7 +103,19 @@ SignIn.propTypes = {
     request: React.PropTypes.func.isRequired,
 };
 
-export default graphql(gql`
+const VerifyRequestedToken = graphql(gql`
+    mutation ($token: String!) {
+        verifyRequestedToken(token: $token) {
+            id
+        }
+    }
+`, {
+    props: ({ mutate }) => ({
+        verify: token => mutate({ variables: { token } })
+    })
+});
+
+const RequestSignInLink = graphql(gql`
     mutation ($email: String!) {
         requestSignInLink(email: $email) {
             id
@@ -87,4 +125,6 @@ export default graphql(gql`
     props: ({ mutate }) => ({
         request: email => mutate({ variables: { email } })
     })
-})(SignIn);
+});
+
+export default VerifyRequestedToken(RequestSignInLink(SignIn));

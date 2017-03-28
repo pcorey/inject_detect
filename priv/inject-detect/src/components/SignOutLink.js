@@ -20,13 +20,11 @@ class SignOutLink extends React.Component {
 
         this.props.signOut()
             .then(() => {
+                localStorage.removeItem("authToken")
                 this.setState({ success: true });
             })
             .catch((error) => {
-                // let errors = _.isEmpty(error.graphQLErrors) ?
-                //               [{error: "Unexpected error"}] :
-                //               error.graphQLErrors;
-                // this.setState({ errors });
+                console.error(error);
             })
             .then(() => {
                 this.setState({ loading: false });
@@ -52,5 +50,19 @@ export default graphql(gql`
         }
     }
 `, {
-    name: "signOut"
+    name: "signOut",
+    options: ({ params }) => {
+        return {
+            refetchQueries: [{
+                query: gql`
+                    query {
+                        user {
+                            id
+                            email
+                        }
+                    }
+                `
+            }]
+        }
+    }
 })(SignOutLink);

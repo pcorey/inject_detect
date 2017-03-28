@@ -20,8 +20,8 @@ class Header extends React.Component {
     }
 
     render() {
-        let { currentUser } = this.props.data;
-        if (currentUser) {
+        let { user } = this.props.data;
+        if (user) {
             return (
                 <div className="ui fixed menu ij-header">
                     <div className="ui container">
@@ -44,7 +44,7 @@ class Header extends React.Component {
                             <div className="borderless item">
                                 <button id="userbutton" className="ui right labeled icon brand dropdown button">
                                     <i className="caret down icon"></i>
-                                    {currentUser.email}
+                                    {user.email}
                                     <div className="menu">
                                         <SignOutLink>Sign out</SignOutLink>
                                     </div>
@@ -80,7 +80,7 @@ class Header extends React.Component {
 
 export default graphql(gql`
     query {
-        currentUser {
+        user {
             id
             email
         }

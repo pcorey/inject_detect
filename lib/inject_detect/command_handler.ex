@@ -45,7 +45,7 @@ defmodule InjectDetect.CommandHandler do
           entries
           |> map(fn
             {pid, listener} ->
-              Task.async(fn -> listener.(type, aggregate_id, data) end)
+              Task.async(fn -> GenServer.call(listener, {type, aggregate_id, data}) end)
           end)
           |> map(&Task.await/1)
       end)

@@ -21,7 +21,6 @@ defmodule InjectDetect.InjectDetectTest do
                                    }})
 
     state = InjectDetect.State.get()
-    IO.inspect(state)
     errors = CommandHandler.handle({:get_started, %{
                                      email: "email@example.com",
                                      application_name: "Foo Application",

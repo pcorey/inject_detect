@@ -2,12 +2,12 @@ import React from 'react';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 
-function CurrentUser({ data: { loading, currentUser } }) {
+function CurrentUser({ data: { loading, user } }) {
     if (loading) {
         return <div>Loading</div>;
     } else {
-        if (currentUser) {
-            return (<p>{currentUser.id} ({currentUser.email})</p>);
+        if (user) {
+            return (<p>{user.id} ({user.email})</p>);
         }
         else {
             return (<p>Logged out</p>);
@@ -19,7 +19,7 @@ function CurrentUser({ data: { loading, currentUser } }) {
 // available on the `data` prop of the wrapped component (PostList here)
 export default graphql(gql`
     query {
-        currentUser {
+        user {
             id
             email
         }

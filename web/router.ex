@@ -22,7 +22,7 @@ defmodule InjectDetect.Router do
   scope "/", InjectDetect do
     pipe_through :browser # Use the default browser stack
 
-    get "/auth/:token", AuthController, :index
+    # get "/auth/:token", AuthController, :index
   end
 
   forward "/graphiql", Absinthe.Plug.GraphiQL, schema: InjectDetect.Schema

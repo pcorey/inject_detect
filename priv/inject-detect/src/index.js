@@ -14,7 +14,7 @@ import Users from "./Users";
 
 const networkInterface = createNetworkInterface({
     uri: _.get(process.env, "REACT_APP_GRAPHQL_URL"),
-    dataIdFromObject: object => object.id
+    dataIdFromObject: object => console.log(object) && object.id
 });
 
 const client = new ApolloClient({
@@ -42,7 +42,7 @@ networkInterface.useAfter([{
                 client.query({
                     query: gql`
                         query {
-                            current_user {
+                            user {
                                 id
                                 email
                             }
@@ -65,6 +65,7 @@ ReactDOM.render(
                         <Route exact path="/" component={Users}/>
                         <Route path="/user" component={CurrentUser}/>
                         <Route path="/sign-in" component={SignIn}/>
+                        <Route path="/sign-in/:token" component={SignIn}/>
                     </div>
                 </div>
             </BrowserRouter>
