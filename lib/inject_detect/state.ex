@@ -1,7 +1,7 @@
 defmodule InjectDetect.State do
   use GenServer
 
-  use InjectDetect.State.UserReducer
+  # use InjectDetect.State.UserReducer
 
   import Ecto.Query
 
@@ -33,6 +33,22 @@ defmodule InjectDetect.State do
     Enum.map(events, fn
       %{type: type, data: data} -> {String.to_atom(type), transform_data(data)}
     end)
+  end
+
+  def apply_event({:got_started, user}, state) do
+    put_in(state, [:users, user.id], %{
+          id: user.id,
+          auth_token: user.auth_token,
+          email: user.email,
+           })
+  end
+
+  def apply_event({:requested_sign_in_link, data}, state) do
+    put_in(state, [:users, data.id, :requested_token], data.requested_token)
+  end
+
+  def apply_event({:signed_out, data}, state) do
+    put_in(state, [:users, data.user_id, :auth_token], nil)
   end
 
   def apply_event({type, _data}, _state) do

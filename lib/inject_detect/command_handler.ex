@@ -8,9 +8,11 @@ defmodule InjectDetect.CommandHandler do
   import Map, only: [put: 3]
 
   alias InjectDetect.Event
+  alias InjectDetect.Handler
+  alias InjectDetect.Listener
   alias InjectDetect.Repo
 
-  def start_link do
+  def start_link() do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
@@ -18,8 +20,10 @@ defmodule InjectDetect.CommandHandler do
     GenServer.call(__MODULE__, {:handle, command})
   end
 
-  def register(listener) do
-    GenServer.call(__MODULE__, {:register, listener})
+  def handle_command({type, args}) do
+    [{pid, module}] = Registry.lookup(Handler.Registry, type)
+    res = GenServer.call(module, {type, args})
+    res
   end
 
   def store_events(events) do
@@ -34,28 +38,31 @@ defmodule InjectDetect.CommandHandler do
     |> Repo.transaction()
   end
 
-  def notify_listeners(listeners, events) do
-    for event <- events, listener <- listeners do
-      Task.async(fn -> listener.(event) end)
+  def notify_listeners(events) do
+    for event = {type, aggregate_id, data} <- events do
+      Registry.dispatch(Listener.Registry, type, fn
+        entries ->
+          entries
+          |> map(fn
+            {pid, listener} ->
+              Task.async(fn -> listener.(type, aggregate_id, data) end)
+          end)
+          |> map(&Task.await/1)
+      end)
     end
-    |> map(&Task.await/1)
   end
 
-  def handle_call({:handle, command = %module{}}, _, listeners) do
+  def handle_call({:handle, command}, _, []) do
     Logger.debug("Handling %{command}...")
 
-    with {:ok, events} <- apply(module, :handle, [command]),
+    with {:ok, events} <- handle_command(command),
          {:ok, _}      <- store_events(events),
-         _             <- notify_listeners(listeners, events)
+         _             <- notify_listeners(events)
     do
-      {:reply, {:ok, events}, listeners}
+      {:reply, {:ok, events}, []}
     else
-      error -> {:reply, error, listeners}
+      error -> {:reply, error, []}
     end
-  end
-
-  def handle_call({:register, listener}, _, listeners) do
-    {:reply, {:ok, listeners ++ listener}, listeners ++ listener}
   end
 
 end

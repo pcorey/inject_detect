@@ -8,23 +8,22 @@ defmodule InjectDetect do
 
     # Define workers and child supervisors to be supervised
     children = [
-      # Start the Ecto repository
       supervisor(InjectDetect.Repo, []),
-      # Start the endpoint when the application starts
       supervisor(InjectDetect.Endpoint, []),
+      supervisor(Registry, [:unique, InjectDetect.Handler.Registry], id: :handler),
+      supervisor(Registry, [:duplicate, InjectDetect.Listener.Registry], id: :listener),
 
       worker(InjectDetect.CommandHandler, []),
       worker(InjectDetect.State, []),
-      worker(InjectDetect.Listener.UserListener, []),
+
+      worker(InjectDetect.User.Handler, []),
+      worker(InjectDetect.User.Listener, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: InjectDetect.Supervisor]
-    result = Supervisor.start_link(children, opts)
-
-    InjectDetect.CommandHandler.register(&InjectDetect.Listener.UserListener.notify/1)
-    result
+    Supervisor.start_link(children, opts)
   end
 
   # Tell Phoenix to update the endpoint configuration

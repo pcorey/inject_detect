@@ -20,7 +20,7 @@ class Header extends React.Component {
     }
 
     render() {
-        let { loading, currentUser } = this.props.data;
+        let { currentUser } = this.props.data;
         if (currentUser) {
             return (
                 <div className="ui fixed menu ij-header">

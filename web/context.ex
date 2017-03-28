@@ -24,11 +24,11 @@ defmodule InjectDetect.Web.Context do
 
   def build_context(conn) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-         {:ok, current_user}  <- authorize(token)
+         {:ok, user}  <- authorize(token)
     do
-      {:ok, %{current_user: current_user}}
+      {:ok, %{user: user, user_id: user.id}}
     else
-      []    -> {:ok, %{current_user: nil}}
+      []    -> {:ok, %{user: nil, user_id: nil}}
       error -> error
     end
   end

@@ -31,16 +31,6 @@ defmodule InjectDetect.Schema do
     {:ok, users}
   end
 
-  def get_started(%{email: email}, _info) do
-    {:ok, [{_, id, _}]} = CommandHandler.handle(%GetStarted{
-      email: email,
-      application_name: "Foo Application",
-      application_size: "Medium",
-      agreed_to_tos: true
-    })
-    {:ok, %{id: id}}
-  end
-
   query do
     field :users, list_of(:user) do
       resolve authenticated &resolve_users/2
@@ -51,20 +41,27 @@ defmodule InjectDetect.Schema do
     end
   end
 
+  def handle(command) do
+    fn
+      (args, data) ->
+        CommandHandler.handle(command, Map.merge(args, data.context))
+    end
+  end
+
   mutation do
     @desc "Get started"
     field :get_started, type: :user do
       arg :email, non_null(:string)
-      resolve authenticated &get_started/2
+      resolve authenticated handle(:get_stared)
     end
 
     field :request_sign_in_link, type: :user do
       arg :email, non_null(:string)
-      resolve authenticated &RequestSignInLink.resolve/2
+      resolve authenticated handle(:request_sign_in_link)
     end
 
     field :sign_out, type: :user do
-      resolve authenticated &SignOut.resolve/2
+      resolve authenticated handle(:sign_out)
     end
   end
 
