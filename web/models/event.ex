@@ -1,4 +1,4 @@
-defmodule InjectDetect.Event do
+defmodule InjectDetect.Model.Event do
   use InjectDetect.Web, :model
 
   schema "events" do

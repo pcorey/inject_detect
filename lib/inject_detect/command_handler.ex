@@ -4,13 +4,13 @@ defmodule InjectDetect.CommandHandler do
   require Logger
 
   import Ecto.Multi, only: [insert: 3]
-  import Enum, only: [map: 2, reduce: 3]
+  import Enum, only: [reduce: 3]
   import Map, only: [put: 3]
 
-  alias InjectDetect.Event
-  alias InjectDetect.Handler
+  alias InjectDetect.Model.Event
   alias InjectDetect.Listener
   alias InjectDetect.Repo
+  alias InjectDetect.Command
 
   def start_link() do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -20,42 +20,33 @@ defmodule InjectDetect.CommandHandler do
     GenServer.call(__MODULE__, {:handle, command})
   end
 
-  def handle_command({type, args}) do
-    [{pid, module}] = Registry.lookup(Handler.Registry, type)
-    res = GenServer.call(module, {type, args})
-    res
-  end
-
+  # TODO: Add version
   def store_events(events) do
     reduce(events, Ecto.Multi.new(), fn
-      ({type, aggregate_id, data}, multi) ->
+      (data = %type{}, multi) ->
         event = %Event{}
         |> put(:type, Atom.to_string(type))
-        |> put(:aggregate_id, aggregate_id)
-        |> put(:data, data)
+        |> put(:data, Map.from_struct(data))
         insert(multi, type, event)
     end)
     |> Repo.transaction()
   end
 
   def notify_listeners(events) do
-    for event = {type, aggregate_id, data} <- events do
-      Registry.dispatch(Listener.Registry, type, fn
-        entries ->
-          entries
-          |> map(fn
-            {pid, listener} ->
-              Task.async(fn -> GenServer.call(listener, {type, aggregate_id, data}) end)
-          end)
-          |> map(&Task.await/1)
+    # TODO: Make calls async?
+    for event = {type, _aggregate_id, _data} <- events do
+      Registry.dispatch(Listener.Registry, type, fn entries ->
+        for {pid, _} <- entries do
+          if Process.alive?(pid), do: GenServer.call(pid, event)
+        end
       end)
     end
   end
 
   def handle_call({:handle, command}, _, []) do
-    Logger.debug("Handling %{command}...")
+    Logger.debug("Handling #{inspect command}")
 
-    with {:ok, events} <- handle_command(command),
+    with {:ok, events} <- Command.handle(command),
          {:ok, _}      <- store_events(events),
          _             <- notify_listeners(events)
     do

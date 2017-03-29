@@ -60,7 +60,7 @@ defmodule InjectDetect.Schema do
       arg :email, non_null(:string)
       resolve handle(:get_stared, fn
         (%{email: email}, _data) ->
-          {:ok, State.find_user(:email, email)}
+          {:ok, State.user(:email, email)}
       end)
     end
 
@@ -68,7 +68,7 @@ defmodule InjectDetect.Schema do
       arg :email, non_null(:string)
       resolve handle(:request_sign_in_link, fn
         (%{email: email}, _data) ->
-          {:ok, State.find_user(:email, email)}
+          {:ok, State.user(:email, email)}
       end)
     end
 
@@ -76,14 +76,14 @@ defmodule InjectDetect.Schema do
       arg :token, non_null(:string)
       resolve handle(:verify_requested_token, fn
         (%{token: token}, _data) ->
-          {:ok, State.find_user(:requested_token, token)}
+          {:ok, State.user(:requested_token, token)}
       end)
     end
 
     field :sign_out, type: :user do
       resolve authenticated handle(:sign_out, fn
         (_args, %{user_id: user_id}) ->
-          {:ok, State.find_user(:id, user_id)}
+          {:ok, State.user(:id, user_id)}
       end)
     end
 

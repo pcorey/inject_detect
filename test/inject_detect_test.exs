@@ -2,7 +2,11 @@ defmodule InjectDetect.InjectDetectTest do
   use ExUnit.Case
 
   alias InjectDetect.Command.GetStarted
-  alias InjectDetect.CommandHandler
+  alias InjectDetect.Command.SignOut
+  alias InjectDetect.Event.GotStarted
+  alias InjectDetect.State
+
+  import InjectDetect.CommandHandler, only: [handle: 1]
 
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(InjectDetect.Repo)
@@ -12,70 +16,43 @@ defmodule InjectDetect.InjectDetectTest do
     :ok
   end
 
-  test "handles a command" do
-    events = CommandHandler.handle({:get_started, %{
-                                     email: "email@example.com",
-                                     application_name: "Foo Application",
-                                     application_size: "Medium",
-                                     agreed_to_tos: true
-                                   }})
+  test "handles a command and updates state" do
+    command = %GetStarted{email: "email@example.com",
+                          application_name: "Foo Application",
+                          application_size: "Medium",
+                          agreed_to_tos: true}
+    # Verify the resulting events
+    {:ok, [got_started = %event{}]} = handle(command)
+    assert event == GotStarted
+    assert got_started.auth_token
+    assert got_started.email == "email@example.com"
+    assert got_started.user_id
+    # Verify the user's state
+    user = State.user(:email, "email@example.com")
+    assert user
+    assert user.auth_token
+    assert user.email == "email@example.com"
+    assert user.id
+  end
 
-    state = InjectDetect.State.get()
-    errors = CommandHandler.handle({:get_started, %{
-                                     email: "email@example.com",
-                                     application_name: "Foo Application",
-                                     application_size: "Medium",
-                                     agreed_to_tos: true
-                                   }})
-    assert errors == {:error, :email_taken}
+  test "handles command errors" do
+    command = %GetStarted{email: "email@example.com",
+                          application_name: "Foo Application",
+                          application_size: "Medium",
+                          agreed_to_tos: true}
+    handle(command)
+    assert {:error, :email_taken} == handle(command)
+  end
 
-    {:ok, [{_, id, %{auth_token: auth_token}}]} = events
-    assert events == {
-      :ok,
-      [
-        {
-          :got_started,
-          id,
-          %{
-            id: id,
-            email: "email@example.com",
-            application_name: "Foo Application",
-            application_size: "Medium",
-            agreed_to_tos: true,
-            auth_token: auth_token
-          }
-        }
-      ]
-    }
-
-    [events] = InjectDetect.Event
-    |> InjectDetect.Repo.all
-    |> Enum.to_list
-
-    assert events.aggregate_id == id
-    assert events.type == "got_started"
-    assert events.data == %{
-      "id" => id,
-      "email" => "email@example.com",
-      "application_name" => "Foo Application",
-      "application_size" => "Medium",
-      "agreed_to_tos" => true,
-      "auth_token" => auth_token
-    }
-
-    InjectDetect.State.get()
-
-    CommandHandler.handle({:get_started, %{
-      email: "email2@example.com",
-      application_name: "Foo Application",
-      application_size: "Medium",
-      agreed_to_tos: true
-    }})
-
-    InjectDetect.State.get()
-    InjectDetect.State.get()
-    state = InjectDetect.State.get()
-    IO.inspect(state)
+  test "signs a user out" do
+    handle(%GetStarted{email: "email@example.com",
+                       application_name: "Foo Application",
+                       application_size: "Medium",
+                       agreed_to_tos: true})
+    handle(%SignOut{user_id: State.user(:email, "email@example.com").id})
+    user = State.user(:email, "email@example.com")
+    assert user
+    refute user.auth_token
   end
 
 end

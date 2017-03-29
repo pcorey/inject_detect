@@ -10,14 +10,10 @@ defmodule InjectDetect do
     children = [
       supervisor(InjectDetect.Repo, []),
       supervisor(InjectDetect.Endpoint, []),
-      supervisor(Registry, [:unique, InjectDetect.Handler.Registry], id: :handler),
-      supervisor(Registry, [:duplicate, InjectDetect.Listener.Registry], id: :listener),
+      supervisor(Registry, [:duplicate, InjectDetect.Listener.Registry]),
 
       worker(InjectDetect.CommandHandler, []),
       worker(InjectDetect.State, []),
-
-      worker(InjectDetect.User.Handler, []),
-      worker(InjectDetect.User.Listener, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
