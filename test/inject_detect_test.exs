@@ -9,6 +9,11 @@ defmodule InjectDetect.InjectDetectTest do
   import InjectDetect.CommandHandler, only: [handle: 1]
 
   setup tags do
+    # Restart state process to start fresh
+    InjectDetect.State
+    |> Process.whereis
+    |> Process.exit(:kill)
+
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(InjectDetect.Repo)
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(InjectDetect.Repo, {:shared, self()})

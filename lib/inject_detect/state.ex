@@ -22,23 +22,23 @@ defmodule InjectDetect.State do
     apply(type, :convert_from, [data, 0])
   end
 
-  defp get_events_since(version) do
+  defp get_events_since(id) do
     events = InjectDetect.Model.Event
-    |> where([event], event.id > ^version)
+    |> where([event], event.id > ^id)
     |> order_by([event], event.id)
     |> InjectDetect.Repo.all
     |> Enum.to_list
 
     # Convert all events into their structs
     {events |> Enum.map(&convert_to_event/1),
-    # Grab the most revent "version" we've seen
-     events |> List.last |> (&(if &1 do &1.id else version end)).()}
+    # Grab the most revent "id" we've seen
+     events |> List.last |> (&(if &1 do &1.id else id end)).()}
   end
 
-  def handle_call(:get, _, {version, state}) do
-    {events, version} = get_events_since(version)
+  def handle_call(:get, _, {id, state}) do
+    {events, id} = get_events_since(id)
     state = Enum.reduce(events, state, &InjectDetect.State.Reducer.apply/2)
-    {:reply, {:ok, state}, {version, state}}
+    {:reply, {:ok, state}, {id, state}}
   end
 
   def user(field, value) do
