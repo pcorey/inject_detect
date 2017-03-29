@@ -32,8 +32,7 @@ defmodule InjectDetect.State do
     # Convert all events into their structs
     {events |> Enum.map(&convert_to_event/1),
     # Grab the most revent "version" we've seen
-     events |> List.last |> (fn nil       -> version
-                                %{id: id} -> id end).()}
+     events |> List.last |> (&(if &1 do &1.id else version end)).()}
   end
 
   def handle_call(:get, _, {version, state}) do
