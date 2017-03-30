@@ -39,12 +39,6 @@ defmodule InjectDetect.State do
      events |> List.last |> (&(if &1 do &1.id else id end)).()}
   end
 
-  def handle_call(:get, _, {id, state}) do
-    {events, id} = get_events_since(id)
-    state = Enum.reduce(events, state, &InjectDetect.State.Reducer.apply/2)
-    {:reply, {:ok, state}, {id, state}}
-  end
-
   def user(field, value) do
     {:ok, state} = get()
     Enum.find(state.users, fn
@@ -55,6 +49,12 @@ defmodule InjectDetect.State do
          {_id, user} -> user
          _           -> nil
        end
+  end
+
+  def handle_call(:get, _, {id, state}) do
+    {events, id} = get_events_since(id)
+    state = Enum.reduce(events, state, &InjectDetect.State.Reducer.apply/2)
+    {:reply, {:ok, state}, {id, state}}
   end
 
   def handle_call(:reset, _, _), do: {:reply, :ok, {0, @initial}}

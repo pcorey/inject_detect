@@ -18,9 +18,9 @@ defmodule InjectDetect.Listener.EmailToken do
 
   def handle_call({%{requested_token: requested_token},
                    %{user_id: user_id}}, _, _) do
-    case user = State.user(:id, user_id) do
+    case State.user(:id, user_id) do
       nil  -> Logger.info("Can't find user #{user_id} to email token.")
-      user -> Logger.info("Requested token: #{requested_token}")
+      _    -> Logger.info("Requested token: #{requested_token}")
     end
     {:reply, :ok, []}
   end
