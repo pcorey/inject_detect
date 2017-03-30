@@ -3,38 +3,38 @@ defmodule InjectDetect.Schema do
 
   alias InjectDetect.Command.{
     GetStarted,
-    RequestSignInLink,
     SignOut,
   }
   alias InjectDetect.CommandHandler
   alias InjectDetect.State
 
-  import Plug.Conn
-
   import_types InjectDetect.Schema.Types
 
-  def authenticated(resolver) do
-    error = {:error, %{error: "Not authenticated", code: :not_authenticated, message: "Not authenticated"}}
+  def auth(resolver) do
+    error = {:error, %{code: :not_authenticated,
+                       error: "Not authenticated",
+                       message: "Not authenticated"}}
     fn
-      (_args, %{context: %{user: nil}})     -> error
-      (args, info = %{context: %{user: _}}) -> resolver.(args, info)
-      (_args, _info)                                -> error
+      (_args, %{context: %{user_id: nil}})     -> error
+      (args, info = %{context: %{user_id: _}}) -> resolver.(args, info)
+      (_args, _info)                           -> error
     end
   end
 
-  def resolve_user(_args, %{context: %{user: user}}) do
-    {:ok, user}
+  def resolve_user(_args, %{context: %{user_id: user_id}}) do
+    IO.puts("resolving user #{inspect user_id}")
+    {:ok, State.user(:id, user_id)}
   end
 
-  def resolve_users(_args, %{context: %{user: user}}) do
-    {:ok, state} = InjectDetect.State.get()
-    users = for {id, user} <- state.users, do: user
+  def resolve_users(_args, %{context: %{user_id: _user_id}}) do
+    {:ok, state} = State.get()
+    users = for {_id, user} <- state.users, do: user
     {:ok, users}
   end
 
   query do
     field :users, list_of(:user) do
-      resolve authenticated &resolve_users/2
+      resolve auth &resolve_users/2
     end
 
     field :user, :user do
@@ -42,49 +42,39 @@ defmodule InjectDetect.Schema do
     end
   end
 
-  def handle(command), do: handle(command, fn (_, _) -> {:ok} end)
   def handle(command, resolve) do
     fn
       (args, data) ->
-        data = Map.merge(args, data.context)
-        case CommandHandler.handle({command, data}) do
-          {:ok, _events} -> resolve.(args, data)
+        command = struct(command, Map.merge(args, data.context))
+        IO.inspect(command)
+        case CommandHandler.handle(command, data.context) do
+          {:ok, context} -> {:ok, resolve.(context)}
           error          -> error
         end
     end
   end
 
+  def user(%{user_id: user_id}), do: State.user(:id, user_id)
+
   mutation do
     @desc "Get started"
     field :get_started, type: :user do
       arg :email, non_null(:string)
-      resolve handle(:get_stared, fn
-        (%{email: email}, _data) ->
-          {:ok, State.user(:email, email)}
-      end)
+      resolve handle(GetStarted, &user/1)
     end
 
-    field :request_sign_in_link, type: :user do
+    field :request_sign_in_token, type: :user do
       arg :email, non_null(:string)
-      resolve handle(:request_sign_in_link, fn
-        (%{email: email}, _data) ->
-          {:ok, State.user(:email, email)}
-      end)
+      resolve handle(RequestSignInToken, &user/1)
     end
 
     field :verify_requested_token, type: :user do
       arg :token, non_null(:string)
-      resolve handle(:verify_requested_token, fn
-        (%{token: token}, _data) ->
-          {:ok, State.user(:requested_token, token)}
-      end)
+      resolve handle(VerifySignInToken, &user/1)
     end
 
     field :sign_out, type: :user do
-      resolve authenticated handle(:sign_out, fn
-        (_args, %{user_id: user_id}) ->
-          {:ok, State.user(:id, user_id)}
-      end)
+      resolve auth handle(SignOut, &user/1)
     end
 
   end

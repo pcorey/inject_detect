@@ -15,6 +15,10 @@ defmodule InjectDetect.State do
     GenServer.call(__MODULE__, :get)
   end
 
+  def reset do
+    GenServer.call(__MODULE__, :reset)
+  end
+
   # TODO: Add version
   defp convert_to_event(%{type: type, data: data}) do
     type = String.to_atom(type)
@@ -52,5 +56,7 @@ defmodule InjectDetect.State do
          _           -> nil
        end
   end
+
+  def handle_call(:reset, _, _), do: {:reply, :ok, {0, @initial}}
 
 end

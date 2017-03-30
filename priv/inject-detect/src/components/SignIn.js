@@ -20,7 +20,7 @@ class SignIn extends React.Component {
         }
     }
 
-    requestSignInLink(e) {
+    requestSignInToken(e) {
         e.preventDefault();
 
         this.setState({ errors: false, loading: true });
@@ -72,7 +72,7 @@ class SignIn extends React.Component {
                         </div>
                     </h2>
 
-                    <form className="ui large form" onSubmit={this.requestSignInLink.bind(this)}>
+                    <form className="ui large form" onSubmit={this.requestSignInToken.bind(this)}>
                         <p className="ui left aligned">Enter your email address and we'll send you a magic link that will sign you in instantly!</p>
                         <div className="ui stacked segment">
                             <div className="field">
@@ -115,9 +115,9 @@ const VerifyRequestedToken = graphql(gql`
     })
 });
 
-const RequestSignInLink = graphql(gql`
+const RequestSignInToken = graphql(gql`
     mutation ($email: String!) {
-        requestSignInLink(email: $email) {
+        requestSignInToken(email: $email) {
             id
         }
     }
@@ -127,4 +127,4 @@ const RequestSignInLink = graphql(gql`
     })
 });
 
-export default VerifyRequestedToken(RequestSignInLink(SignIn));
+export default VerifyRequestedToken(RequestSignInToken(SignIn));

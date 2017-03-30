@@ -2,6 +2,7 @@ import React from 'react';
 import gql from 'graphql-tag';
 import { Link } from 'react-router-dom';
 import { graphql } from 'react-apollo';
+import _ from "lodash";
 
 import SignOutLink from "./SignOutLink";
 
@@ -79,10 +80,26 @@ class Header extends React.Component {
 }
 
 export default graphql(gql`
-    query {
+    query user {
         user {
             id
             email
         }
     }
-`)(Header);
+`, {
+    options({ params }) {
+        return {
+            reducer: (previousResults, action) => {
+                switch (action.operationName) {
+                    case "getStarted":
+                        let user = _.get(action, "result.data.getStarted");
+                        return { user };
+                    case "signOut":
+                        return { user: null };
+                    default:
+                        return previousResults;
+                }
+            }
+        };
+    }
+})(Header);

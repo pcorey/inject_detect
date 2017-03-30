@@ -8,6 +8,7 @@ defmodule InjectDetect.Schema.Types do
   object :user do
     field :id, :id
     field :email, :string
+    field :auth_token, :string
   end
 
 end

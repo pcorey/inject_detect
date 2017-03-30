@@ -1,3 +1,3 @@
 defprotocol InjectDetect.Command do
-  def handle(command)
+  def handle(command, context)
 end

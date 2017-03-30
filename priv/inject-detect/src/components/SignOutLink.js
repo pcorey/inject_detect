@@ -5,34 +5,15 @@ import { graphql } from 'react-apollo';
 
 class SignOutLink extends React.Component {
 
-    constructor() {
-        super();
-        this.state = {
-            loading: false,
-            success: false
-        };
-    }
-
     signOut(e) {
         e.preventDefault();
-
-        this.setState({ loading: true });
-
         this.props.signOut()
             .then(() => {
-                localStorage.removeItem("authToken")
-                this.setState({ success: true });
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .then(() => {
-                this.setState({ loading: false });
+                localStorage.removeItem("authToken");
             });
     }
 
     render() {
-        const { loading, success } = this.state;
         return (
             <a href="#" className="item" onClick={this.signOut.bind(this)}>{this.props.children}</a>
         );
@@ -44,25 +25,11 @@ SignOutLink.propTypes = {
 };
 
 export default graphql(gql`
-    mutation {
+    mutation signOut {
         signOut {
             id
         }
     }
 `, {
-    name: "signOut",
-    options: ({ params }) => {
-        return {
-            refetchQueries: [{
-                query: gql`
-                    query {
-                        user {
-                            id
-                            email
-                        }
-                    }
-                `
-            }]
-        }
-    }
+    name: "signOut"
 })(SignOutLink);

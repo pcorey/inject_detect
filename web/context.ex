@@ -1,8 +1,6 @@
 defmodule InjectDetect.Web.Context do
   @behaviour Plug
 
-  # use Phoenix.Controller
-
   import Plug.Conn
 
   def init(opts), do: opts
@@ -23,21 +21,22 @@ defmodule InjectDetect.Web.Context do
   end
 
   def build_context(conn) do
-    with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-         {:ok, user}  <- authorize(token)
+    with ["Bearer " <> auth_token] <- get_req_header(conn, "authorization"),
+         {:ok, user_id}            <- authorize(auth_token)
     do
-      {:ok, %{user: user, user_id: user.id}}
+      {:ok, %{user_id: user_id}}
     else
-      []    -> {:ok, %{user: nil, user_id: nil}}
+      []    -> {:ok, %{user_id: nil}}
       error -> error
     end
   end
 
-  defp authorize(token) do
-    InjectDetect.State.user(:auth_token, token)
+  defp authorize(auth_token) do
+    IO.puts("auth token #{auth_token}")
+    InjectDetect.State.user(:auth_token, auth_token)
     |> case do
          nil  -> {:error, "Invalid authorization token"}
-         user -> {:ok, user}
+         user -> {:ok, user.id}
        end
   end
 
