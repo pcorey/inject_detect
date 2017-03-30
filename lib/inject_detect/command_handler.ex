@@ -35,7 +35,7 @@ defmodule InjectDetect.CommandHandler do
 
   def notify_listeners(events, context) do
     # TODO: Make calls async?
-    for event = {type, _aggregate_id, _data} <- events do
+    for event = %type{} <- events do
       Registry.dispatch(Listener.Registry, type, fn entries ->
         for {pid, _} <- entries do
           if Process.alive?(pid), do: call(pid, {event, context})

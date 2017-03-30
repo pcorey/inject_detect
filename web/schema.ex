@@ -3,6 +3,7 @@ defmodule InjectDetect.Schema do
 
   alias InjectDetect.Command.{
     GetStarted,
+    RequestSignInToken,
     SignOut,
   }
   alias InjectDetect.CommandHandler
@@ -22,7 +23,6 @@ defmodule InjectDetect.Schema do
   end
 
   def resolve_user(_args, %{context: %{user_id: user_id}}) do
-    IO.puts("resolving user #{inspect user_id}")
     {:ok, State.user(:id, user_id)}
   end
 
