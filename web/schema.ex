@@ -24,11 +24,7 @@ defmodule InjectDetect.Schema do
   end
 
   def resolve_user(_args, %{context: %{user_id: user_id}}) do
-    user = State.user(:id, user_id)
-    IO.inspect(user)
-    applications = for {id, app} <- user.applications, do: app
-    user = put_in(user[:applications], applications)
-    {:ok, user}
+    {:ok, State.user(:id, user_id)}
   end
 
   def resolve_users(_args, %{context: %{user_id: _user_id}}) do

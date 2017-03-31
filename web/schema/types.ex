@@ -11,7 +11,12 @@ defmodule InjectDetect.Schema.Types do
     field :id, :id
     field :email, :string
     field :auth_token, :string
-    field :applications, list_of(:application)
+    field :applications, list_of(:application) do
+      resolve fn
+        (user, _, _) ->
+          {:ok, (for {id, app} <- user.applications, do: app)}
+      end
+    end
   end
 
 end
