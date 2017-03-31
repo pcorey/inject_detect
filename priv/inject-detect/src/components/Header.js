@@ -1,7 +1,7 @@
-import React from 'react';
-import gql from 'graphql-tag';
-import { Link } from 'react-router-dom';
-import { graphql } from 'react-apollo';
+import React from "react";
+import gql from "graphql-tag";
+import { Link, NavLink } from "react-router-dom";
+import { graphql } from "react-apollo";
 import _ from "lodash";
 
 import SignOutLink from "./SignOutLink";
@@ -22,6 +22,7 @@ class Header extends React.Component {
 
     render() {
         let { user } = this.props.data;
+
         if (user) {
             return (
                 <div className="ui fixed menu ij-header">
@@ -31,13 +32,21 @@ class Header extends React.Component {
                             Inject Detect
                         </Link>
 
-                        <a href="#" className="active borderless item">Dashboard</a>
+                        <NavLink to="/dashboard" className="borderless item">Dashboard</NavLink>
 
                         <div className="ui simple dropdown borderless item">
                             Applications <i className="dropdown icon"></i>
                             <div className="menu">
-                                <a className="item" href="#">Foo Application</a>
-                                <a className="item" href="#">Bar Application</a>
+
+                                { user &&
+                                  user.applications &&
+                                  user.applications.map((application) => {
+                                      return (
+                                          <Link to={`/dashboard/${application.id}`} key={application.id} className="item"><i className="red warning icon"/>{application.applicationName}</Link>
+                                      );
+                                  })}
+
+                                <Link to={`/dashboard/add`} className="item"><i className="plus icon"/>Add Application</Link>
                             </div>
                         </div>
 
@@ -84,6 +93,10 @@ export default graphql(gql`
         user {
             id
             email
+            applications {
+                id
+                applicationName
+            }
         }
     }
 `, {
@@ -91,9 +104,10 @@ export default graphql(gql`
         return {
             reducer: (previousResults, action) => {
                 switch (action.operationName) {
+                    case "verifyRequestedToken":
+                        return { user: _.get(action, "result.data.verifyRequestedToken") };
                     case "getStarted":
-                        let user = _.get(action, "result.data.getStarted");
-                        return { user };
+                        return { user: _.get(action, "result.data.getStarted") };
                     case "signOut":
                         return { user: null };
                     default:

@@ -17,7 +17,9 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.RequestSignInToken do
                               requested_token: requested_token}],
        %{user_id: user.id}}
     else
-      {:error, :user_not_found}
+      {:error, %{code: :user_not_found,
+                 error: "We couldn't find a user with that email.",
+                 message: "User not found"}}
     end
   end
 

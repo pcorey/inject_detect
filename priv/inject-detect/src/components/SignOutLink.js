@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import _ from "lodash";
-import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
+import gql from "graphql-tag";
+import { graphql } from "react-apollo";
 
 class SignOutLink extends React.Component {
 

@@ -32,7 +32,6 @@ defmodule InjectDetect.Web.Context do
   end
 
   defp authorize(auth_token) do
-    IO.puts("auth token #{auth_token}")
     InjectDetect.State.user(:auth_token, auth_token)
     |> case do
          nil  -> {:error, "Invalid authorization token"}

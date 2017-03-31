@@ -17,7 +17,9 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.VerifyRequestedToken do
         %GivenAuthToken{auth_token: auth_token, user_id: user.id}],
        %{user_id: user.id}}
     else
-      {:error, :user_not_found}
+      {:error, %{code: :invalid_token,
+                 error: "Invalid token",
+                 message: "Invalid token"}}
     end
   end
 

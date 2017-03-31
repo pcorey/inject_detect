@@ -1,15 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 import _ from "lodash";
-import { ApolloProvider } from 'react-apollo';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { ApolloProvider } from "react-apollo";
+import { BrowserRouter, Route } from "react-router-dom";
 
 import { client } from "./apollo";
 
 import "./styles/index.styl";
-import Header from "./components/Header";
-import SignIn from "./components/SignIn";
+import Dashboard from "./components/Dashboard";
 import GetStarted from "./components/GetStarted";
+import Header from "./components/Header";
+import PrivateRoute from "./components/PrivateRoute";
+import SignIn from "./components/SignIn";
+import VerifyRequestedToken from "./components/VerifyRequestedToken";
 
 ReactDOM.render(
     (
@@ -20,7 +23,8 @@ ReactDOM.render(
                     <div className="ij-layout-content ui main container">
                         <Route exact path="/" component={GetStarted}/>
                         <Route path="/sign-in" component={SignIn}/>
-                        <Route path="/sign-in/:token" component={SignIn}/>
+                        <Route path="/verify/:token" component={VerifyRequestedToken}/>
+                        <PrivateRoute path="/dashboard" component={Dashboard}/>
                     </div>
                 </div>
             </BrowserRouter>

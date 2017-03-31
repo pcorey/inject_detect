@@ -1,50 +1,22 @@
-import React from 'react';
+import React from "react";
 import _ from "lodash";
-import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
+import gql from "graphql-tag";
+import { graphql } from "react-apollo";
 
 class SignIn extends React.Component {
 
-    constructor() {
-        super();
-        this.state = {
-            loading: false,
-            success: false
-        };
-    }
-
-    componentDidMount() {
-        let token = _.get(this.props, "match.params.token");
-        if (token) {
-            this.verifyRequestedToken(token);
-        }
+    state = {
+        loading: false,
+        success: false
     }
 
     requestSignInToken(e) {
         e.preventDefault();
 
-        this.setState({ errors: false, loading: true });
+        this.setState({ errors: false, success: false, loading: true });
 
         let email = this.refs.email.value;
         this.props.request(email)
-            .then(() => {
-                this.setState({ success: true });
-            })
-            .catch((error) => {
-                let errors = _.isEmpty(error.graphQLErrors) ?
-                              [{error: "Unexpected error"}] :
-                              error.graphQLErrors;
-                this.setState({ errors });
-            })
-            .then(() => {
-                this.setState({ loading: false });
-            });
-    }
-
-    verifyRequestedToken(token) {
-        this.setState({ errors: false, loading: true });
-
-        this.props.verify(token)
             .then(() => {
                 this.setState({ success: true });
             })
@@ -83,7 +55,6 @@ class SignIn extends React.Component {
                             </div>
                             <button className={`ui large fluid ${loading ? "loading" : ""} submit brand button`} disabled={loading} type="sumbit">Send link</button>
                         </div>
-                        <div className="ui error message"></div>
                     </form>
 
                     { success && <div className="ui success message">We've sent you a sign-in link. Check your email!</div>}
@@ -103,19 +74,7 @@ SignIn.propTypes = {
     request: React.PropTypes.func.isRequired,
 };
 
-const VerifyRequestedToken = graphql(gql`
-    mutation ($token: String!) {
-        verifyRequestedToken(token: $token) {
-            id
-        }
-    }
-`, {
-    props: ({ mutate }) => ({
-        verify: token => mutate({ variables: { token } })
-    })
-});
-
-const RequestSignInToken = graphql(gql`
+export default graphql(gql`
     mutation ($email: String!) {
         requestSignInToken(email: $email) {
             id
@@ -125,6 +84,4 @@ const RequestSignInToken = graphql(gql`
     props: ({ mutate }) => ({
         request: email => mutate({ variables: { email } })
     })
-});
-
-export default VerifyRequestedToken(RequestSignInToken(SignIn));
+})(SignIn);

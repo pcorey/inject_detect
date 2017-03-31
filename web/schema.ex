@@ -5,6 +5,7 @@ defmodule InjectDetect.Schema do
     GetStarted,
     RequestSignInToken,
     SignOut,
+    VerifyRequestedToken,
   }
   alias InjectDetect.CommandHandler
   alias InjectDetect.State
@@ -23,7 +24,11 @@ defmodule InjectDetect.Schema do
   end
 
   def resolve_user(_args, %{context: %{user_id: user_id}}) do
-    {:ok, State.user(:id, user_id)}
+    user = State.user(:id, user_id)
+    IO.inspect(user)
+    applications = for {id, app} <- user.applications, do: app
+    user = put_in(user[:applications], applications)
+    {:ok, user}
   end
 
   def resolve_users(_args, %{context: %{user_id: _user_id}}) do
@@ -60,6 +65,9 @@ defmodule InjectDetect.Schema do
     @desc "Get started"
     field :get_started, type: :user do
       arg :email, non_null(:string)
+      arg :application_name, non_null(:string)
+      arg :application_size, non_null(:string)
+      arg :agreed_to_tos, :boolean
       resolve handle(GetStarted, &user/1)
     end
 
@@ -70,7 +78,7 @@ defmodule InjectDetect.Schema do
 
     field :verify_requested_token, type: :user do
       arg :token, non_null(:string)
-      resolve handle(VerifySignInToken, &user/1)
+      resolve handle(VerifyRequestedToken, &user/1)
     end
 
     field :sign_out, type: :user do

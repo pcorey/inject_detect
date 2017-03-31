@@ -64,7 +64,9 @@ defmodule InjectDetect.InjectDetectTest do
     user = State.user(:email, "email@example.com")
     command = %SignOut{user_id: user.id}
     context = %{user_id: 1337}
-    assert handle(command, context) == {:error, :not_authorized}
+    assert handle(command, context) == {:error, %{code: :not_authorized,
+                                                  error: "Not authorized",
+                                                  message: "Not authorized"}}
   end
 
 end

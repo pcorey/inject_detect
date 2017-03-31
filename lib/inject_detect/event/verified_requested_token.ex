@@ -9,6 +9,8 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.VerifiedRequestedToken do
 
-  def apply(_event, state), do: state
+  def apply(%{user_id: user_id}, state) do
+    put_in(state, [:users, user_id, :requested_token], nil)
+  end
 
 end

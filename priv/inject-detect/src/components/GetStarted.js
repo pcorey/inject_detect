@@ -1,16 +1,13 @@
-import React from 'react';
+import React from "react";
 import _ from "lodash";
-import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
+import gql from "graphql-tag";
+import { graphql } from "react-apollo";
 
 class GetStarted extends React.Component {
 
-    constructor() {
-        super();
-        this.state = {
-            loading: false,
-            success: false
-        };
+    state = {
+        loading: false,
+        success: false
     }
 
     getStarted(e) {
@@ -19,21 +16,28 @@ class GetStarted extends React.Component {
         this.setState({ errors: false, loading: true });
 
         let email = this.refs.email.value;
-        this.props.getStarted(email)
-            .then((res) => {
-                this.setState({ success: true });
-                let authToken = _.get(res, "data.getStarted.auth_token");
-                localStorage.setItem("authToken", authToken);
-            })
-            .catch((error) => {
-                let errors = _.isEmpty(error.graphQLErrors) ?
-                              [{error: "Unexpected error"}] :
-                              error.graphQLErrors;
-                this.setState({ errors });
-            })
-            .then(() => {
-                this.setState({ loading: false });
-            });
+        let application_name = this.refs.application_name.value;
+        let application_size = this.refs.application_size.value;
+        let agreed_to_tos = this.refs.agreed_to_tos.checked;
+
+        this.props.getStarted(email,
+                              application_name,
+                              application_size,
+                              agreed_to_tos)
+               .then((res) => {
+                   this.setState({ success: true });
+                   let authToken = _.get(res, "data.getStarted.auth_token");
+                   localStorage.setItem("authToken", authToken);
+               })
+               .catch((error) => {
+                   let errors = _.isEmpty(error.graphQLErrors) ?
+                                [{error: "Unexpected error"}] :
+                                error.graphQLErrors;
+                   this.setState({ errors });
+               })
+               .then(() => {
+                   this.setState({ loading: false });
+               });
     }
 
     render() {
@@ -41,7 +45,7 @@ class GetStarted extends React.Component {
 
         return (
             <div className="ij-get-started ui middle aligned center aligned grid">
-                <div className="column">
+                <div className="eight wide left aligned column">
 
                     <h2 className="ui icon header">
                         <div className="content">
@@ -56,6 +60,37 @@ class GetStarted extends React.Component {
                                 <div className="ui left icon input">
                                     <i className="user icon"></i>
                                     <input type="email" name="email" placeholder="E-mail address" ref="email" required/>
+                                </div>
+                            </div>
+
+                            <div className="field">
+                                <div className="ui left icon input">
+                                    <i className="user icon"></i>
+                                    <input type="text" name="application_name" placeholder="Application name" ref="application_name" required/>
+                                </div>
+                            </div>
+
+                            <div className="field">
+                                <div className="ui left icon input">
+                                    <i className="user icon"></i>
+                                    <div className="ui selection dropdown">
+                                        <input type="hidden" name="application_size" ref="application_size"/>
+                                        <i className="dropdown icon"></i>
+                                        <div className="default text">Application Size</div>
+                                        <div className="menu">
+                                            <div className="item" data-value="small">Small</div>
+                                            <div className="item" data-value="medium">Medium</div>
+                                            <div className="item" data-value="large">Large</div>
+                                            <div className="item" data-value="extra_large">Extra Large</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="field">
+                                <div className="ui checkbox">
+                                    <input type="checkbox" id="agreed_to_tos" name="agreed_to_tos" ref="agreed_to_tos" required/>
+                                    <label htmlFor="agreed_to_tos">I agree to the terms.</label>
                                 </div>
                             </div>
                             <button className={`ui large fluid ${loading ? "loading" : ""} submit brand button`} disabled={loading} type="sumbit">Get started!</button>
@@ -77,8 +112,14 @@ GetStarted.propTypes = {
 };
 
 export default graphql(gql`
-    mutation getStarted ($email: String!) {
-        getStarted(email: $email) {
+    mutation getStarted ($email: String!,
+                         $applicationName: String!,
+                         $applicationSize: String!,
+                         $agreedToTos: Boolean) {
+        getStarted(email: $email,
+                   applicationName: $applicationName,
+                   applicationSize: $applicationSize,
+                   agreedToTos: $agreedToTos) {
             id
             email
             auth_token
@@ -86,6 +127,16 @@ export default graphql(gql`
     }
 `, {
     props: ({ mutate }) => ({
-        getStarted: email => mutate({ variables: { email } })
+        getStarted: (email,
+                     applicationName,
+                     applicationSize,
+                     agreedToTos) => mutate({
+                         variables: {
+                             email,
+                             applicationName,
+                             applicationSize,
+                             agreedToTos
+                         }
+                     })
     })
 })(GetStarted);
