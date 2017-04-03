@@ -7,11 +7,10 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.VerifyRequestedToken do
   alias InjectDetect.State
   alias InjectDetect.Event.GivenAuthToken
   alias InjectDetect.Event.VerifiedRequestedToken
-  alias Phoenix.Token
 
   def handle(%{token: token}, _context) do
     if user = State.user(:requested_token, token) do
-      auth_token = Token.sign(InjectDetect.Endpoint, "token", user.id)
+      auth_token = InjectDetect.generate_token(user.id)
       {:ok,
        [%VerifiedRequestedToken{token: token, user_id: user.id},
         %GivenAuthToken{auth_token: auth_token, user_id: user.id}],

@@ -7,6 +7,7 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { client } from "./apollo";
 
 import "./styles/index.styl";
+import Application from "./components/Application";
 import Dashboard from "./components/Dashboard";
 import GetStarted from "./components/GetStarted";
 import Header from "./components/Header";
@@ -24,7 +25,8 @@ ReactDOM.render(
                         <Route exact path="/" component={GetStarted}/>
                         <Route path="/sign-in" component={SignIn}/>
                         <Route path="/verify/:token" component={VerifyRequestedToken}/>
-                        <PrivateRoute path="/dashboard" component={Dashboard}/>
+                        <PrivateRoute exact path="/dashboard" component={Dashboard}/>
+                        <PrivateRoute path="/application/:id" component={Application}/>
                     </div>
                 </div>
             </BrowserRouter>

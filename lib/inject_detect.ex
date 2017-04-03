@@ -31,4 +31,10 @@ defmodule InjectDetect do
     InjectDetect.Endpoint.config_change(changed, removed)
     :ok
   end
+
+  def generate_id, do: Ecto.UUID.generate()
+
+  def generate_token(value) do
+    Phoenix.Token.sign(InjectDetect.Endpoint, :crypto.strong_rand_bytes(32), value)
+  end
 end

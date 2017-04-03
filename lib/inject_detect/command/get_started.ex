@@ -7,8 +7,6 @@ end
 
 defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
 
-  alias Ecto.UUID
-  alias Phoenix.Token
   alias InjectDetect.Event.AddedApplication
   alias InjectDetect.Event.GivenAuthToken
   alias InjectDetect.Event.GotStarted
@@ -16,9 +14,10 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
 
   def handle(data, _context) do
     unless State.user(:email, data.email) do
-      user_id = UUID.generate()
-      application_id = UUID.generate()
-      auth_token = Token.sign(InjectDetect.Endpoint, "token", user_id)
+      user_id = InjectDetect.generate_id()
+      application_id = InjectDetect.generate_id()
+      application_token = InjectDetect.generate_token(application_id)
+      auth_token = InjectDetect.generate_token(user_id)
       {:ok,
        [%GotStarted{agreed_to_tos: data.agreed_to_tos,
                     email: data.email,
@@ -26,6 +25,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
         %AddedApplication{application_id: application_id,
                           application_name: data.application_name,
                           application_size: data.application_size,
+                          application_token: application_token,
                           user_id: user_id},
         %GivenAuthToken{auth_token: auth_token,
                         user_id: user_id}],

@@ -17,7 +17,7 @@ class Dashboard extends React.Component {
                         user.applications &&
                         user.applications.map((application) => {
                             return (
-                                <div>
+                                <div key={application.id}>
                                     <div className="ui stacked segment">
                                         <a className="ui ribbon red label">{application.applicationName}</a>
                                         <i className="right floated protect icon" title="Watching for unexpected queries"></i>
@@ -125,10 +125,6 @@ class Dashboard extends React.Component {
             </div>
         );
     }
-};
-
-Dashboard.propTypes = {
-    getStarted: React.PropTypes.func.isRequired,
 };
 
 export default graphql(gql`

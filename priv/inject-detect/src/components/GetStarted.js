@@ -93,6 +93,7 @@ class GetStarted extends React.Component {
                                     <label htmlFor="agreed_to_tos">I agree to the terms.</label>
                                 </div>
                             </div>
+
                             <button className={`ui large fluid ${loading ? "loading" : ""} submit brand button`} disabled={loading} type="sumbit">Get started!</button>
                         </div>
                         <div className="ui error message"></div>
