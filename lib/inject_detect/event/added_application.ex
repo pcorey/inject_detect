@@ -17,16 +17,20 @@ defimpl InjectDetect.State.Reducer,
               application_size: application_size,
               application_token: application_token,
               user_id: user_id}, state) do
-    update_in(state, [:users,
-                      user_id,
-                      :applications], fn
-      applications -> applications ++ [%{application_name: application_name,
-                                         application_size: application_size,
-                                         applicatino_token: application_token,
-                                         expected_queries: [],
-                                         unexpected_queries: [],
-                                         id: application_id}]
-    end)
+    application = %{application_name: application_name,
+                    application_size: application_size,
+                    application_token: application_token,
+                    expected_queries: [],
+                    unexpected_queries: [],
+                    id: application_id}
+    state = update_in(state,
+              [:users,
+               InjectDetect.State.all_with(:id, user_id),
+               :applications],
+              fn
+                applications ->
+                  applications ++ [application]
+              end)
   end
 
 end

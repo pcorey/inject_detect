@@ -4,7 +4,7 @@ defmodule InjectDetect.State do
   import Ecto.Query
 
   @initial %{
-    users: %{}
+    users: []
   }
 
   def start_link do
@@ -41,14 +41,17 @@ defmodule InjectDetect.State do
 
   def user(field, value) do
     {:ok, state} = get()
-    Enum.find(state.users, fn
-      {_, %{^field => ^value}} -> true
-      _                        -> false
-    end)
-    |> case do
-         {_id, user} -> user
-         _           -> nil
-       end
+    get_in(state, [:users, all_with(field, value)])
+    |> List.first
+  end
+
+  def application(field, value) do
+    {:ok, state} = get()
+    get_in(state, [:users,
+                   Access.all,
+                   :applications,
+                   all_with(field, value)])
+    |> List.first
   end
 
   def handle_call(:get, _, {id, state}) do
@@ -58,5 +61,22 @@ defmodule InjectDetect.State do
   end
 
   def handle_call(:reset, _, _), do: {:reply, :ok, {0, @initial}}
+
+  def all_with(key, value) do
+    fn
+      (:get, list, next) ->
+        list = list
+        |> Enum.filter(&(&1[key] == value))
+        |> Enum.map(next)
+      (:get_and_update, list, next) ->
+        new_list = list
+        |> Enum.filter(&(&1[key] == value))
+        |> Enum.map(fn
+          item -> {original, updated} = next.(item)
+                  updated
+        end)
+        {list, new_list}
+    end
+  end
 
 end

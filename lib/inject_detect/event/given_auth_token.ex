@@ -10,7 +10,9 @@ defimpl InjectDetect.State.Reducer,
   for: InjectDetect.Event.GivenAuthToken do
 
   def apply(event, state) do
-    put_in(state, [:users, event.user_id, :auth_token], event.auth_token)
+    put_in(state, [:users,
+                   InjectDetect.State.all_with(:id, event.user_id),
+                   :auth_token], event.auth_token)
   end
 
 end

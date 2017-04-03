@@ -11,10 +11,11 @@ defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.GotStarted do
 
   def apply(event, state) do
-    put_in(state, [:users, event.user_id], %{applications: [],
-                                             agreed_to_tos: event.agreed_to_tos,
-                                             email: event.email,
-                                             id: event.user_id})
+    user = %{applications: [],
+             agreed_to_tos: event.agreed_to_tos,
+             email: event.email,
+             id: event.user_id}
+    update_in(state, [:users], fn users -> users ++ [user] end)
   end
 
 end

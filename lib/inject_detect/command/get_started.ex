@@ -13,7 +13,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
   alias InjectDetect.State
 
   def handle(data, _context) do
-    unless State.user(:email, data.email) do
+    unless user = State.user(:email, data.email) do
       user_id = InjectDetect.generate_id()
       application_id = InjectDetect.generate_id()
       application_token = InjectDetect.generate_token(application_id)
@@ -28,7 +28,8 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
                           application_token: application_token,
                           user_id: user_id},
         %GivenAuthToken{auth_token: auth_token,
-                        user_id: user_id}],
+                        user_id: user_id}
+       ],
        %{user_id: user_id}}
     else
       {:error, %{code: :email_taken,
