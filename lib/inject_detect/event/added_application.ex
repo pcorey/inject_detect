@@ -3,6 +3,11 @@ defmodule InjectDetect.Event.AddedApplication do
             application_name: nil,
             application_size: nil,
             application_token: nil,
+            alerting: true,
+            expected_queries: [],
+            unexpected_queries: [],
+            ingesting_queries: true,
+            training_mode: true,
             user_id: nil
 
   def convert_from(event, _), do: struct(__MODULE__, event)
@@ -12,25 +17,17 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.AddedApplication do
 
-  def apply(%{application_id: application_id,
-              application_name: application_name,
-              application_size: application_size,
-              application_token: application_token,
-              user_id: user_id}, state) do
-    application = %{application_name: application_name,
-                    application_size: application_size,
-                    application_token: application_token,
-                    expected_queries: [],
-                    unexpected_queries: [],
-                    id: application_id}
+  def apply(event, state) do
+    application = Map.from_struct(event)
+    |> Map.delete(:application_id)
+    |> Map.put_new(:id, event.application_id)
     state = update_in(state,
-              [:users,
-               InjectDetect.State.all_with(:id, user_id),
-               :applications],
-              fn
-                applications ->
-                  applications ++ [application]
-              end)
+                      [:users,
+                       InjectDetect.State.all_with(:id, event.user_id),
+                       :applications],
+                      fn applications ->
+                        applications ++ [application]
+                      end)
   end
 
 end

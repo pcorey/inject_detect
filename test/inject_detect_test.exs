@@ -2,6 +2,7 @@ defmodule InjectDetect.InjectDetectTest do
   use ExUnit.Case
 
   alias InjectDetect.Command.GetStarted
+  alias InjectDetect.Command.IngestQueries
   alias InjectDetect.Command.SignOut
   alias InjectDetect.State
 
@@ -67,6 +68,37 @@ defmodule InjectDetect.InjectDetectTest do
     assert handle(command, context) == {:error, %{code: :not_authorized,
                                                   error: "Not authorized",
                                                   message: "Not authorized"}}
+  end
+
+  test "ingests an unexpected query" do
+    setup = [%GetStarted{email: "email@example.com",
+                         application_name: "Foo Application",
+                         application_size: "Medium",
+                         agreed_to_tos: true}]
+    Enum.map(setup, &(handle(&1, %{})))
+
+    application = State.application(:application_name, "Foo Application")
+
+    %IngestQueries{application_token: application.application_token,
+                   queries: [%{collection: "users",
+                               type: "find",
+                               queried_at: ~N[2017-03-28 01:30:00],
+                               query: %{"_id" => "string"}},
+                             %{collection: "users",
+                               type: "find",
+                               queried_at: ~N[2017-04-03 11:00:00],
+                               query: %{"_id" => "string"}},
+                             %{collection: "orders",
+                               type: "remove",
+                               queried_at: ~N[2017-04-03 11:00:00],
+                               query: %{"_id" => "string"}}]}
+    |> handle(%{})
+
+    user = State.user(:email, "email@example.com")
+    IO.inspect(user)
+    assert user
+    assert user.auth_token
+    assert user.email == "email@example.com"
   end
 
 end

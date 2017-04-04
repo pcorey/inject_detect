@@ -5,38 +5,47 @@ end
 
 defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
 
-  alias InjectDetect.Event.QueriesIngested
-  alias InjectDetect.Event.UnexpectedQueryIngested
+  alias InjectDetect.Event.IngestedExpectedQueries
+  alias InjectDetect.Event.IngestedUnexpectedQueries
   alias InjectDetect.State
 
-  # def valid?(query) do
-  # end
+  defp is_expected?(application, query) do
+    application.expected_queries
+    |> Enum.find(fn expected_query -> Map.equal?(expected_query, query) end)
+    |> case do
+          nil -> false
+          _   -> true
+        end
+  end
 
-  # def expected?(application, query) do
-  # end
+  defp reduce_queries(application) do
+    fn
+      (query, {unexpected, expected}) ->
+        case is_expected?(application, query) do
+          true  -> {unexpected, expected ++ [query]}
+          false -> {unexpected ++ [query], expected}
+        end
+    end
+  end
 
-  def handle(data, _context) do
-    if application = State.application(:application_token, data.application_token) do
-    #   {queries, unexpected_queries} = data.queries
-    #   |> Enum.reduce({[], []}, fn
-    #     (query, {queries, unexpected_queries}) ->
+  defp to_events(_application, [], _event_type), do: []
+  defp to_events(application, queries, event_type) do
+    [struct(event_type, %{application_id: application.id,
+                          queries: queries})]
+  end
 
-    #       cond do
-    #         invalid?(query) ->
-    #     end
-    #       with {:ok} <- valid?(query)
-    #     {:ok} <- expected?(application, query)
-    #       do
-    #         {queries ++ [query], unexpected_queries}
-    #       else
-    #         {{queries, unexpected_queries ++ [query]}}
-    #       end
-    #       # TODO: Whole application goes here...
-    #       {queries ++ [], unexpected_queries ++ []}
-    #   end)
-    #   events = [%QueriesProcessed{application_id: application.id,
-    #                               queries: queries}]
-    #   {:ok, events}
+  def handle(%{application_token: application_token,
+               queries: queries}, _context) do
+    application = State.application(:application_token, application_token)
+    if application do
+      events = queries
+      |> Enum.reduce({[], []}, reduce_queries(application))
+      |> (fn
+            {unexpected, expected} ->
+              to_events(application, expected, IngestedExpectedQueries) ++
+              to_events(application, unexpected, IngestedUnexpectedQueries)
+          end).()
+      {:ok, events}
     else
       {:error, %{code: :invalid_token,
                  error: "Invalid application token",

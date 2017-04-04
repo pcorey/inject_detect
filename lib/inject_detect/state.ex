@@ -40,17 +40,20 @@ defmodule InjectDetect.State do
   end
 
   def user(field, value) do
-    {:ok, state} = get()
-    get_in(state, [:users, all_with(field, value)])
+    get()
+    |> elem(1)
+    |> get_in([:users, all_with(field, value)])
     |> List.first
   end
 
   def application(field, value) do
-    {:ok, state} = get()
-    get_in(state, [:users,
-                   Access.all,
-                   :applications,
-                   all_with(field, value)])
+    get()
+    |> elem(1)
+    |> get_in([:users,
+               Access.all,
+               :applications,
+               all_with(field, value)])
+    |> List.flatten
     |> List.first
   end
 
@@ -64,18 +67,28 @@ defmodule InjectDetect.State do
 
   def all_with(key, value) do
     fn
+      (:get, nil, next) ->
+        next.(nil)
+      (:get, [], next) ->
+        next.([])
       (:get, list, next) ->
-        list = list
+        list
         |> Enum.filter(&(&1[key] == value))
         |> Enum.map(next)
+
+      (:get_and_update, nil, next) ->
+        [nil]
+        |> Enum.map(next)
+        |> :lists.unzip
+      (:get_and_update, [], next) ->
+        [nil]
+        |> Enum.map(next)
+        |> :lists.unzip
       (:get_and_update, list, next) ->
-        new_list = list
+        list
         |> Enum.filter(&(&1[key] == value))
-        |> Enum.map(fn
-          item -> {original, updated} = next.(item)
-                  updated
-        end)
-        {list, new_list}
+        |> Enum.map(next)
+        |> :lists.unzip
     end
   end
 
