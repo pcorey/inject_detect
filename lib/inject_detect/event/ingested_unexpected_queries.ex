@@ -19,9 +19,9 @@ defimpl InjectDetect.State.Reducer,
                   [:users,
                   Access.all,
                   :applications,
-                  State.all_with(:id, event.application_id),
+                  State.all_with(id: event.application_id),
                   :unexpected_queries,
-                  State.all_with(:query, query["query"])],
+                  State.all_with(query: query["query"])],
           fn
             # Found new unexpected query
             nil ->

@@ -16,7 +16,7 @@ defimpl InjectDetect.State.Reducer,
     # |> Map.put_new(:id, event.application_id)
     # state = update_in(state,
     #   [:users,
-    #    InjectDetect.State.all_with(:id, event.user_id),
+    #    InjectDetect.State.all_with(id: event.user_id),
     #    :applications],
     #   fn applications ->
     #     applications ++ [application]

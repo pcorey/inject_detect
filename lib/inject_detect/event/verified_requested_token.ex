@@ -11,7 +11,7 @@ defimpl InjectDetect.State.Reducer,
 
   def apply(%{user_id: user_id}, state) do
     put_in(state, [:users,
-                   InjectDetect.State.all_with(:id, user_id),
+                   InjectDetect.State.all_with(id: user_id),
                    :requested_token], nil)
   end
 
