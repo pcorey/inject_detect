@@ -9,34 +9,57 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.IngestedUnexpectedQueries do
 
-  alias InjectDetect.State
+  defp that_match(collection, query, type) do
+    fn (:get_and_update, queries, next) ->
+      queries
+      |> Enum.map(fn
+        unexpected = %{collection: ^collection,
+                      query: ^query,
+                      type: ^type}  -> {true, next.(unexpected)}
+        unexpected                  -> {false, {unexpected, unexpected}}
+      end)
+      |> (fn
+            queries -> found = queries
+                      |> Enum.map(&(elem(&1, 0)))
+                      |> Enum.any?
+                      case found do
+                        true  -> Enum.map(queries, &(elem(&1, 1)))
+                        false -> Enum.map(queries, &(elem(&1, 1))) ++ [next.(nil)]
+                      end
+          end).()
+      |> :lists.unzip
+    end
+  end
 
   def apply(event, state) do
     event.queries
     |> Enum.reduce(state, fn
-      (query, state) ->
+      (%{"collection" => collection,
+         "query" => query,
+         "queried_at" => queried_at,
+         "type" => type}, state) ->
         update_in(state,
-                  [:users,
-                  Access.all,
-                  :applications,
-                  State.all_with(id: event.application_id),
-                  :unexpected_queries,
-                  State.all_with(query: query["query"])],
-          fn
-            # Found new unexpected query
+          [:users,
+           Access.all,
+           :applications,
+           InjectDetect.State.all_with(id: event.application_id),
+           :unexpected_queries,
+           that_match(collection, query, type)], fn
+
+            # New unexpected query
             nil ->
-              %{collection: query["collection"],
+              %{collection: collection,
                 count: 1,
-                query: query["query"],
-                type: query["type"],
-                last_queried_at: query["queried_at"]}
-            # Found existing unexpected query
-            (found = %{}) ->
-              %{collection: found.collection,
-                count: found.count + 1,
-                query: found.query,
-                type: found.type,
-                last_queried_at: query["queried_at"]}
+                query: query,
+                type: type,
+                last_queried_at: queried_at}
+
+            # Previous seen unexpected query
+            unexpected ->
+              %{unexpected |
+                count: unexpected.count + 1,
+                last_queried_at: queried_at}
+
           end)
     end)
   end

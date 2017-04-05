@@ -67,39 +67,20 @@ defmodule InjectDetect.State do
 
   def all_with(filters) do
     fn
-      (:get, nil, next) ->
-        next.(nil)
-      (:get, [], next) ->
-        next.([])
       (:get, list, next) ->
-        list
-        |> Enum.filter(fn
-          item ->
-            filters
-            |> Enum.all?(fn
-              {key, value} -> item[key] == value
-            end)
+        Enum.filter(list, fn
+          item -> Enum.all?(filters, fn {k, v} -> item[k] == v end)
         end)
         |> Enum.map(next)
 
-      (:get_and_update, nil, next) ->
-        [nil]
-        |> Enum.map(next)
-        |> :lists.unzip
-      (:get_and_update, [], next) ->
-        [nil]
-        |> Enum.map(next)
-        |> :lists.unzip
       (:get_and_update, list, next) ->
-        list
-        |> Enum.filter(fn
-          item ->
-            filters
-            |> Enum.all?(fn
-            {key, value} -> item[key] == value
-          end)
+        Enum.map(list, fn
+          item -> Enum.all?(filters, fn {k, v} -> item[k] == v end)
+                  |> case do
+                      true  -> next.(item)
+                      false -> {item, item}
+                    end
         end)
-        |> Enum.map(next)
         |> :lists.unzip
     end
   end

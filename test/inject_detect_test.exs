@@ -74,6 +74,10 @@ defmodule InjectDetect.InjectDetectTest do
     setup = [%GetStarted{email: "email@example.com",
                          application_name: "Foo Application",
                          application_size: "Medium",
+                         agreed_to_tos: true},
+             %GetStarted{email: "email2@example.com",
+                         application_name: "Bar Application",
+                         application_size: "Large",
                          agreed_to_tos: true}]
     Enum.map(setup, &(handle(&1, %{})))
 
@@ -90,12 +94,17 @@ defmodule InjectDetect.InjectDetectTest do
                                query: %{"_id" => "string"}},
                              %{collection: "orders",
                                type: "remove",
-                               queried_at: ~N[2017-04-03 11:00:00],
-                               query: %{"_id" => "string"}}]}
+                               queried_at: ~N[2017-04-03 12:00:00],
+                               query: %{"_id" => %{"$gte" => "string"}}}
+                            ]}
     |> handle(%{})
 
+    State.get()
+    |> elem(1)
+    |> IO.inspect
+
     user = State.user(:email, "email@example.com")
-    IO.inspect(user)
+    # IO.inspect(user)
     assert user
     assert user.auth_token
     assert user.email == "email@example.com"
