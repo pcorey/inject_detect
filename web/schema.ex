@@ -9,6 +9,7 @@ defmodule InjectDetect.Schema do
   }
   alias InjectDetect.CommandHandler
   alias InjectDetect.State
+  alias InjectDetect.State.User
 
   import_types InjectDetect.Schema.Types
 
@@ -24,7 +25,7 @@ defmodule InjectDetect.Schema do
   end
 
   def resolve_user(_args, %{context: %{user_id: user_id}}) do
-    {:ok, State.user(:id, user_id)}
+    {:ok, User.find(user_id)}
   end
 
   def resolve_users(_args, %{context: %{user_id: _user_id}}) do
@@ -55,7 +56,7 @@ defmodule InjectDetect.Schema do
     end
   end
 
-  def user(%{user_id: user_id}), do: State.user(:id, user_id)
+  def user(%{user_id: user_id}), do: User.find(user_id)
 
   mutation do
     @desc "Get started"

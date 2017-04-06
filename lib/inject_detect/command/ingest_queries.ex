@@ -7,7 +7,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
 
   alias InjectDetect.Event.IngestedExpectedQueries
   alias InjectDetect.Event.IngestedUnexpectedQueries
-  alias InjectDetect.State
+  alias InjectDetect.State.Application
 
   defp is_expected?(application, query) do
     application.expected_queries
@@ -36,7 +36,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
 
   def handle(%{application_token: application_token,
                queries: queries}, _context) do
-    application = State.application(:application_token, application_token)
+    application = Application.find(application_token)
     if application do
       events = queries
       |> Enum.reduce({[], []}, reduce_queries(application))

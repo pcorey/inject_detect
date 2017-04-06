@@ -10,15 +10,13 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.GotStarted do
 
-  import InjectDetect.State, only: [with_attrs: 1]
-
   def apply(event, state) do
     user = %{applications: [],
              agreed_to_tos: event.agreed_to_tos,
              email: event.email,
              id: event.user_id}
-    path = [:users]
-    update_in(state, path, fn users -> users ++ [user] end)
+    state
+    |> put_in([:users, event.user_id], user)
   end
 
 end

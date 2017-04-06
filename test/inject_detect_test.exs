@@ -5,6 +5,8 @@ defmodule InjectDetect.InjectDetectTest do
   alias InjectDetect.Command.IngestQueries
   alias InjectDetect.Command.SignOut
   alias InjectDetect.State
+  alias InjectDetect.State.User
+  alias InjectDetect.State.Application
 
   import InjectDetect.CommandHandler, only: [handle: 2]
 
@@ -27,7 +29,7 @@ defmodule InjectDetect.InjectDetectTest do
     {:ok, %{user_id: user_id}} = handle(command, %{})
     assert user_id
     # Verify the user's state
-    user = State.user(:email, "email@example.com")
+    user = User.find(email: "email@example.com")
     assert user
     assert user.auth_token
     assert user.email == "email@example.com"
@@ -50,9 +52,9 @@ defmodule InjectDetect.InjectDetectTest do
                        application_name: "Foo Application",
                        application_size: "Medium",
                        agreed_to_tos: true}, %{})
-    handle(%SignOut{user_id: State.user(:email, "email@example.com").id},
-                  %{user_id: State.user(:email, "email@example.com").id})
-    user = State.user(:email, "email@example.com")
+    handle(%SignOut{user_id: User.find(email: "email@example.com").id},
+                  %{user_id: User.find(email: "email@example.com").id})
+    user = User.find(email: "email@example.com")
     assert user
     refute user.auth_token
   end
@@ -62,7 +64,7 @@ defmodule InjectDetect.InjectDetectTest do
                        application_name: "Foo Application",
                        application_size: "Medium",
                        agreed_to_tos: true}, %{})
-    user = State.user(:email, "email@example.com")
+    user = User.find(email: "email@example.com")
     command = %SignOut{user_id: user.id}
     context = %{user_id: 1337}
     assert handle(command, context) == {:error, %{code: :not_authorized,
@@ -81,7 +83,7 @@ defmodule InjectDetect.InjectDetectTest do
                          agreed_to_tos: true}]
     Enum.map(setup, &(handle(&1, %{})))
 
-    application = State.application(:name, "Foo Application")
+    application = Application.find(name: "Foo Application")
 
     %IngestQueries{application_token: application.token,
                    queries: [%{collection: "users",
@@ -99,11 +101,7 @@ defmodule InjectDetect.InjectDetectTest do
                             ]}
     |> handle(%{})
 
-    # State.get()
-    # |> elem(1)
-    # |> IO.inspect
-
-    user = State.user(:email, "email@example.com")
+    user = User.find(email: "email@example.com")
     # IO.inspect(user)
     assert user
     assert user.auth_token

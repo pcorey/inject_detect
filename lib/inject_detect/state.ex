@@ -3,7 +3,10 @@ defmodule InjectDetect.State do
 
   import Ecto.Query
 
-  @initial %{users: []}
+  @initial %{users: %{},
+             applications: %{},
+             unexpected_queries: %{},
+             expected_queries: %{}}
 
   def start_link do
     GenServer.start_link(__MODULE__, {0, @initial}, name: __MODULE__)
@@ -33,26 +36,8 @@ defmodule InjectDetect.State do
 
     # Convert all events into their structs
     {events |> Enum.map(&convert_to_event/1),
-    # Grab the most revent "id" we've seen
+    # Grab the most recent "id" we've seen
      events |> List.last |> (&(if &1 do &1.id else id end)).()}
-  end
-
-  def user(field, value) do
-    get()
-    |> elem(1)
-    |> get_in([:users, with_attrs([{field, value}])])
-    |> List.first
-  end
-
-  def application(field, value) do
-    get()
-    |> elem(1)
-    |> get_in([:users,
-               Access.all,
-               :applications,
-               with_attrs([{field, value}])])
-    |> List.flatten
-    |> List.first
   end
 
   def handle_call(:get, _, {id, state}) do
@@ -63,22 +48,5 @@ defmodule InjectDetect.State do
 
   def handle_call(:reset, _, _), do:
     {:reply, :ok, {0, @initial}}
-
-  def with_attrs(attrs) do
-    matches = fn user -> Enum.all?(attrs, fn {k, v} -> user[k] == v end) end
-    fn
-      (:get, users, next) ->
-        Enum.filter(users, matches)
-        |> Enum.map(next)
-      (:get_and_update, users, next) ->
-        Enum.map(users, fn user -> matches.(user)
-        |> case do
-              true  -> next.(user)
-              false -> {nil, user}
-            end
-        end)
-        |> :lists.unzip
-    end
-  end
 
 end

@@ -5,6 +5,7 @@ defmodule InjectDetect.Listener.EmailToken do
 
   alias InjectDetect.Listener
   alias InjectDetect.State
+  alias InjectDetect.State.User
 
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -18,7 +19,7 @@ defmodule InjectDetect.Listener.EmailToken do
 
   def handle_call({%{requested_token: requested_token},
                    %{user_id: user_id}}, _, _) do
-    case State.user(:id, user_id) do
+    case User.find(user_id) do
       nil  -> Logger.info("Can't find user #{user_id} to email token.")
       _    -> Logger.info("Requested token: #{requested_token}")
     end

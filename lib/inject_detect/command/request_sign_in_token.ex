@@ -5,11 +5,12 @@ end
 defimpl InjectDetect.Command, for: InjectDetect.Command.RequestSignInToken do
 
   alias InjectDetect.State
+  alias InjectDetect.State.User
   alias InjectDetect.Event.RequestedSignInToken
 
   def handle(%{email: email}, _context) do
     requested_token = InjectDetect.generate_token(email)
-    if user = State.user(:email, email) do
+    if user = User.find(email: email) do
       {:ok,
        [%RequestedSignInToken{user_id: user.id,
                               email: email,

@@ -4,12 +4,13 @@ end
 
 defimpl InjectDetect.Command, for: InjectDetect.Command.VerifyRequestedToken do
 
-  alias InjectDetect.State
   alias InjectDetect.Event.GivenAuthToken
   alias InjectDetect.Event.VerifiedRequestedToken
+  alias InjectDetect.State
+  alias InjectDetect.State.User
 
   def handle(%{token: token}, _context) do
-    if user = State.user(:requested_token, token) do
+    if user = User.find(requested_token: token) do
       auth_token = InjectDetect.generate_token(user.id)
       {:ok,
        [%VerifiedRequestedToken{token: token, user_id: user.id},
