@@ -81,9 +81,9 @@ defmodule InjectDetect.InjectDetectTest do
                          agreed_to_tos: true}]
     Enum.map(setup, &(handle(&1, %{})))
 
-    application = State.application(:application_name, "Foo Application")
+    application = State.application(:name, "Foo Application")
 
-    %IngestQueries{application_token: application.application_token,
+    %IngestQueries{application_token: application.token,
                    queries: [%{collection: "users",
                                type: "find",
                                queried_at: ~N[2017-03-28 01:30:00],

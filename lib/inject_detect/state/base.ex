@@ -2,7 +2,7 @@ defmodule InjectDetect.State.Base do
 
   def new(), do: %{users: []}
 
-  defp with_attrs(attrs) do
+  def with_attrs(attrs) do
     matches = fn user -> Enum.all?(attrs, fn {k, v} -> user[k] == v end) end
     fn
       (:get, users, next) ->

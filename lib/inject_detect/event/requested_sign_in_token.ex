@@ -10,10 +10,12 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.RequestedSignInToken do
 
+  import InjectDetect.State, only: [with_attrs: 1]
+
   def apply(event, state) do
-    put_in(state, [:users,
-                   InjectDetect.State.all_with(id: event.user_id),
-                   :requested_token], event.requested_token)
+      put_in(state, [:users,
+                     with_attrs(id: event.user_id),
+                     :requested_token], event.requested_token)
   end
 
 end

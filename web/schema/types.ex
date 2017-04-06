@@ -3,8 +3,8 @@ defmodule InjectDetect.Schema.Types do
 
   object :application do
     field :id, :id
-    field :application_name, :string
-    field :application_size, :string
+    field :name, :string
+    field :size, :string
   end
 
   object :user do

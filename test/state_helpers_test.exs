@@ -49,4 +49,15 @@ defmodule InjectDetect.StateHelpersTest do
                                                  name: "Foobar"}]}]}
   end
 
+  test "finds an application" do
+    state = Base.new()
+    |> Base.add_user(id: "123", email: "foo@bar", agreed_to_tos: true)
+    |> User.add_application([id: "123"], id: "456", name: "Foobar")
+
+    assert User.find_application(state, id: "456") == %{id: "456",
+                                                        name: "Foobar"}
+    assert User.find_application(state, "123", id: "456") == %{id: "456",
+                                                               name: "Foobar"}
+  end
+
 end

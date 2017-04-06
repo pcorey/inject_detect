@@ -9,7 +9,40 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.IngestedUnexpectedQueries do
 
-  defp that_match(collection, query, type) do
+  import InjectDetect.State, only: [with_attrs: 1]
+
+  def apply(event, state) do
+    event.queries
+    |> Enum.reduce(state, &apply_query(event, &1, &2))
+  end
+
+  def apply_query(event, query, state) do
+    path = [:users,
+            Access.all,
+            :applications,
+            with_attrs(id: event.application_id),
+            :unexpected_queries,
+            with_attrs_or_nil(query["collection"], query["query"], query["type"])]
+    update_in(state, path, &add_or_update_query(&1, query))
+  end
+
+  def add_or_update_query(nil, %{"collection" => collection,
+                                 "query" => query,
+                                 "queried_at" => queried_at,
+                                 "type" => type}) do
+    %{collection: collection,
+      count: 1,
+      query: query,
+      type: type,
+      last_queried_at: queried_at}
+  end
+
+  def add_or_update_query(query, %{"queried_at" => queried_at}) do
+    %{query | count: query.count + 1,
+      last_queried_at: queried_at}
+  end
+
+  defp with_attrs_or_nil(collection, query, type) do
     fn (:get_and_update, queries, next) ->
       queries
       |> Enum.map(fn
@@ -29,39 +62,6 @@ defimpl InjectDetect.State.Reducer,
           end).()
       |> :lists.unzip
     end
-  end
-
-  def apply(event, state) do
-    event.queries
-    |> Enum.reduce(state, fn
-      (%{"collection" => collection,
-         "query" => query,
-         "queried_at" => queried_at,
-         "type" => type}, state) ->
-        update_in(state,
-          [:users,
-           Access.all,
-           :applications,
-           InjectDetect.State.all_with(id: event.application_id),
-           :unexpected_queries,
-           that_match(collection, query, type)], fn
-
-            # New unexpected query
-            nil ->
-              %{collection: collection,
-                count: 1,
-                query: query,
-                type: type,
-                last_queried_at: queried_at}
-
-            # Previous seen unexpected query
-            unexpected ->
-              %{unexpected |
-                count: unexpected.count + 1,
-                last_queried_at: queried_at}
-
-          end)
-    end)
   end
 
 end

@@ -1,6 +1,17 @@
 defmodule InjectDetect.State.User do
 
-  def get() do
+  import InjectDetect.State.Base, only: [with_attrs: 1]
+
+  def find_application(state, attrs) do
+    get_in(state, [:users, Access.all, :applications, with_attrs(attrs)])
+    |> List.flatten
+    |> List.first
+  end
+
+  def find_application(state, user_id, attrs) do
+    get_in(state, [:users, with_attrs(id: user_id), :applications, with_attrs(attrs)])
+    |> List.flatten
+    |> List.first
   end
 
   def add_application(state, user, attrs) do

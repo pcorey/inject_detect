@@ -63,6 +63,23 @@ defmodule InjectDetect.State do
   def handle_call(:reset, _, _), do:
     {:reply, :ok, {0, InjectDetect.State.Base.new()}}
 
+  def with_attrs(attrs) do
+    matches = fn user -> Enum.all?(attrs, fn {k, v} -> user[k] == v end) end
+    fn
+      (:get, users, next) ->
+        Enum.filter(users, matches)
+        |> Enum.map(next)
+      (:get_and_update, users, next) ->
+        Enum.map(users, fn user -> matches.(user)
+        |> case do
+              true  -> next.(user)
+              false -> {nil, user}
+            end
+        end)
+        |> :lists.unzip
+    end
+  end
+
   def all_with(filters) do
     fn
       (:get, list, next) ->
