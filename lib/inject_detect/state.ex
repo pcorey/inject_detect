@@ -40,7 +40,7 @@ defmodule InjectDetect.State do
   def user(field, value) do
     get()
     |> elem(1)
-    |> get_in([:users, all_with([{field, value}])])
+    |> get_in([:users, with_attrs([{field, value}])])
     |> List.first
   end
 
@@ -50,7 +50,7 @@ defmodule InjectDetect.State do
     |> get_in([:users,
                Access.all,
                :applications,
-               all_with([{field, value}])])
+               with_attrs([{field, value}])])
     |> List.flatten
     |> List.first
   end
@@ -76,26 +76,6 @@ defmodule InjectDetect.State do
               true  -> next.(user)
               false -> {nil, user}
             end
-        end)
-        |> :lists.unzip
-    end
-  end
-
-  def all_with(filters) do
-    fn
-      (:get, list, next) ->
-        Enum.filter(list, fn
-          item -> Enum.all?(filters, fn {k, v} -> item[k] == v end)
-        end)
-        |> Enum.map(next)
-
-      (:get_and_update, list, next) ->
-        Enum.map(list, fn
-          item -> Enum.all?(filters, fn {k, v} -> item[k] == v end)
-                  |> case do
-                      true  -> next.(item)
-                      false -> {item, item}
-                    end
         end)
         |> :lists.unzip
     end
