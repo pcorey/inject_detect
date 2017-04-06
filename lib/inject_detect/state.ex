@@ -3,12 +3,9 @@ defmodule InjectDetect.State do
 
   import Ecto.Query
 
-  @initial %{
-    users: []
-  }
-
   def start_link do
-    GenServer.start_link(__MODULE__, {0, @initial}, name: __MODULE__)
+    base = InjectDetect.State.Base.new()
+    GenServer.start_link(__MODULE__, {0, base}, name: __MODULE__)
   end
 
   def get do
@@ -63,7 +60,8 @@ defmodule InjectDetect.State do
     {:reply, {:ok, state}, {id, state}}
   end
 
-  def handle_call(:reset, _, _), do: {:reply, :ok, {0, @initial}}
+  def handle_call(:reset, _, _), do:
+    {:reply, :ok, {0, InjectDetect.State.Base.new()}}
 
   def all_with(filters) do
     fn

@@ -99,9 +99,9 @@ defmodule InjectDetect.InjectDetectTest do
                             ]}
     |> handle(%{})
 
-    State.get()
-    |> elem(1)
-    |> IO.inspect
+    # State.get()
+    # |> elem(1)
+    # |> IO.inspect
 
     user = State.user(:email, "email@example.com")
     # IO.inspect(user)
