@@ -3,9 +3,10 @@ defmodule InjectDetect.State do
 
   import Ecto.Query
 
+  @initial %{users: []}
+
   def start_link do
-    base = InjectDetect.State.Base.new()
-    GenServer.start_link(__MODULE__, {0, base}, name: __MODULE__)
+    GenServer.start_link(__MODULE__, {0, @initial}, name: __MODULE__)
   end
 
   def get do
@@ -61,7 +62,7 @@ defmodule InjectDetect.State do
   end
 
   def handle_call(:reset, _, _), do:
-    {:reply, :ok, {0, InjectDetect.State.Base.new()}}
+    {:reply, :ok, {0, @initial}}
 
   def with_attrs(attrs) do
     matches = fn user -> Enum.all?(attrs, fn {k, v} -> user[k] == v end) end
