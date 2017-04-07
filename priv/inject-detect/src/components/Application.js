@@ -17,7 +17,7 @@ class Application extends React.Component {
             <div className="ij-dashboard ui mobile reversed stackable grid">
 
                 <div className="sixteen wide column">
-                    <h1 style={{fontSize: "3em", fontWeight: 100}}>{application && application.applicationName}</h1>
+                    <h1 style={{fontSize: "3em", fontWeight: 100}}>{application && application.name}</h1>
                     {/* { application && <ApplicationSecret application={application}/> } */}
                     <h3>
                         Unexpected queries:
@@ -64,7 +64,7 @@ export default graphql(gql`
             email
             applications {
                 id
-                applicationName
+                name
             }
         }
     }

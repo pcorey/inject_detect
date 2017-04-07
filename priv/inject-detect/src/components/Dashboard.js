@@ -19,7 +19,7 @@ class Dashboard extends React.Component {
                             return (
                                 <div key={application.id}>
                                     <div className="ui stacked segment">
-                                        <a className="ui ribbon red label">{application.applicationName}</a>
+                                        <a className="ui ribbon red label">{application.name}</a>
                                         <i className="right floated protect icon" title="Watching for unexpected queries"></i>
                                         <i className="right floated alarm icon disabled"title="Notifications are not being sent"></i>
                                         <i className="right floated search icon disabled" title="Training mode is turned off"></i>
@@ -134,7 +134,7 @@ export default graphql(gql`
             email
             applications {
                 id
-                applicationName
+                name
             }
         }
     }

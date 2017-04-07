@@ -14,7 +14,9 @@ defmodule InjectDetect.Schema.Types do
     field :applications, list_of(:application) do
       resolve fn
         (user, _, _) ->
-          {:ok, user.applications}
+          applications = user.applications
+          |> Enum.map(&InjectDetect.State.Application.find/1)
+          {:ok, applications}
       end
     end
   end
