@@ -5,6 +5,7 @@ defmodule InjectDetect.State do
 
   @initial %{users: %{},
              applications: %{},
+             application_tokens: %{},
              unexpected_queries: %{},
              expected_queries: %{}}
 

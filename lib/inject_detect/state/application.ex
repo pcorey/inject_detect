@@ -10,10 +10,10 @@ defmodule InjectDetect.State.Application do
     |> Enum.find(fn user -> Enum.all?(attrs, fn {k, v} -> user[k] == v end) end)
   end
 
-  def find(token) do
+  def find(id) do
     State.get()
     |> elem(1)
-    |> get_in([:applications, token])
+    |> get_in([:applications, id])
   end
 
 end

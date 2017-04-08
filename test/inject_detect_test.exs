@@ -84,7 +84,7 @@ defmodule InjectDetect.InjectDetectTest do
 
     application = Application.find(name: "Foo Application")
 
-    %IngestQueries{application_token: application.token,
+    %IngestQueries{application_id: application.id,
                    queries: [%{collection: "users",
                                type: "find",
                                queried_at: ~N[2017-03-28 01:30:00],
@@ -104,10 +104,12 @@ defmodule InjectDetect.InjectDetectTest do
     IO.inspect(InjectDetect.State.get())
 
     application = Application.find(name: "Foo Application")
-    assert application.unexpected_queries == [%{collection: "users",
+    assert application.unexpected_queries == [%{application_id: application.id,
+                                                collection: "users",
                                                 type: "find",
                                                 query: %{"_id" => "string"}},
-                                              %{collection: "orders",
+                                              %{application_id: application.id,
+                                                collection: "orders",
                                                 type: "remove",
                                                 query: %{"_id" => %{"$gte" => "string"}}}]
 
