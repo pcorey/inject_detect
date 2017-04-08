@@ -4,7 +4,6 @@ end
 
 defimpl InjectDetect.Command, for: InjectDetect.Command.RequestSignInToken do
 
-  alias InjectDetect.State
   alias InjectDetect.State.User
   alias InjectDetect.Event.RequestedSignInToken
 

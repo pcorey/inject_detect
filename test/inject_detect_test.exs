@@ -4,7 +4,6 @@ defmodule InjectDetect.InjectDetectTest do
   alias InjectDetect.Command.GetStarted
   alias InjectDetect.Command.IngestQueries
   alias InjectDetect.Command.SignOut
-  alias InjectDetect.State
   alias InjectDetect.State.User
   alias InjectDetect.State.Application
 
@@ -101,11 +100,18 @@ defmodule InjectDetect.InjectDetectTest do
                             ]}
     |> handle(%{})
 
-    user = User.find(email: "email@example.com")
-    # IO.inspect(user)
-    assert user
-    assert user.auth_token
-    assert user.email == "email@example.com"
+    IO.inspect(application.token)
+    IO.inspect(InjectDetect.State.get())
+
+    application = Application.find(name: "Foo Application")
+    assert application.unexpected_queries == [%{collection: "users",
+                                                type: "find",
+                                                query: %{"_id" => "string"}},
+                                              %{collection: "orders",
+                                                type: "remove",
+                                                query: %{"_id" => %{"$gte" => "string"}}}]
+
+    # unexpected_queries = UnexpectedQueries.find(:application_id, application.id)
   end
 
 end

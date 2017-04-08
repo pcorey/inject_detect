@@ -10,11 +10,10 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
   alias InjectDetect.Event.AddedApplication
   alias InjectDetect.Event.GivenAuthToken
   alias InjectDetect.Event.GotStarted
-  alias InjectDetect.State
   alias InjectDetect.State.User
 
   def handle(data, _context) do
-    unless user = User.find(email: data.email) do
+    unless User.find(email: data.email) do
       user_id = InjectDetect.generate_id()
       application_id = InjectDetect.generate_id()
       application_token = InjectDetect.generate_token(application_id)

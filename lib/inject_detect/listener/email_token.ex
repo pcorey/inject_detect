@@ -4,7 +4,6 @@ defmodule InjectDetect.Listener.EmailToken do
   require Logger
 
   alias InjectDetect.Listener
-  alias InjectDetect.State
   alias InjectDetect.State.User
 
   def start_link do

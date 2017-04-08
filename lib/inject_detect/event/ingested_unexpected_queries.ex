@@ -1,5 +1,5 @@
 defmodule InjectDetect.Event.IngestedUnexpectedQueries do
-  defstruct application_id: nil,
+  defstruct application_token: nil,
             queries: []
 
   def convert_from(event, _), do: struct(__MODULE__, event)
@@ -20,7 +20,11 @@ defimpl InjectDetect.State.Reducer,
 
   def apply_query(event, query, state) do
     key = %{collection: query.collection, type: query.type, query: query.query}
-    update_in(state, [:unexpected_queries, key], &add_or_update_query(&1, query))
+    update_in(state, [:unexpected_queries,
+                      key], &add_or_update_query(&1, query))
+    update_in(state, [:applications,
+                      event.application_token,
+                      :unexpected_queries], &add_to_application(&1, key))
   end
 
   def add_or_update_query(nil, query) do
@@ -35,5 +39,12 @@ defimpl InjectDetect.State.Reducer,
     %{query | count: query.count + 1,
       last_queried_at: queried_at}
   end
+
+  def add_to_application([], key), do:
+    [key]
+  def add_to_application([key | queries], key), do:
+    [key | queries]
+  def add_to_application([head | queries], key), do:
+    [head | add_to_application(queries, key)]
 
 end

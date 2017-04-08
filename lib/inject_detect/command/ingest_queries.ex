@@ -30,7 +30,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
 
   defp to_events(_application, [], _event_type), do: []
   defp to_events(application, queries, event_type) do
-    [struct(event_type, %{application_id: application.id,
+    [struct(event_type, %{application_token: application.token,
                           queries: queries})]
   end
 

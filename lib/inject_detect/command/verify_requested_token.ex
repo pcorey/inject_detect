@@ -6,7 +6,6 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.VerifyRequestedToken do
 
   alias InjectDetect.Event.GivenAuthToken
   alias InjectDetect.Event.VerifiedRequestedToken
-  alias InjectDetect.State
   alias InjectDetect.State.User
 
   def handle(%{token: token}, _context) do
