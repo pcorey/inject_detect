@@ -28,7 +28,7 @@ defmodule InjectDetect.CommandHandler do
         event = %Event{}
         |> put(:type, Atom.to_string(type))
         |> put(:data, Map.from_struct(data))
-        insert(multi, type, event)
+        insert(multi, data, event)
     end)
     |> Repo.transaction()
   end
