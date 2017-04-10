@@ -104,14 +104,12 @@ defmodule InjectDetect.InjectDetectTest do
     IO.inspect(InjectDetect.State.get())
 
     application = Application.find(name: "Foo Application")
-    assert application.unexpected_queries == [%{application_id: application.id,
-                                                collection: "users",
-                                                type: "find",
-                                                query: %{"_id" => "string"}},
-                                              %{application_id: application.id,
-                                                collection: "orders",
-                                                type: "remove",
-                                                query: %{"_id" => %{"$gte" => "string"}}}]
+    assert Enum.member?(application.expected_queries, %{collection: "users",
+                                                        type: "find",
+                                                        query: %{"_id" => "string"}})
+    assert Enum.member?(application.expected_queries, %{collection: "orders",
+                                                        type: "remove",
+                                                        query: %{"_id" => %{"$gte" => "string"}}})
 
     # unexpected_queries = UnexpectedQueries.find(:application_id, application.id)
   end

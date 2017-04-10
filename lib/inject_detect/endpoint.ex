@@ -11,7 +11,7 @@ defmodule InjectDetect.Endpoint do
   # You should set gzip to true if you are running phoenix.digest
   # when deploying your static files in production.
   plug Plug.Static,
-    at: "/", 
+    at: "/",
     from: "priv/inject-detect/build/",
     gzip: false,
     only: ~w(index.html favicon.ico static)

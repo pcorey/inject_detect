@@ -26,6 +26,8 @@ defimpl InjectDetect.State.Reducer,
     state
     |> put_in([:applications, event.id], application)
     |> put_in([:application_tokens, event.token], event.id)
+    |> put_in([:expected_queries, event.id], %{})
+    |> put_in([:unexpected_queries, event.id], %{})
     |> update_in([:users, event.user_id, :applications], fn apps -> [event.id | apps] end)
   end
 
