@@ -7,8 +7,6 @@ defmodule InjectDetect.Event.IngestedQuery do
 
   def convert_from(event, _), do: struct(__MODULE__, event)
 
-  def stream(event), do: "application_id: #{event.application_id}"
-
 end
 
 defimpl InjectDetect.State.Reducer,

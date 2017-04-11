@@ -12,8 +12,8 @@ defmodule InjectDetect do
       supervisor(InjectDetect.Endpoint, []),
       supervisor(Registry, [:duplicate, InjectDetect.Listener.Registry]),
 
-      worker(InjectDetect.State, []),
       worker(InjectDetect.CommandHandler, []),
+      worker(InjectDetect.State, []),
 
       # Supervise event listeners:
       worker(InjectDetect.Listener.EmailToken, []),

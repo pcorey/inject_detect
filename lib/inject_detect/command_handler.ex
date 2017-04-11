@@ -17,34 +17,19 @@ defmodule InjectDetect.CommandHandler do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  def init(_) do
-    # InjectDetect.State.version()
-    # |> IO.inspect
-    {:ok, 0}
-  end
-
   def handle(command, context \\ %{}) do
     GenServer.call(__MODULE__, {:handle, command, context})
   end
 
-  def store_events([], multi, version) do
-    {:ok, _} = Repo.transaction(multi)
-    {:ok, version}
-  end
-
-  def store_events([data = %type{} | events], multi, version) do
-    stream = apply(type, :stream, [data])
-    %Event{version: version + 1,
-           stream: stream}
+  def store_events([], multi), do: Repo.transaction(multi)
+  def store_events([data = %type{} | events], multi) do
+    %Event{}
     |> put(:type, Atom.to_string(type))
     |> put(:data, Map.from_struct(data))
     |> (&insert(multi, data, &1)).()
-    |> (&store_events(events, &1, version + 1)).()
+    |> (&store_events(events, &1)).()
   end
-
-  def store_events(events, version) do
-    store_events(events, Ecto.Multi.new(), version)
-  end
+  def store_events(events), do: store_events(events, Ecto.Multi.new())
 
   def notify_listeners(events, context) do
     # TODO: Make calls async?
@@ -65,16 +50,16 @@ defmodule InjectDetect.CommandHandler do
     end
   end
 
-  def handle_call({:handle, command, context}, _, version) do
+  def handle_call({:handle, command, context}, _, []) do
     Logger.debug("Handle: #{inspect command} with #{inspect context}")
 
-    with {:ok, events, context}    <- handle_command(command, context),
-         {:ok, version} <- store_events(events, version),
-         _                         <- notify_listeners(events, context)
+    with {:ok, events, context} <- handle_command(command, context),
+         {:ok, _}               <- store_events(events),
+         _                      <- notify_listeners(events, context)
     do
-      {:reply, {:ok, context}, version}
+      {:reply, {:ok, context}, []}
     else
-      error -> {:reply, error, version}
+      error -> {:reply, error, []}
     end
   end
 
