@@ -25,7 +25,8 @@ defmodule InjectDetect.CommandHandler do
   def store_events(events) do
     reduce(events, Ecto.Multi.new(), fn
       (data = %type{}, multi) ->
-        event = %Event{}
+        event = %Event{stream: "foo",
+                       stream_head: :crypto.rand_uniform(0, 1000)}
         |> put(:type, Atom.to_string(type))
         |> put(:data, Map.from_struct(data))
         insert(multi, data, event)

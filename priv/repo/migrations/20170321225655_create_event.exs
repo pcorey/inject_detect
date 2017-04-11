@@ -3,12 +3,14 @@ defmodule InjectDetect.Repo.Migrations.CreateEvent do
 
   def change do
     create table(:events) do
-      add :type, :string
-      add :aggregate_id, :uuid
       add :data, :map
-
+      add :stream, :string
+      add :stream_head, :integer
+      add :type, :string
+      add :version, :integer
       timestamps()
     end
-
+    create unique_index(:events, [:stream, :stream_head])
   end
+
 end

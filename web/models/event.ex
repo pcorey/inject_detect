@@ -2,9 +2,11 @@ defmodule InjectDetect.Model.Event do
   use InjectDetect.Web, :model
 
   schema "events" do
-    field :type, :string
-    field :aggregate_id, Ecto.UUID
     field :data, :map
+    field :stream, :string
+    field :stream_head, :integer
+    field :type, :string
+    field :version, :integer
 
     timestamps()
   end

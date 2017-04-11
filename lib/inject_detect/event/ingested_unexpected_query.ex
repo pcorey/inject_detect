@@ -12,6 +12,8 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.IngestedUnexpectedQuery do
 
+  alias InjectDetect.State.Query
+
   def apply(event, state) do
     query = %{
       collection: event.collection,

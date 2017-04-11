@@ -50,7 +50,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   end
 
   # Application not found:
-  def ingest_for_application(nil, command) do
+  def ingest_for_application(nil, _command) do
     {:error, %{code: :invalid_token,
                error: "Invalid application token",
                message: "Invalid token"}}
