@@ -18,6 +18,8 @@ defmodule InjectDetect.CommandHandler do
   end
 
   def init(_) do
+    # InjectDetect.State.version()
+    # |> IO.inspect
     {:ok, 0}
   end
 

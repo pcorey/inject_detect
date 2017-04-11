@@ -17,6 +17,10 @@ defmodule InjectDetect.State do
     GenServer.call(__MODULE__, :get)
   end
 
+  def version do
+    GenServer.call(__MODULE__, :version)
+  end
+
   def reset do
     GenServer.call(__MODULE__, :reset)
   end
@@ -28,23 +32,31 @@ defmodule InjectDetect.State do
     apply(type, :convert_from, [data, 0])
   end
 
-  defp get_events_since(id) do
+  defp get_events_since(version) do
+    IO.puts("since #{version}")
     events = InjectDetect.Model.Event
-    |> where([event], event.id > ^id)
-    |> order_by([event], event.id)
+    |> where([event], event.version > ^version)
+    |> order_by([event], event.version)
     |> InjectDetect.Repo.all
     |> Enum.to_list
+    |> IO.inspect
 
     # Convert all events into their structs
     {events |> Enum.map(&convert_to_event/1),
-    # Grab the most recent "id" we've seen
-     events |> List.last |> (&(if &1 do &1.id else id end)).()}
+    # Grab the most recent "version" we've seen
+     events |> List.last |> (&(if &1 do &1.version else version end)).()}
   end
 
-  def handle_call(:get, _, {id, state}) do
-    {events, id} = get_events_since(id)
+  def handle_call(:get, _, {version, state}) do
+    {events, version} = get_events_since(version)
     state = Enum.reduce(events, state, &InjectDetect.State.Reducer.apply/2)
-    {:reply, {:ok, state}, {id, state}}
+    {:reply, {:ok, state}, {version, state}}
+  end
+
+  def handle_call(:version, _, {version, state}) do
+    {events, version} = get_events_since(version)
+    state = Enum.reduce(events, state, &InjectDetect.State.Reducer.apply/2)
+    {:reply, {:ok, version}, {version, state}}
   end
 
   def handle_call(:reset, _, _), do:
