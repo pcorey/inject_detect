@@ -18,33 +18,30 @@ defmodule InjectDetect.CommandHandler do
   end
 
   def init(_) do
-    {:ok, {0, %{}}}
+    {:ok, 0}
   end
 
   def handle(command, context \\ %{}) do
     GenServer.call(__MODULE__, {:handle, command, context})
   end
 
-  def store_events([], multi, {version, streams}) do
+  def store_events([], multi, version) do
     {:ok, _} = Repo.transaction(multi)
-    {:ok, {version, streams}}
+    {:ok, version}
   end
 
-  def store_events([data = %type{} | events], multi, {version, streams}) do
+  def store_events([data = %type{} | events], multi, version) do
     stream = apply(type, :stream, [data])
     %Event{version: version + 1,
-           stream: stream,
-           stream_version: (streams[stream] || 0) + 1}
+           stream: stream}
     |> put(:type, Atom.to_string(type))
     |> put(:data, Map.from_struct(data))
     |> (&insert(multi, data, &1)).()
-    |> (&store_events(events, &1, {version + 1,
-                                   update_in(streams[stream], fn nil -> 1
-                                                                   v -> v + 1 end)})).()
+    |> (&store_events(events, &1, version + 1)).()
   end
 
-  def store_events(events, {version, streams}) do
-    store_events(events, Ecto.Multi.new(), {version, streams})
+  def store_events(events, version) do
+    store_events(events, Ecto.Multi.new(), version)
   end
 
   def notify_listeners(events, context) do
@@ -66,16 +63,16 @@ defmodule InjectDetect.CommandHandler do
     end
   end
 
-  def handle_call({:handle, command, context}, _, {version, streams}) do
+  def handle_call({:handle, command, context}, _, version) do
     Logger.debug("Handle: #{inspect command} with #{inspect context}")
 
     with {:ok, events, context}    <- handle_command(command, context),
-         {:ok, {version, streams}} <- store_events(events, {version, streams}),
+         {:ok, version} <- store_events(events, version),
          _                         <- notify_listeners(events, context)
     do
-      {:reply, {:ok, context}, {version, streams}}
+      {:reply, {:ok, context}, version}
     else
-      error -> {:reply, error, {version, streams}}
+      error -> {:reply, error, version}
     end
   end
 
