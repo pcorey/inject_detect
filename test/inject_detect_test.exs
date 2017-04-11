@@ -108,45 +108,84 @@ defmodule InjectDetect.InjectDetectTest do
                                                         query: %{"_id" => %{"$gte" => "string"}}})
   end
 
-  # test "ingests an unexpected query out of training mode" do
-  #   setup = [%GetStarted{email: "email@example.com",
-  #                        application_name: "Foo Application",
-  #                        application_size: "Medium",
-  #                        agreed_to_tos: true},
-  #            %GetStarted{email: "email2@example.com",
-  #                        application_name: "Bar Application",
-  #                        application_size: "Large",
-  #                        agreed_to_tos: true}]
-  #   Enum.map(setup, &(handle(&1, %{})))
+  test "ingests an unexpected query out of training mode" do
+    setup = [%GetStarted{email: "email@example.com",
+                         application_name: "Foo Application",
+                         application_size: "Medium",
+                         agreed_to_tos: true},
+             %GetStarted{email: "email2@example.com",
+                         application_name: "Bar Application",
+                         application_size: "Large",
+                         agreed_to_tos: true}]
+    Enum.map(setup, &(handle(&1, %{})))
 
-  #   application = Application.find(name: "Foo Application")
+    application = Application.find(name: "Foo Application")
 
-  #   %TurnOffTrainingMode{application_id: application.id}
-  #   |> handle(%{})
+    %TurnOffTrainingMode{application_id: application.id}
+    |> handle(%{})
 
-  #   %IngestQueries{application_id: application.id,
-  #                  queries: [%{collection: "users",
-  #                              type: "find",
-  #                              queried_at: ~N[2017-03-28 01:30:00],
-  #                              query: %{"_id" => "string"}},
-  #                            %{collection: "users",
-  #                              type: "find",
-  #                              queried_at: ~N[2017-04-03 11:00:00],
-  #                              query: %{"_id" => "string"}},
-  #                            %{collection: "orders",
-  #                              type: "remove",
-  #                              queried_at: ~N[2017-04-03 12:00:00],
-  #                              query: %{"_id" => %{"$gte" => "string"}}}
-  #                           ]}
-  #   |> handle(%{})
+    %IngestQueries{application_id: application.id,
+                   queries: [%{collection: "users",
+                               type: "find",
+                               queried_at: ~N[2017-03-28 01:30:00],
+                               query: %{"_id" => "string"}},
+                             %{collection: "users",
+                               type: "find",
+                               queried_at: ~N[2017-04-03 11:00:00],
+                               query: %{"_id" => "string"}},
+                             %{collection: "orders",
+                               type: "remove",
+                               queried_at: ~N[2017-04-03 12:00:00],
+                               query: %{"_id" => %{"$gte" => "string"}}}
+                            ]}
+    |> handle(%{})
 
-  #   application = Application.find(name: "Foo Application")
-  #   assert Enum.member?(application.unexpected_queries, %{collection: "users",
-  #                                                         type: "find",
-  #                                                         query: %{"_id" => "string"}})
-  #   assert Enum.member?(application.unexpected_queries, %{collection: "orders",
-  #                                                         type: "remove",
-  #                                                         query: %{"_id" => %{"$gte" => "string"}}})
-  # end
+    application = Application.find(name: "Foo Application")
+    assert Enum.member?(application.unexpected_queries, %{collection: "users",
+                                                          type: "find",
+                                                          query: %{"_id" => "string"}})
+    assert Enum.member?(application.unexpected_queries, %{collection: "orders",
+                                                          type: "remove",
+                                                          query: %{"_id" => %{"$gte" => "string"}}})
+  end
+
+  test "ingests an expected and unexpected queries" do
+    %GetStarted{email: "email@example.com",
+                application_name: "Foo Application",
+                application_size: "Medium",
+                agreed_to_tos: true}
+    |> handle(%{})
+
+    application = Application.find(name: "Foo Application")
+
+    %IngestQueries{application_id: application.id,
+                   queries: [%{collection: "users",
+                               type: "find",
+                               queried_at: ~N[2017-03-28 01:30:00],
+                               query: %{"_id" => "string"}}]}
+    |> handle(%{})
+
+    %TurnOffTrainingMode{application_id: application.id}
+    |> handle(%{})
+
+    %IngestQueries{application_id: application.id,
+                   queries: [%{collection: "users",
+                               type: "find",
+                               queried_at: ~N[2017-04-03 11:00:00],
+                               query: %{"_id" => "string"}},
+                             %{collection: "orders",
+                               type: "remove",
+                               queried_at: ~N[2017-04-03 12:00:00],
+                               query: %{"_id" => %{"$gte" => "string"}}}]}
+    |> handle(%{})
+
+    application = Application.find(name: "Foo Application")
+    assert Enum.member?(application.expected_queries, %{collection: "users",
+                                                        type: "find",
+                                                        query: %{"_id" => "string"}})
+    assert Enum.member?(application.unexpected_queries, %{collection: "orders",
+                                                          type: "remove",
+                                                          query: %{"_id" => %{"$gte" => "string"}}})
+  end
 
 end

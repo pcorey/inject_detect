@@ -29,10 +29,12 @@ defimpl InjectDetect.State.Reducer,
     |> update_in(applications_path, &add_to_application(&1, key))
   end
 
-  def add_to_unexpected(nil, query), do: %{query | count: 1}
+  def add_to_unexpected(nil, query), do:
+    Map.put_new(query, :count, 1)
+  def add_to_unexpected(unexpected, query), do:
+    %{unexpected | count: unexpected[:count] + 1, queried_at: query[:queried_at]}
 
-  def add_to_application(unexpected_queries, key) do
+  def add_to_application(unexpected_queries, key), do:
     Enum.uniq([key | unexpected_queries])
-  end
 
 end
