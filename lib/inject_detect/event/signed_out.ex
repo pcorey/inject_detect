@@ -3,6 +3,8 @@ defmodule InjectDetect.Event.SignedOut do
 
   def convert_from(event, _), do: struct(__MODULE__, event)
 
+  def stream(event), do: "user_id: #{event.user_id}"
+
 end
 
 defimpl InjectDetect.State.Reducer,

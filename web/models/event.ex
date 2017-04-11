@@ -4,7 +4,7 @@ defmodule InjectDetect.Model.Event do
   schema "events" do
     field :data, :map
     field :stream, :string
-    field :stream_head, :integer
+    field :stream_version, :integer
     field :type, :string
     field :version, :integer
 

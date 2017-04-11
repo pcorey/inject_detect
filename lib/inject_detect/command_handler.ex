@@ -17,21 +17,34 @@ defmodule InjectDetect.CommandHandler do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
+  def init(_) do
+    {:ok, {0, %{}}}
+  end
+
   def handle(command, context \\ %{}) do
     GenServer.call(__MODULE__, {:handle, command, context})
   end
 
-  # TODO: Add version
-  def store_events(events) do
-    reduce(events, Ecto.Multi.new(), fn
-      (data = %type{}, multi) ->
-        event = %Event{stream: "foo",
-                       stream_head: :crypto.rand_uniform(0, 1000)}
-        |> put(:type, Atom.to_string(type))
-        |> put(:data, Map.from_struct(data))
-        insert(multi, data, event)
-    end)
-    |> Repo.transaction()
+  def store_events([], multi, {version, streams}) do
+    {:ok, _} = Repo.transaction(multi)
+    {:ok, {version, streams}}
+  end
+
+  def store_events([data = %type{} | events], multi, {version, streams}) do
+    stream = apply(type, :stream, [data])
+    %Event{version: version + 1,
+           stream: stream,
+           stream_version: (streams[stream] || 0) + 1}
+    |> put(:type, Atom.to_string(type))
+    |> put(:data, Map.from_struct(data))
+    |> (&insert(multi, data, &1)).()
+    |> (&store_events(events, &1, {version + 1,
+                                   update_in(streams[stream], fn nil -> 1
+                                                                   v -> v + 1 end)})).()
+  end
+
+  def store_events(events, {version, streams}) do
+    store_events(events, Ecto.Multi.new(), {version, streams})
   end
 
   def notify_listeners(events, context) do
@@ -53,16 +66,16 @@ defmodule InjectDetect.CommandHandler do
     end
   end
 
-  def handle_call({:handle, command, context}, _, []) do
+  def handle_call({:handle, command, context}, _, {version, streams}) do
     Logger.debug("Handle: #{inspect command} with #{inspect context}")
 
-    with {:ok, events, context} <- handle_command(command, context),
-         {:ok, _}               <- store_events(events),
-         _                      <- notify_listeners(events, context)
+    with {:ok, events, context}    <- handle_command(command, context),
+         {:ok, {version, streams}} <- store_events(events, {version, streams}),
+         _                         <- notify_listeners(events, context)
     do
-      {:reply, {:ok, context}, []}
+      {:reply, {:ok, context}, {version, streams}}
     else
-      error -> {:reply, error, []}
+      error -> {:reply, error, {version, streams}}
     end
   end
 

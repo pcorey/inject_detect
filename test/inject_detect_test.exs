@@ -4,6 +4,7 @@ defmodule InjectDetect.InjectDetectTest do
   alias InjectDetect.Command.GetStarted
   alias InjectDetect.Command.IngestQueries
   alias InjectDetect.Command.SignOut
+  alias InjectDetect.Command.TurnOffTrainingMode
   alias InjectDetect.State.User
   alias InjectDetect.State.Application
 
@@ -20,19 +21,17 @@ defmodule InjectDetect.InjectDetectTest do
   end
 
   test "handles a command and updates state" do
-    command = %GetStarted{email: "email@example.com",
+    %GetStarted{email: "email@example.com",
                           application_name: "Foo Application",
                           application_size: "Medium",
                           agreed_to_tos: true}
-    # Verify the resulting context
-    {:ok, %{user_id: user_id}} = handle(command, %{})
-    assert user_id
+    |> handle(%{})
     # Verify the user's state
     user = User.find(email: "email@example.com")
     assert user
     assert user.auth_token
     assert user.email == "email@example.com"
-    assert user.id == user_id
+    assert user.id
   end
 
   test "handles command errors" do
@@ -71,7 +70,7 @@ defmodule InjectDetect.InjectDetectTest do
                                                   message: "Not authorized"}}
   end
 
-  test "ingests an unexpected query" do
+  test "ingests an unexpected query in training mode" do
     setup = [%GetStarted{email: "email@example.com",
                          application_name: "Foo Application",
                          application_size: "Medium",
@@ -100,8 +99,6 @@ defmodule InjectDetect.InjectDetectTest do
                             ]}
     |> handle(%{})
 
-    IO.inspect(InjectDetect.State.get())
-
     application = Application.find(name: "Foo Application")
     assert Enum.member?(application.expected_queries, %{collection: "users",
                                                         type: "find",
@@ -110,5 +107,46 @@ defmodule InjectDetect.InjectDetectTest do
                                                         type: "remove",
                                                         query: %{"_id" => %{"$gte" => "string"}}})
   end
+
+  # test "ingests an unexpected query out of training mode" do
+  #   setup = [%GetStarted{email: "email@example.com",
+  #                        application_name: "Foo Application",
+  #                        application_size: "Medium",
+  #                        agreed_to_tos: true},
+  #            %GetStarted{email: "email2@example.com",
+  #                        application_name: "Bar Application",
+  #                        application_size: "Large",
+  #                        agreed_to_tos: true}]
+  #   Enum.map(setup, &(handle(&1, %{})))
+
+  #   application = Application.find(name: "Foo Application")
+
+  #   %TurnOffTrainingMode{application_id: application.id}
+  #   |> handle(%{})
+
+  #   %IngestQueries{application_id: application.id,
+  #                  queries: [%{collection: "users",
+  #                              type: "find",
+  #                              queried_at: ~N[2017-03-28 01:30:00],
+  #                              query: %{"_id" => "string"}},
+  #                            %{collection: "users",
+  #                              type: "find",
+  #                              queried_at: ~N[2017-04-03 11:00:00],
+  #                              query: %{"_id" => "string"}},
+  #                            %{collection: "orders",
+  #                              type: "remove",
+  #                              queried_at: ~N[2017-04-03 12:00:00],
+  #                              query: %{"_id" => %{"$gte" => "string"}}}
+  #                           ]}
+  #   |> handle(%{})
+
+  #   application = Application.find(name: "Foo Application")
+  #   assert Enum.member?(application.unexpected_queries, %{collection: "users",
+  #                                                         type: "find",
+  #                                                         query: %{"_id" => "string"}})
+  #   assert Enum.member?(application.unexpected_queries, %{collection: "orders",
+  #                                                         type: "remove",
+  #                                                         query: %{"_id" => %{"$gte" => "string"}}})
+  # end
 
 end
