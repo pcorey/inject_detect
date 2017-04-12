@@ -25,6 +25,12 @@ defmodule InjectDetect.Router do
     # get "/auth/:token", AuthController, :index
   end
 
+  scope "/api", InjectDetect do
+    pipe_through :api
+
+    post "/ingest", IngestController, :create
+  end
+
   forward "/graphiql", Absinthe.Plug.GraphiQL, schema: InjectDetect.Schema
 
   scope "/graphql" do
