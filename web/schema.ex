@@ -56,10 +56,11 @@ defmodule InjectDetect.Schema do
     end
   end
 
-  def user(%{user_id: user_id}), do: User.find(user_id)
+  def user(%{user_id: user_id}) do
+    User.find(user_id)
+  end
 
   mutation do
-    @desc "Get started"
     field :get_started, type: :user do
       arg :email, non_null(:string)
       arg :application_name, non_null(:string)

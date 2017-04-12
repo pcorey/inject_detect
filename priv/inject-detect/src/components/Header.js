@@ -105,11 +105,17 @@ export default graphql(gql`
             reducer: (previousResults, action) => {
                 switch (action.operationName) {
                     case "verifyRequestedToken":
-                        return { user: _.get(action, "result.data.verifyRequestedToken") };
+                        return _.extend({}, previousResults, {
+                            user: _.get(action, "result.data.verifyRequestedToken")
+                        });
                     case "getStarted":
-                        return { user: _.get(action, "result.data.getStarted") };
+                        return _.extend({}, previousResults, {
+                            user: _.get(action, "result.data.getStarted")
+                        });
                     case "signOut":
-                        return { user: null };
+                        return _.extend({}, previousResults, {
+                            user: null
+                        });
                     default:
                         return previousResults;
                 }

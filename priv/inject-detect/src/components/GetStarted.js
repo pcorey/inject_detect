@@ -124,6 +124,10 @@ export default graphql(gql`
             id
             email
             auth_token
+            applications {
+                id
+                name
+            }
         }
     }
 `, {
