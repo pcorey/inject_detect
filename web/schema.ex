@@ -5,6 +5,7 @@ defmodule InjectDetect.Schema do
     GetStarted,
     RequestSignInToken,
     SignOut,
+    TurnOffTrainingMode,
     VerifyRequestedToken,
   }
   alias InjectDetect.CommandHandler
@@ -75,6 +76,10 @@ defmodule InjectDetect.Schema do
     User.find(user_id)
   end
 
+  def application(%{application_id: application_id}) do
+    Application.find(application_id)
+  end
+
   mutation do
     field :get_started, type: :user do
       arg :email, non_null(:string)
@@ -96,6 +101,11 @@ defmodule InjectDetect.Schema do
 
     field :sign_out, type: :user do
       resolve auth handle(SignOut, &user/1)
+    end
+
+    field :turn_off_training_mode, type: :application do
+      arg :application_id, non_null(:string)
+      resolve auth handle(TurnOffTrainingMode, &application/1)
     end
 
   end

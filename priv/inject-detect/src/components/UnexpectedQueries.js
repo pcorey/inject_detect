@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import { PrismCode } from "react-prism";
 
 class UnexpectedQueries extends React.Component {
 
@@ -9,7 +10,7 @@ class UnexpectedQueries extends React.Component {
         if (_.isEmpty(application.unexpectedQueries)) {
             return (
                 <div className="ui success message">
-                    {application.name} hasn't made any unexpected queries!
+                    This application hasn't made any unexpected queries!
                 </div>
             );
         }
@@ -31,7 +32,11 @@ class UnexpectedQueries extends React.Component {
                                      <td>{query.queriedAt}</td>
                                      <td>{query.type}</td>
                                      <td>{query.collection}</td>
-                                     <td>{query.query}</td>
+                                     <td>
+                                         <PrismCode className="language-javascript">
+                                             {query.query}
+                                         </PrismCode>
+                                     </td>
                                  </tr>
                              );
                          })}

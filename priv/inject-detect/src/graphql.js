@@ -55,6 +55,22 @@ export const GetStartedMutation = gql`
     }
 `;
 
+export const TurnOnTrainingModeMutation = gql`
+    mutation turnOnTrainingMode ($applicationId: String!) {
+        turnOnTrainingMode(applicationId: $applicationId) {
+            trainingMode
+        }
+    }
+`;
+
+export const TurnOffTrainingModeMutation = gql`
+    mutation turnOffTrainingMode ($applicationId: String!) {
+        turnOffTrainingMode(applicationId: $applicationId) {
+            trainingMode
+        }
+    }
+`;
+
 export const RequestSignInTokenMutation = gql`
     mutation ($email: String!) {
         requestSignInToken(email: $email) {

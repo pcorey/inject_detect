@@ -3,20 +3,13 @@ import _ from "lodash";
 import { ApplicationQuery } from "../graphql";
 import { graphql } from "react-apollo";
 
+import ApplicationAlerting from "./ApplicationAlerting";
 import ApplicationSecret from "./ApplicationSecret";
+import ApplicationTrainingMode from "./ApplicationTrainingMode";
 import ExpectedQueries from "./ExpectedQueries";
 import UnexpectedQueries from "./UnexpectedQueries";
 
 class Application extends React.Component {
-
-    toggleTrainingMode(e) {
-        console.log("toggle training mode")
-        e.preventDefault();
-    }
-
-    toggleAlerting(e) {
-        e.preventDefault();
-    }
 
     render() {
         let { application, loading } = this.props.data;
@@ -36,29 +29,13 @@ class Application extends React.Component {
 
                     <div className="sixteen wide column">
                         <h1 style={{fontSize: "3em", fontWeight: 100}}>{application.name}</h1>
+
                         <div className="ui segment">
                             <h3>Application Configuration</h3>
                             <div className="ui form">
-                                <div className="ui field">
-                                    <div className="ui labeled input">
-                                        <div className="ui label">
-                                            Secret token:
-                                        </div>
-                                        <input type="text" value={application.token}/>
-                                    </div>
-                                </div>
-                                <div className="ui field">
-                                    <div className="ui toggle checkbox">
-                                        <input type="checkbox" ref="trainingMode" checked={application.trainingMode} onChange={this.toggleTrainingMode.bind(this)}/>
-                                        <label>In training mode</label>
-                                    </div>
-                                </div>
-                                <div className="ui field">
-                                    <div className="ui toggle checkbox">
-                                        <input type="checkbox" ref="alerting" checked={application.alerting} onChange={this.toggleAlerting.bind(this)}/>
-                                        <label>Sending email alerts</label>
-                                    </div>
-                                </div>
+                                <ApplicationSecret application={application}/>
+                                <ApplicationTrainingMode application={application}/>
+                                <ApplicationAlerting application={application}/>
                             </div>
                         </div>
 
@@ -89,6 +66,7 @@ export default graphql(ApplicationQuery, {
     options: props => ({
         variables: {
             id: _.get(props, "match.params.id")
-        }
+        },
+        pollInterval: 5000
     })
 })(Application);
