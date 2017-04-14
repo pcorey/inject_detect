@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import { PrismCode } from "react-prism";
 
 class ExpectedQueries extends React.Component {
 
@@ -30,9 +31,10 @@ class ExpectedQueries extends React.Component {
                                      <td>{query.type}</td>
                                      <td>{query.collection}</td>
                                      <td>
-                                         <code className="language-javascript">
+                                         <PrismCode className="language-javascript">
                                              {query.query}
-                                         </code>
+                                             {/* {"{foo: \"bar\", baz: \"asdf\", bar: {hello: \"how are you?\", fine: 12345}, another: {hello: \"how are you?\", fine: 12345}}"} */}
+                                         </PrismCode>
                                      </td>
                                  </tr>
                              );

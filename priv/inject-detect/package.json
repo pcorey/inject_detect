@@ -50,6 +50,7 @@
     "react": "^15.4.2",
     "react-apollo": "^0.13.3",
     "react-dom": "^15.4.2",
+    "react-prism": "^4.0.0",
     "react-router-dom": "^4.0.0"
   },
   "scripts": {
