@@ -47,9 +47,12 @@
   "dependencies": {
     "apollo-client": "^0.10.1",
     "lodash": "^4.17.4",
+    "moment": "^2.18.1",
+    "moment-timezone": "^0.5.13",
     "react": "^15.4.2",
     "react-apollo": "^0.13.3",
     "react-dom": "^15.4.2",
+    "react-moment": "^0.2.2",
     "react-prism": "^4.0.0",
     "react-router-dom": "^4.0.0"
   },

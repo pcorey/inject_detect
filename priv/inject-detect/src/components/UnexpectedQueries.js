@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import Moment from 'react-moment';
 import { PrismCode } from "react-prism";
 
 class UnexpectedQueries extends React.Component {
@@ -29,7 +30,7 @@ class UnexpectedQueries extends React.Component {
                         {application.unexpectedQueries.map(query => {
                              return (
                                  <tr>
-                                     <td>{query.queriedAt}</td>
+                                     <td><Moment fromNow>{query.queriedAt}</Moment></td>
                                      <td>{query.type}</td>
                                      <td>{query.collection}</td>
                                      <td>
