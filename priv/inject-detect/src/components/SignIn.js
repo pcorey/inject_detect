@@ -1,6 +1,6 @@
 import React from "react";
 import _ from "lodash";
-import gql from "graphql-tag";
+import { RequestSignInTokenMutation } from "../graphql";
 import { graphql } from "react-apollo";
 
 class SignIn extends React.Component {
@@ -74,13 +74,7 @@ SignIn.propTypes = {
     request: React.PropTypes.func.isRequired,
 };
 
-export default graphql(gql`
-    mutation ($email: String!) {
-        requestSignInToken(email: $email) {
-            id
-        }
-    }
-`, {
+export default graphql(RequestSignInTokenMutation, {
     props: ({ mutate }) => ({
         request: email => mutate({ variables: { email } })
     })

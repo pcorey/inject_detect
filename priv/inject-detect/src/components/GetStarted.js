@@ -1,6 +1,6 @@
 import React from "react";
 import _ from "lodash";
-import gql from "graphql-tag";
+import { GetStartedMutation } from "../graphql";
 import { graphql } from "react-apollo";
 
 class GetStarted extends React.Component {
@@ -112,25 +112,7 @@ GetStarted.propTypes = {
     getStarted: React.PropTypes.func.isRequired,
 };
 
-export default graphql(gql`
-    mutation getStarted ($email: String!,
-                         $applicationName: String!,
-                         $applicationSize: String!,
-                         $agreedToTos: Boolean) {
-        getStarted(email: $email,
-                   applicationName: $applicationName,
-                   applicationSize: $applicationSize,
-                   agreedToTos: $agreedToTos) {
-            id
-            email
-            auth_token
-            applications {
-                id
-                name
-            }
-        }
-    }
-`, {
+export default graphql(GetStartedMutation, {
     props: ({ mutate }) => ({
         getStarted: (email,
                      applicationName,

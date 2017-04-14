@@ -8,9 +8,10 @@ class ApplicationSecret extends React.Component {
     render() {
         let { application } = this.props;
 
+        console.log("application", application)
         return (
             <div className="application-secret">
-                <code>{application.id}</code>
+                <code>{application.token}</code>
                 <button className="mini ui button">
                     <i className="ui refresh icon"/>
                     Create New Secret

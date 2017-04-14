@@ -1,6 +1,6 @@
 import React from "react";
 import _ from "lodash";
-import gql from "graphql-tag";
+import { SignOutMutation } from "../graphql";
 import { graphql } from "react-apollo";
 
 class SignOutLink extends React.Component {
@@ -24,12 +24,6 @@ SignOutLink.propTypes = {
     signOut: React.PropTypes.func.isRequired
 };
 
-export default graphql(gql`
-    mutation signOut {
-        signOut {
-            id
-        }
-    }
-`, {
+export default graphql(SignOutMutation, {
     name: "signOut"
 })(SignOutLink);

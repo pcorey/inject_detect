@@ -10,6 +10,7 @@ defmodule InjectDetect.Schema do
   alias InjectDetect.CommandHandler
   alias InjectDetect.State
   alias InjectDetect.State.User
+  alias InjectDetect.State.Application
 
   import_types InjectDetect.Schema.Types
 
@@ -34,6 +35,15 @@ defmodule InjectDetect.Schema do
     {:ok, users}
   end
 
+  def resolve_application(%{id: id}, %{context: %{user_id: user_id}}) do
+    case application = Application.find(id) do
+      %{user_id: ^user_id} -> {:ok, application}
+      _                    -> {:error, %{code: :not_found,
+                                         error: "Not found",
+                                         message: "Not found"}}
+    end
+  end
+
   query do
     field :users, list_of(:user) do
       resolve auth &resolve_users/2
@@ -41,6 +51,11 @@ defmodule InjectDetect.Schema do
 
     field :user, :user do
       resolve &resolve_user/2
+    end
+
+    field :application, :application do
+      arg :id, non_null(:string)
+      resolve &resolve_application/2
     end
   end
 

@@ -1,6 +1,6 @@
 import React from "react";
 import _ from "lodash";
-import gql from "graphql-tag";
+import { UserQuery } from "../graphql";
 import { graphql } from "react-apollo";
 
 class Dashboard extends React.Component {
@@ -127,15 +127,4 @@ class Dashboard extends React.Component {
     }
 };
 
-export default graphql(gql`
-    query user {
-        user {
-            id
-            email
-            applications {
-                id
-                name
-            }
-        }
-    }
-`)(Dashboard);
+export default graphql(UserQuery)(Dashboard);

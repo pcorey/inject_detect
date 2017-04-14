@@ -1,8 +1,8 @@
 import React from "react";
-import gql from "graphql-tag";
-import { Link, NavLink } from "react-router-dom";
-import { graphql } from "react-apollo";
 import _ from "lodash";
+import { Link, NavLink } from "react-router-dom";
+import { UserQuery } from "../graphql";
+import { graphql } from "react-apollo";
 
 import SignOutLink from "./SignOutLink";
 
@@ -88,18 +88,7 @@ class Header extends React.Component {
     }
 }
 
-export default graphql(gql`
-    query user {
-        user {
-            id
-            email
-            applications {
-                id
-                name
-            }
-        }
-    }
-`, {
+export default graphql(UserQuery, {
     options({ params }) {
         return {
             reducer: (previousResults, action) => {

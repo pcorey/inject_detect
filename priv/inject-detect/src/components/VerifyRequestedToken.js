@@ -1,6 +1,6 @@
 import React from "react";
 import _ from "lodash";
-import gql from "graphql-tag";
+import { VerifyRequestedTokenMutation } from "../graphql";
 import { Redirect } from "react-router-dom";
 import { graphql } from "react-apollo";
 
@@ -78,15 +78,7 @@ VerifyRequestedToken.propTypes = {
     verify: React.PropTypes.func.isRequired
 };
 
-export default graphql(gql`
-    mutation verifyRequestedToken ($token: String!) {
-        verifyRequestedToken(token: $token) {
-            authToken
-            email
-            id
-        }
-    }
-`, {
+export default graphql(VerifyRequestedTokenMutation, {
     props: ({ mutate }) => ({
         verify: token => mutate({ variables: { token } })
     })
