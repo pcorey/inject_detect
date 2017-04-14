@@ -29,7 +29,11 @@ class ExpectedQueries extends React.Component {
                                  <tr>
                                      <td>{query.type}</td>
                                      <td>{query.collection}</td>
-                                     <td>{query.query}</td>
+                                     <td>
+                                         <code className="language-javascript">
+                                             {query.query}
+                                         </code>
+                                     </td>
                                  </tr>
                              );
                          })}
