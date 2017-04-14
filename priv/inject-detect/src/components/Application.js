@@ -4,6 +4,8 @@ import { ApplicationQuery } from "../graphql";
 import { graphql } from "react-apollo";
 
 import ApplicationSecret from "./ApplicationSecret";
+import ExpectedQueries from "./ExpectedQueries";
+import UnexpectedQueries from "./UnexpectedQueries";
 
 class Application extends React.Component {
 
@@ -62,58 +64,12 @@ class Application extends React.Component {
 
                         <div className="ui segment">
                             <h3>Unexpected queries:</h3>
-                            {
-                                !application.unexpectedQueries.length && (
-                                    <div className="ui success message">
-                                        Your application hasn't made any unexpected queries!
-                                    </div>
-                                )
-                            }
-                            {
-                                !!application.unexpectedQueries.length && (
-                                    application.unexpectedQueries.map(query => {
-                                        return (
-                                            <div className="ui success message">
-                                                <p>{query.type}</p>
-                                                <p>{query.collection}</p>
-                                                <code>{query.query}</code>
-                                            </div>
-                                        );
-                                    })
-                                )
-                            }
+                            <UnexpectedQueries application={application}/>
                         </div>
 
                         <div className="ui segment">
                             <h3>Expected queries:</h3>
-                            {
-                                !application.expectedQueries.length && (
-                                    <div className="ui success message">
-                                        Your application hasn't made any expected queries!
-                                    </div>
-                                )
-                            }
-                            {
-                                !!application.expectedQueries.length && (
-                                    application.expectedQueries.map(query => {
-                                        return (
-                                            <div className="ui success message">
-                                                <p>{query.type}</p>
-                                                <p>{query.collection}</p>
-                                                <p>
-                                                    <code>{query.query}</code>
-                                                </p>
-                                                <div>
-                                                    <button className="ui button">
-                                                        <i className="ui refresh icon"/>
-                                                        Something
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        );
-                                    })
-                                )
-                            }
+                            <ExpectedQueries application={application}/>
                         </div>
 
                     </div>
