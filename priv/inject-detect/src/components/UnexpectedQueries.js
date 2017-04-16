@@ -31,13 +31,36 @@ class UnexpectedQueries extends React.Component {
                              return (
                                  <tr>
                                      <td><Moment fromNow>{query.queriedAt}</Moment></td>
-                                     <td>{query.type}</td>
-                                     <td>{query.collection}</td>
+                                     <td>
+                                         <PrismCode className="language-javascript">
+                                             {query.type}
+                                         </PrismCode>
+                                     </td>
+                                     <td>
+                                         <PrismCode className="language-javascript">
+                                             {query.collection}
+                                         </PrismCode>
+                                     </td>
                                      <td>
                                          <PrismCode className="language-javascript">
                                              {query.query}
                                          </PrismCode>
                                      </td>
+                                     {/* <td>
+                                         <PrismCode className="language-javascript">
+                                         db.{query.collection}.{query.type}(
+                                         </PrismCode>
+                                         </td>
+                                         <td>
+                                         <PrismCode className="language-javascript">
+                                         {query.query}
+                                         </PrismCode>
+                                         </td>
+                                         <td>
+                                         <PrismCode className="language-javascript">
+                                         )
+                                         </PrismCode>
+                                         </td> */}
                                  </tr>
                              );
                          })}

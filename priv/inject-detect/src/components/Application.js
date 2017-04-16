@@ -31,7 +31,7 @@ class Application extends React.Component {
                         <h1 style={{fontSize: "3em", fontWeight: 100}}>{application.name}</h1>
 
                         <div className="ui segment">
-                            <h3>Application Configuration</h3>
+                            <h2>Application Configuration</h2>
                             <div className="ui form">
                                 <ApplicationSecret application={application}/>
                                 <ApplicationTrainingMode application={application}/>
@@ -39,13 +39,13 @@ class Application extends React.Component {
                             </div>
                         </div>
 
-                        <div className="ui segment">
-                            <h3>Unexpected queries:</h3>
+                        <div className="ui vertical segment">
+                            <h2>Unexpected queries:</h2>
                             <UnexpectedQueries application={application}/>
                         </div>
 
-                        <div className="ui segment">
-                            <h3>Expected queries:</h3>
+                        <div className="ui vertical segment">
+                            <h2>Expected queries:</h2>
                             <ExpectedQueries application={application}/>
                         </div>
 
