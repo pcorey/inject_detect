@@ -119,10 +119,11 @@ defmodule InjectDetect.InjectDetectTest do
                          agreed_to_tos: true}]
     Enum.map(setup, &(handle(&1, %{})))
 
+    user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
 
     %TurnOffTrainingMode{application_id: application.id}
-    |> handle(%{})
+    |> handle(%{user_id: user.id})
 
     %IngestQueries{application_id: application.id,
                    queries: [%{collection: "users",
@@ -156,6 +157,7 @@ defmodule InjectDetect.InjectDetectTest do
                 agreed_to_tos: true}
     |> handle(%{})
 
+    user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
 
     %IngestQueries{application_id: application.id,
@@ -166,7 +168,7 @@ defmodule InjectDetect.InjectDetectTest do
     |> handle(%{})
 
     %TurnOffTrainingMode{application_id: application.id}
-    |> handle(%{})
+    |> handle(%{user_id: user.id})
 
     %IngestQueries{application_id: application.id,
                    queries: [%{collection: "users",
