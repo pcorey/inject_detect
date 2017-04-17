@@ -55,17 +55,10 @@ export const GetStartedMutation = gql`
     }
 `;
 
-export const TurnOnTrainingModeMutation = gql`
-    mutation turnOnTrainingMode ($applicationId: String!) {
-        turnOnTrainingMode(applicationId: $applicationId) {
-            trainingMode
-        }
-    }
-`;
-
-export const TurnOffTrainingModeMutation = gql`
-    mutation turnOffTrainingMode ($applicationId: String!) {
-        turnOffTrainingMode(applicationId: $applicationId) {
+export const ToggleTrainingModeMutation = gql`
+    mutation toggleTrainingMode ($applicationId: String!) {
+        toggleTrainingMode(applicationId: $applicationId) {
+            id
             trainingMode
         }
     }
