@@ -1,8 +1,8 @@
-defmodule InjectDetect.ToggleTrainingModeTest do
+defmodule InjectDetect.ToggleAlertingTest do
   use ExUnit.Case
 
   alias InjectDetect.Command.GetStarted
-  alias InjectDetect.Command.ToggleTrainingMode
+  alias InjectDetect.Command.ToggleAlerting
   alias InjectDetect.State.User
   alias InjectDetect.State.Application
 
@@ -18,7 +18,6 @@ defmodule InjectDetect.ToggleTrainingModeTest do
     :ok
   end
 
-
   test "toggles training mode" do
     %GetStarted{email: "email@example.com",
                 application_name: "Foo Application",
@@ -29,19 +28,19 @@ defmodule InjectDetect.ToggleTrainingModeTest do
     user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
 
-    assert application.training_mode == true
+    assert application.alerting == true
 
-    %ToggleTrainingMode{application_id: application.id}
+    %ToggleAlerting{application_id: application.id}
     |> handle(%{user_id: user.id})
 
     application = Application.find(name: "Foo Application")
-    assert application.training_mode == false
+    assert application.alerting == false
 
-    %ToggleTrainingMode{application_id: application.id}
+    %ToggleAlerting{application_id: application.id}
     |> handle(%{user_id: user.id})
 
     application = Application.find(name: "Foo Application")
-    assert application.training_mode == true
+    assert application.alerting == true
   end
 
 end
