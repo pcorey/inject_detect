@@ -1,5 +1,6 @@
 defmodule InjectDetect.Event.AddedExpectedQuery do
-  defstruct application_id: nil,
+  defstruct id: nil,
+            application_id: nil,
             collection: nil,
             queried_at: nil,
             query: nil,
