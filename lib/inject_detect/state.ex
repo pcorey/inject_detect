@@ -3,11 +3,7 @@ defmodule InjectDetect.State do
 
   import Ecto.Query
 
-  @initial %{users: %{},
-             applications: %{},
-             application_tokens: %{},
-             unexpected_queries: %{},
-             expected_queries: %{}}
+  @initial %{users: []}
 
   def start_link do
     GenServer.start_link(__MODULE__, {0, @initial}, name: __MODULE__)

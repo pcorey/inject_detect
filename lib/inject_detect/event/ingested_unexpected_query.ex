@@ -27,6 +27,12 @@ defimpl InjectDetect.State.Reducer,
     state
     |> update_in(unexpected_queries_path, &add_to_unexpected(&1, query))
     |> update_in(applications_path, &add_to_application(&1, key))
+    Lens.key(:users)
+    |> Lens.all
+    |> Lens.key(:applications)
+    |> Lens.filter(&(&1.id == event.application_id))
+    |> Lens.key(:unexpected_queries)
+    # |> Lens.map
   end
 
   def add_to_unexpected(nil, query), do:

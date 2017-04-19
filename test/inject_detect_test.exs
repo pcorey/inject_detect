@@ -20,7 +20,71 @@ defmodule InjectDetect.InjectDetectTest do
     :ok
   end
 
-  test "user story..." do
+  test "lenses" do
+    state = %{
+      users: [
+        %{
+          id: 123,
+          applications: [
+            %{
+              id: 234,
+              name: "Foo",
+              expected_queries: [
+                %{
+                  id: 345,
+                  query: %{"_id" => "string"},
+                  collection: "foo",
+                  type: "find"
+                },
+                %{
+                  id: 456,
+                  query: %{"_id" => "number"},
+                  collection: "foo",
+                  type: "find"
+                }
+              ],
+              unexpected_queries: [
+                %{
+                  id: 567,
+                  query: %{"_id" => %{"$gte" => "string"}},
+                  collection: "foo",
+                  type: "find",
+                  queried_at: "1999",
+                  seen: 1
+                },
+                %{
+                  id: 678,
+                  query: %{"_id" => %{"$lt" => "string"}},
+                  collection: "foo",
+                  type: "find",
+                  queried_at: "2000",
+                  seen: 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    lens = Lens.key(:users)
+           |> Lens.filter(&(&1.id == 123))
+           |> Lens.key(:applications)
+           |> Lens.all
+           |> Lens.key(:unexpected_queries)
+           |> Lens.filter(&(&1.id == 666))
+           |> Lens.key(:id)
+    # assert Lens.get(lens, state).seen == 1
+    IO.inspect Lens.to_list(lens, state) |> List.first
+
+    state = Lens.map(lens, state, fn
+      (query = %{seen: seen}) -> %{query | seen: seen + 1}
+      _ -> IO.puts("_")
+           %{id: 666, foo: "bar", seen: 1}
+    end)
+    IO.inspect Lens.get(lens, state)
+    # assert Lens.get(lens, state).seen == 2
+    # IO.inspect Lens.get(lens, state)
+    # IO.inspect(state)
   end
 
 end

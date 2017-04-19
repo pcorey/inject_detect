@@ -22,12 +22,12 @@ defimpl InjectDetect.State.Reducer,
       query: event.query,
       type: event.type
     }
-    key = Query.to_key(query)
-    expected_queries_path = [:expected_queries, event.application_id, Query.to_key(query)]
-    applications_path = [:applications, event.application_id, :expected_queries]
-    state
-    |> put_in(expected_queries_path, query)
-    |> update_in(applications_path, &(&1 ++ [key]))
+    Lens.key(:users)
+    |> Lens.all
+    |> Lens.key(:applications)
+    |> Lens.filter(&(&1.id == event.application_id))
+    |> Lens.key(:expected_query)
+    |> Lens.map(state, &([query | &1]))
   end
 
 end

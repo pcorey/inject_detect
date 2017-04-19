@@ -13,22 +13,11 @@ defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.AddedApplication do
 
   def apply(event, state) do
-    application = %{id: event.id,
-                    name: event.name,
-                    size: event.size,
-                    token: event.token,
-                    user_id: event.user_id,
-                    alerting: true,
-                    expected_queries: [],
-                    unexpected_queries: [],
-                    ingesting_queries: true,
-                    training_mode: true}
-    state
-    |> put_in([:applications, event.id], application)
-    |> put_in([:application_tokens, event.token], event.id)
-    |> put_in([:expected_queries, event.id], %{})
-    |> put_in([:unexpected_queries, event.id], %{})
-    |> update_in([:users, event.user_id, :applications], fn apps -> [event.id | apps] end)
+    InjectDetect.State.user.add_application(state, event.user_id, %{id: event.id,
+                                                                    name: event.name,
+                                                                    size: event.size,
+                                                                    token: event.token,
+                                                                    user_id: event.user_id})
   end
 
 end

@@ -1,6 +1,9 @@
 defmodule InjectDetect.State.ExpectedQuery do
 
-  alias InjectDetect.State
+  def new(attrs) do
+    attrs
+    |> Map.put_new(:seen, 1)
+  end
 
   def find(application_id, key) do
     State.get()

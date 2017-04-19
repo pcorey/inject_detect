@@ -41,7 +41,8 @@ defmodule InjectDetect.Mixfile do
      {:plug_static_index_html, "~> 0.1.2"},
      {:absinthe, "~> 1.2.0"},
      {:absinthe_plug, "~> 1.2.3"},
-     {:cors_plug, "~> 1.2"}]
+     {:cors_plug, "~> 1.2"},
+     {:lens, "~> 0.3.0"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
