@@ -82,12 +82,19 @@ defmodule InjectDetect.State.ApplicationTest do
         | unexpected_queries: [UnexpectedQuery.new(query)]}
   end
 
-  # test "adds an application" do
-  #   user = %{id: 123, email: "foo@bar.com"}
-  #   application = %{id: 234}
-  #   state = Base.add_user(Base.new(), user)
-  #   assert User.add_application(state, 123, application) ==
-  #     %{users: [%{User.new(user) | applications: [Application.new(%{id: 234})]}]}
-  # end
+  test "touch unexpected query" do
+    user = %{id: 123, email: "foo@bar.com"}
+    application = %{id: 234, name: "Foo"}
+    query = %{id: 345, collection: "foo", query: %{"_id" => "string"}, type: "find"}
+    state = Base.new()
+    |> Base.add_user(user)
+    |> User.add_application(user.id, application)
+    |> Application.add_unexpected_query(application.id, query)
+    |> Application.touch_unexpected_query(application.id, query)
+    assert Application.find(state, name: "Foo") ==
+      %{Application.new(application)
+        | unexpected_queries: [%{UnexpectedQuery.new(query)
+                                 | seen: 2}]}
+  end
 
 end
