@@ -1,13 +1,13 @@
-defmodule InjectDetect.State.ExpectedQueryTest do
+defmodule InjectDetect.State.UnexpectedQueryTest do
   use ExUnit.Case
 
   alias InjectDetect.State.Application
   alias InjectDetect.State.Base
-  alias InjectDetect.State.ExpectedQuery
+  alias InjectDetect.State.UnexpectedQuery
   alias InjectDetect.State.User
 
   test "base expected query" do
-    assert ExpectedQuery.new(%{}) == %{seen: 1}
+    assert UnexpectedQuery.new(%{}) == %{seen: 1}
     assert Application.new(%{id: 123}) == %{id: 123, seen: 1}
   end
 
@@ -18,8 +18,8 @@ defmodule InjectDetect.State.ExpectedQueryTest do
     state = Base.new()
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
-    |> Application.add_expected_query(application.id, query)
-    assert ExpectedQuery.find(state, 345) == ExpectedQuery.new(query)
+    |> Application.add_unexpected_query(application.id, query)
+    assert UnexpectedQuery.find(state, 345) == UnexpectedQuery.new(query)
   end
 
   test "find by query" do
@@ -29,8 +29,8 @@ defmodule InjectDetect.State.ExpectedQueryTest do
     state = Base.new()
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
-    |> Application.add_expected_query(application.id, query)
-    assert ExpectedQuery.find(state, query: %{"_id" => "string"}) == ExpectedQuery.new(query)
+    |> Application.add_unexpected_query(application.id, query)
+    assert UnexpectedQuery.find(state, query: %{"_id" => "string"}) == UnexpectedQuery.new(query)
   end
 
 end
