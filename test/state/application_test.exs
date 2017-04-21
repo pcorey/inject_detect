@@ -66,7 +66,7 @@ defmodule InjectDetect.State.ApplicationTest do
     assert Application.find(state, name: "Foo") ==
       %{Application.new(application)
         | expected_queries: [%{ExpectedQuery.new(query)
-                               | seen: 2}]}
+                               | seen: 1}]}
   end
 
   test "add unexpected query" do
@@ -94,7 +94,7 @@ defmodule InjectDetect.State.ApplicationTest do
     assert Application.find(state, name: "Foo") ==
       %{Application.new(application)
         | unexpected_queries: [%{UnexpectedQuery.new(query)
-                                 | seen: 2}]}
+                                 | seen: 1}]}
   end
 
 end

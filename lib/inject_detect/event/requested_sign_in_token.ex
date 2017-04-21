@@ -11,8 +11,9 @@ defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.RequestedSignInToken do
 
   def apply(event, state) do
-    state
-    |> put_in([:users, event.user_id, :requested_token], event.requested_token)
+    put_in(state, [Lens.key(:users),
+                   Lens.filter(&(&1.id == event.user_id)),
+                   Lens.key(:requested_token)], event.requested_token)
   end
 
 end

@@ -7,8 +7,8 @@ defmodule InjectDetect.State.ExpectedQueryTest do
   alias InjectDetect.State.User
 
   test "base expected query" do
-    assert ExpectedQuery.new(%{}) == %{seen: 1}
-    assert Application.new(%{id: 123}) == %{id: 123, seen: 1}
+    assert ExpectedQuery.new(%{}) == %{seen: 0}
+    assert ExpectedQuery.new(%{id: 123}) == %{id: 123, seen: 0}
   end
 
   test "find by id" do
