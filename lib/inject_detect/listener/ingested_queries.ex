@@ -4,7 +4,7 @@ defmodule InjectDetect.Listener.UnexpectedQueryDetector do
   require Logger
 
   alias InjectDetect.Listener
-  alias InjectDetect.State.User
+  alias InjectDetect.State.UnexpectedQuery
 
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -30,7 +30,7 @@ defmodule InjectDetect.Listener.UnexpectedQueryDetector do
   def tokenize(m), do: for {k, v} <- m, into: %{}, do: {String.to_atom(k), v}
 
   def is_unexpected?(application_id, query) do
-    nil == UnexpectedQueries.find(%{application_id: application_id,
+    nil == UnexpectedQuery.find(%{application_id: application_id,
                                     collection: query[:collection],
                                     query: query[:query],
                                     type: query[:type]})

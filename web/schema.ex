@@ -64,7 +64,6 @@ defmodule InjectDetect.Schema do
     fn
       (args, data) ->
         command = struct(command, Map.merge(args, data.context))
-        IO.inspect(command)
         case CommandHandler.handle(command, data.context) do
           {:ok, context} -> {:ok, resolve.(context)}
           error          -> error

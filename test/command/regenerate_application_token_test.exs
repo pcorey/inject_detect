@@ -3,7 +3,6 @@ defmodule InjectDetect.RegenerateApplicationTokenTest do
 
   alias InjectDetect.Command.GetStarted
   alias InjectDetect.Command.RegenerateApplicationToken
-  alias InjectDetect.State
   alias InjectDetect.State.User
   alias InjectDetect.State.Application
 

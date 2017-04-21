@@ -45,7 +45,6 @@ defmodule InjectDetect.Schema.Types do
           IO.puts("resolving #{inspect application}")
           expected_queries = application.expected_queries
           |> Enum.map(&InjectDetect.State.ExpectedQuery.find(application.id, &1))
-          |> IO.inspect
           {:ok, expected_queries}
       end
     end
