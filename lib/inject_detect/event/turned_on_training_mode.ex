@@ -9,7 +9,11 @@ defimpl InjectDetect.State.Reducer,
   for: InjectDetect.Event.TurnedOnTrainingMode do
 
   def apply(event, state) do
-    put_in(state, [:applications, event.application_id, :training_mode], true)
+    put_in(state, [Lens.key(:users),
+                   Lens.all,
+                   Lens.key(:applications),
+                   Lens.filter(&(&1.id == event.application_id)),
+                   Lens.key(:training_mode)], true)
   end
 
 end

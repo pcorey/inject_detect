@@ -48,8 +48,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   end
 
   def ingest_query(%{training_mode: false}, query, {added, events}) do
-    case {find_expected_query(query, added),
-          find_unexpected_query(query, added)} do
+    case {ExpectedQuery.find(query), find_unexpected_query(query, added)} do
       {nil, nil}       -> query = Map.put_new(query, :id, generate_id)
                           {[query | added],
                            events ++ [struct(IngestedQuery, query),

@@ -3,7 +3,7 @@ defmodule InjectDetect.IngestQueriesTest do
 
   alias InjectDetect.Command.GetStarted
   alias InjectDetect.Command.IngestQueries
-  alias InjectDetect.Command.TurnOffTrainingMode
+  alias InjectDetect.Command.ToggleTrainingMode
   alias InjectDetect.State.User
   alias InjectDetect.State.Application
   alias InjectDetect.State.ExpectedQuery
@@ -53,6 +53,9 @@ defmodule InjectDetect.IngestQueriesTest do
     assert ExpectedQuery.find(collection: "users",
                               type: "find",
                               query: %{"_id" => "string"})
+    assert ExpectedQuery.find(collection: "orders",
+                              type: "remove",
+                              query: %{"_id" => %{"$gte" => "string"}})
   end
 
   test "ingests an unexpected query out of training mode" do
@@ -65,7 +68,7 @@ defmodule InjectDetect.IngestQueriesTest do
     user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
 
-    %TurnOffTrainingMode{application_id: application.id}
+    %ToggleTrainingMode{application_id: application.id}
     |> handle(%{user_id: user.id})
 
     %IngestQueries{application_id: application.id,
@@ -85,12 +88,14 @@ defmodule InjectDetect.IngestQueriesTest do
     |> handle(%{})
 
     application = Application.find(name: "Foo Application")
-    assert Enum.member?(application.unexpected_queries, %{collection: "users",
-                                                          type: "find",
-                                                          query: %{"_id" => "string"}})
-    assert Enum.member?(application.unexpected_queries, %{collection: "orders",
-                                                          type: "remove",
-                                                          query: %{"_id" => %{"$gte" => "string"}}})
+    assert length(application.unexpected_queries) == 2
+    assert length(application.expected_queries) == 0
+    assert UnexpectedQuery.find(collection: "users",
+                                type: "find",
+                                query: %{"_id" => "string"})
+    assert UnexpectedQuery.find(collection: "orders",
+                                type: "remove",
+                                query: %{"_id" => %{"$gte" => "string"}})
   end
 
   test "ingests an expected and unexpected queries" do
@@ -110,7 +115,7 @@ defmodule InjectDetect.IngestQueriesTest do
                                query: %{"_id" => "string"}}]}
     |> handle(%{})
 
-    %TurnOffTrainingMode{application_id: application.id}
+    %ToggleTrainingMode{application_id: application.id}
     |> handle(%{user_id: user.id})
 
     %IngestQueries{application_id: application.id,
@@ -125,12 +130,14 @@ defmodule InjectDetect.IngestQueriesTest do
     |> handle(%{})
 
     application = Application.find(name: "Foo Application")
-    assert Enum.member?(application.expected_queries, %{collection: "users",
-                                                        type: "find",
-                                                        query: %{"_id" => "string"}})
-    assert Enum.member?(application.unexpected_queries, %{collection: "orders",
-                                                          type: "remove",
-                                                          query: %{"_id" => %{"$gte" => "string"}}})
+    assert length(application.unexpected_queries) == 1
+    assert length(application.expected_queries) == 1
+    assert ExpectedQuery.find(collection: "users",
+                              type: "find",
+                              query: %{"_id" => "string"})
+    assert UnexpectedQuery.find(collection: "orders",
+                                type: "remove",
+                                query: %{"_id" => %{"$gte" => "string"}})
   end
 
 end
