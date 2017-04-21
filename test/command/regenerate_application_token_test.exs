@@ -30,23 +30,11 @@ defmodule InjectDetect.RegenerateApplicationTokenTest do
     application = Application.find(name: "Foo Application")
     token = application.token
 
-    assert State.get()
-    |> elem(1)
-    |> get_in([:application_tokens, token]) == application.id
-
     %RegenerateApplicationToken{application_id: application.id}
     |> handle(%{user_id: user.id})
 
     application = Application.find(name: "Foo Application")
     assert application.token != token
-
-    assert State.get()
-    |> elem(1)
-    |> get_in([:application_tokens, application.token]) == application.id
-
-    assert State.get()
-    |> elem(1)
-    |> get_in([:application_tokens, token]) == nil
   end
 
 end
