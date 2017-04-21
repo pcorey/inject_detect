@@ -1,4 +1,4 @@
-defmodule InjectDetect.Event.AddedExpectedQuery do
+defmodule InjectDetect.Event.AddedUnexpectedQuery do
   defstruct application_id: nil,
             id: nil,
             collection: nil,
@@ -11,12 +11,12 @@ defmodule InjectDetect.Event.AddedExpectedQuery do
 end
 
 defimpl InjectDetect.State.Reducer,
-   for: InjectDetect.Event.AddedExpectedQuery do
+   for: InjectDetect.Event.AddedUnexpectedQuery do
 
-  import InjectDetect.State.Application, only: [add_expected_query: 3]
+  import InjectDetect.State.Application, only: [add_unexpected_query: 3]
 
   def apply(event, state) do
-    add_expected_query(state, event.application_id, Map.from_struct(event))
+    add_unexpected_query(state, event.application_id, Map.from_struct(event))
   end
 
 end

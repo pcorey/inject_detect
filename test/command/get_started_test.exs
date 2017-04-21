@@ -19,9 +19,9 @@ defmodule InjectDetect.GetStartedTest do
 
   test "gets a user started" do
     %GetStarted{email: "email@example.com",
-                          application_name: "Foo Application",
-                          application_size: "Medium",
-                          agreed_to_tos: true}
+                application_name: "Foo Application",
+                application_size: "Medium",
+                agreed_to_tos: true}
     |> handle(%{})
     user = User.find(email: "email@example.com")
     assert user

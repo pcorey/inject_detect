@@ -1,5 +1,6 @@
 defmodule InjectDetect.State.Application do
 
+  alias InjectDetect.State
   alias InjectDetect.State.ExpectedQuery
   alias InjectDetect.State.UnexpectedQuery
 
@@ -10,6 +11,12 @@ defmodule InjectDetect.State.Application do
     |> Map.put_new(:ingesting_queries, true)
     |> Map.put_new(:training_mode, true)
     |> Map.put_new(:unexpected_queries, [])
+  end
+
+  def find(attrs) do
+    State.get()
+    |> elem(1)
+    |> find(attrs)
   end
 
   def find(state, attrs) when is_list(attrs) do

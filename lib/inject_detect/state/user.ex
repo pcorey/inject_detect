@@ -1,8 +1,15 @@
 defmodule InjectDetect.State.User do
 
+  alias InjectDetect.State
   alias InjectDetect.State.Application
 
   def new(attrs), do: Map.put_new(attrs, :applications, [])
+
+  def find(attrs) do
+    State.get()
+    |> elem(1)
+    |> find(attrs)
+  end
 
   def find(state, attrs) when is_list(attrs) do
     Lens.key(:users)

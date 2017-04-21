@@ -6,6 +6,8 @@ defmodule InjectDetect.IngestQueriesTest do
   alias InjectDetect.Command.TurnOffTrainingMode
   alias InjectDetect.State.User
   alias InjectDetect.State.Application
+  alias InjectDetect.State.ExpectedQuery
+  alias InjectDetect.State.UnexpectedQuery
 
   import InjectDetect.CommandHandler, only: [handle: 2]
 
@@ -46,12 +48,11 @@ defmodule InjectDetect.IngestQueriesTest do
     |> handle(%{})
 
     application = Application.find(name: "Foo Application")
-    assert Enum.member?(application.expected_queries, %{collection: "users",
-                                                        type: "find",
-                                                        query: %{"_id" => "string"}})
-    assert Enum.member?(application.expected_queries, %{collection: "orders",
-                                                        type: "remove",
-                                                        query: %{"_id" => %{"$gte" => "string"}}})
+    assert length(application.expected_queries) == 2
+    assert length(application.unexpected_queries) == 0
+    assert ExpectedQuery.find(collection: "users",
+                              type: "find",
+                              query: %{"_id" => "string"})
   end
 
   test "ingests an unexpected query out of training mode" do

@@ -1,8 +1,20 @@
 defmodule InjectDetect.State.ExpectedQuery do
 
+  alias InjectDetect.State
+
   def new(attrs) do
     attrs
-    |> Map.put_new(:seen, 1)
+    |> Map.put_new(:seen, 0)
+  end
+
+  def find(%{collection: collection, query: query, type: type}) do
+    find(collection: collection, query: query, type: type)
+  end
+
+  def find(attrs) do
+    State.get()
+    |> elem(1)
+    |> find(attrs)
   end
 
   def find(state, attrs) when is_list(attrs) do

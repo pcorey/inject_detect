@@ -12,12 +12,14 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.AddedApplication do
 
+  alias InjectDetect.State.User
+
   def apply(event, state) do
-    InjectDetect.State.user.add_application(state, event.user_id, %{id: event.id,
-                                                                    name: event.name,
-                                                                    size: event.size,
-                                                                    token: event.token,
-                                                                    user_id: event.user_id})
+    User.add_application(state, event.user_id, %{id: event.id,
+                                                 name: event.name,
+                                                 size: event.size,
+                                                 token: event.token,
+                                                 user_id: event.user_id})
   end
 
 end

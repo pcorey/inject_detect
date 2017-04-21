@@ -2,7 +2,7 @@ defmodule InjectDetect.State.UnexpectedQuery do
 
   def new(attrs) do
     attrs
-    |> Map.put_new(:seen, 1)
+    |> Map.put_new(:seen, 0)
   end
 
   def find(state, attrs) when is_list(attrs) do

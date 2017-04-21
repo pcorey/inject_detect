@@ -10,11 +10,12 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.GotStarted do
 
+  alias InjectDetect.State.Base
+
   def apply(event, state) do
-    user = %{agreed_to_tos: event.agreed_to_tos,
-             email: event.email,
-             id: event.user_id}
-    InjectDetect.State.Base.add_user(state, user)
+    Base.add_user(state, %{agreed_to_tos: event.agreed_to_tos,
+                           email: event.email,
+                           id: event.user_id})
   end
 
 end

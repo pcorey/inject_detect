@@ -6,68 +6,79 @@ end
 defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
 
   alias InjectDetect.Event.AddedExpectedQuery
+  alias InjectDetect.Event.AddedUnexpectedQuery
   alias InjectDetect.Event.IngestedQuery
   alias InjectDetect.Event.IngestedExpectedQuery
   alias InjectDetect.Event.IngestedUnexpectedQuery
   alias InjectDetect.State
   alias InjectDetect.State.Application
-  alias InjectDetect.State.Query
+  alias InjectDetect.State.ExpectedQuery
+  alias InjectDetect.State.UnexpectedQuery
 
-  def added_expected_queries(command) do
-    base = %{application_id: command.application_id}
-    command.queries
-    |> Enum.filter(&Query.is_unexpected?(State.get(), command.application_id, &1))
-    |> Enum.map(&Map.delete(&1, :queried_at))
-    |> Enum.uniq()
-    |> Enum.map(&struct(AddedExpectedQuery, Map.merge(&1, base)))
+  import InjectDetect, only: [generate_id: 0]
+
+  def find_query(query, added, find) do
+    find.(query) || Enum.find(added, fn
+      added -> query.collection == added.collection &&
+               query.query == added.query &&
+               query.type == added.type
+    end)
   end
 
-  def ingested_queries(command) do
-    base = %{application_id: command.application_id}
-    Enum.map(command.queries, &struct(IngestedQuery, Map.merge(&1, base)))
+  def find_expected_query(query, added) do
+    find_query(query, added, &ExpectedQuery.find/1)
   end
 
-  def ingested_expected_queries(queries, application_id) do
-    base = %{application_id: application_id}
-    Enum.map(queries, &struct(IngestedExpectedQuery, Map.merge(&1, base)))
+  def find_unexpected_query(query, added) do
+    find_query(query, added, &UnexpectedQuery.find/1)
   end
 
-  def ingested_expected_queries(command) do
-    command.queries
-    |> Enum.filter(&Query.is_expected?(State.get(), command.application_id, &1))
-    |> ingested_expected_queries(command.application_id)
+  def ingest_query(%{training_mode: true}, query, {added, events}) do
+    case find_expected_query(query, added) do
+      nil       -> query = Map.put_new(query, :id, generate_id)
+                   {[query | added],
+                    events ++ [struct(IngestedQuery, query),
+                               struct(AddedExpectedQuery, query),
+                               struct(IngestedExpectedQuery, query)]}
+      %{id: id} -> query = Map.put_new(query, :id, id)
+                   {added,
+                    events ++ [struct(IngestedQuery, query),
+                               struct(IngestedExpectedQuery, query)]}
+    end
   end
 
-  def ingested_unexpected_queries(queries, application_id) do
-    base = %{application_id: application_id}
-    Enum.map(queries, &struct(IngestedUnexpectedQuery, Map.merge(&1, base)))
+  def ingest_query(%{training_mode: false}, query, {added, events}) do
+    case {find_expected_query(query, added),
+          find_unexpected_query(query, added)} do
+      {nil, nil}       -> query = Map.put_new(query, :id, generate_id)
+                          {[query | added],
+                           events ++ [struct(IngestedQuery, query),
+                                      struct(AddedUnexpectedQuery, query),
+                                      struct(IngestedUnexpectedQuery, query)]}
+      {nil, %{id: id}} -> query = Map.put_new(query, :id, id)
+                          {added,
+                           events ++ [struct(IngestedQuery, query),
+                                      struct(IngestedUnexpectedQuery, query)]}
+      {%{id: id}, _}   -> query = Map.put_new(query, :id, id)
+                          {added,
+                           events ++ [struct(IngestedQuery, query),
+                                      struct(IngestedExpectedQuery, query)]}
+    end
   end
 
-  def ingested_unexpected_queries(command) do
-    command.queries
-    |> Enum.filter(&Query.is_unexpected?(State.get(), command.application_id, &1))
-    |> ingested_unexpected_queries(command.application_id)
-  end
-
-  # Application not found:
   def ingest_for_application(nil, _command) do
     {:error, %{code: :invalid_token,
                error: "Invalid application token",
                message: "Invalid token"}}
   end
 
-  # Training mode:
-  def ingest_for_application(%{training_mode: true}, command) do
-    {:ok, ingested_queries(command) ++
-          added_expected_queries(command) ++
-          ingested_expected_queries(command.queries, command.application_id)}
-  end
-
-  # Live mode:
-  def ingest_for_application(%{training_mode: false}, command) do
-    {:ok, ingested_queries(command) ++
-          ingested_expected_queries(command) ++
-          ingested_unexpected_queries(command)}
+  def ingest_for_application(application, command) do
+    events = command.queries
+    |> Enum.map(&(Map.put_new(&1, :application_id, application.id)))
+    |> Enum.reduce({[], []}, &ingest_query(application, &1, &2))
+    |> elem(1)
+    |> List.flatten
+    {:ok, events}
   end
 
   def handle(command, _context) do
