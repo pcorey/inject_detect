@@ -39,4 +39,13 @@ defmodule InjectDetect.State.UnexpectedQuery do
     |> List.first
   end
 
+  def remove(state, id) do
+    Lens.key(:users)
+    |> Lens.all
+    |> Lens.key(:applications)
+    |> Lens.all
+    |> Lens.key(:unexpected_queries)
+    |> Lens.map(state, &Enum.reject(&1, fn query -> query.id == id end))
+  end
+
 end
