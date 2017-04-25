@@ -33,18 +33,21 @@ class Application extends React.Component {
                             Application: {application.name}
                         </h1>
 
-
-                        {/* <div className="ui segment">
-                            <h3 className="ui sub header">Application Configuration</h3>
-                            <div className="ui form">
-                            <ApplicationSecret application={application}/>
-                            <ApplicationTrainingMode application={application}/>
-                            <ApplicationAlerting application={application}/>
+                        <div className="ui icon message" style={{marginTop: "4em"}}>
+                            <i className="settings icon"></i>
+                            <div className="content configuration">
+                                <div>
+                                    <div className="header">Application configuration</div>
+                                    <p>Training mode is <strong>{application.training_mode ? "on" : "off"}</strong>. Alerting is <strong>{application.alerting ? "on" : "off"}</strong>.</p>
+                                </div>
+                                <button className="ui icon button">
+                                    <i className="settings icon"></i>
+                                </button>
                             </div>
-                            </div> */}
+                        </div>
 
                         <div className="section">
-                            <h3 className="ui sub header">Expected queries:</h3>
+                            <h3 className="ui sub header">Unxpected queries:</h3>
                             <div className="ui grid">
                                 <div className="fourteen wide column">
                                     <p className="instructions">
@@ -52,26 +55,16 @@ class Application extends React.Component {
                                     </p>
                                 </div>
                                 <div className="two wide column graphic container">
-                                    <i className="ui warning graphic icon"/>
+                                    <i className="ui warning sign graphic icon"/>
                                 </div>
                             </div>
                             <UnexpectedQueries application={application}/>
                         </div>
 
-                        {/* <div className="ui icon message">
-                            <i className="inbox icon"></i>
-                            <div className="content">
-                            <div className="header">
-                            Have you heard about our mailing list?
-                            </div>
-                            <p>Get the best news in your e-mail every day.</p>
-                            </div>
-                            </div> */}
-
                         <div className="section">
-                            <h3 className="ui sub header">Unexpected queries:</h3>
+                            <h3 className="ui sub header">Expected queries:</h3>
                             <p className="instructions">
-                                Your application is expecting {application.expectedQueries.length} {application.expectedQueries.length == 1 ? "type of query" : "different queries"}. Add more queries by setting your application into <code>Training Mode</code>, or marking unexpected queries as expected.
+                                Your application is expecting {application.expectedQueries.length} {application.expectedQueries.length == 1 ? "type of query" : "different queries"}. Add more queries by setting your application into <Link to="/">Training Mode</Link>, or marking unexpected queries as expected.
                             </p>
                             <ExpectedQueries application={application}/>
                         </div>

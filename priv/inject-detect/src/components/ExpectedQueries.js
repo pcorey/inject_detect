@@ -28,7 +28,7 @@ class ExpectedQueries extends React.Component {
                         return (
                             <div className="ui fluid card">
                                 <div className="content">
-                                    <div className="ui right floated icon button" data-tooltip="Remove query from set of 'expected queries'." data-inverted="" data-position="top right">
+                                    <div className="ui right floated icon button" data-tooltip="Remove query from set of 'expected queries'." data-position="top right">
                                         <i className="trash icon"></i>
                                     </div>
                                     <div className="header">

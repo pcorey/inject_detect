@@ -31,9 +31,11 @@ class UnexpectedQueries extends React.Component {
                                 <div className="content">
                                     <div className="right floated meta">
                                         Last seen: <Moment fromNow>{query.queriedAt}</Moment>
-                                        {/* <button className="ui icon button">
-                                            <i className="trash icon"></i>
-                                            </button> */}
+                                        <div className="ui icon buttons">
+                                            {/* <button className="ui button" data-tooltip="Mark this query as an expected query. Any further sightings of this query will be ignored." data-position="top right"><i className="checkmark icon"></i></button>
+                                                <button className="ui button" data-tooltip="Mark this query as handled. It's not an expected query, but you've fixed the problem and we shouldn't see it again." data-position="top right"><i className="trash icon"></i></button> */}
+                                            <button className="ui button" data-tooltip="See more details about this unexpected query." data-position="top right"><i className="expand icon"></i></button>
+                                        </div>
                                     </div>
                                     <div className="header">
                                         <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${pretty(query.query)})`}</PrismCode>
