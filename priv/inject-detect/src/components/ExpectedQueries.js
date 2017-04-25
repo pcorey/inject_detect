@@ -7,6 +7,12 @@ class ExpectedQueries extends React.Component {
     render() {
         let { application } = this.props;
 
+        function pretty(query) {
+            return query
+                .replace(/:"string"/g, ":String")
+                .replace(/:"date"/g, ":Date");
+        }
+
         if (_.isEmpty(application.expectedQueries)) {
             return (
                 <div className="ui warning message">
@@ -16,30 +22,24 @@ class ExpectedQueries extends React.Component {
         }
         else {
             return (
-                <table className="ui selectable olive table">
-                    <thead>
-                        <tr>
-                            <th>Query Type</th>
-                            <th>Collection</th>
-                            <th>Query</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {application.expectedQueries.map(query => {
-                             return (
-                                 <tr>
-                                     <td>{query.type}</td>
-                                     <td>{query.collection}</td>
-                                     <td>
-                                         <PrismCode className="language-javascript">
-                                             {query.query}
-                                         </PrismCode>
-                                     </td>
-                                 </tr>
-                             );
-                         })}
-                    </tbody>
-                </table>
+                <div className="ui cards">
+                {
+                    application.expectedQueries.map(query => {
+                        return (
+                            <div className="ui fluid card">
+                                <div className="content">
+                                    <div className="ui right floated icon button" data-tooltip="Remove query from set of 'expected queries'." data-inverted="" data-position="top right">
+                                        <i className="trash icon"></i>
+                                    </div>
+                                    <div className="header">
+                                        <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${pretty(query.query)})`}</PrismCode>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                }
+                </div>
             )
         }
 

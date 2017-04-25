@@ -8,6 +8,12 @@ class UnexpectedQueries extends React.Component {
     render() {
         let { application } = this.props;
 
+        function pretty(query) {
+            return query
+                .replace(/:"string"/g, ":String")
+                .replace(/:"date"/g, ":Date");
+        }
+
         if (_.isEmpty(application.unexpectedQueries)) {
             return (
                 <div className="ui success message">
@@ -17,55 +23,27 @@ class UnexpectedQueries extends React.Component {
         }
         else {
             return (
-                <table className="ui selectable red table">
-                    <thead>
-                        <tr>
-                            <th>Last seen</th>
-                            <th>Query type</th>
-                            <th>Collection</th>
-                            <th>Query</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {application.unexpectedQueries.map(query => {
-                             return (
-                                 <tr>
-                                     <td><Moment fromNow>{query.queriedAt}</Moment></td>
-                                     <td>
-                                         <PrismCode className="language-javascript">
-                                             {query.type}
-                                         </PrismCode>
-                                     </td>
-                                     <td>
-                                         <PrismCode className="language-javascript">
-                                             {query.collection}
-                                         </PrismCode>
-                                     </td>
-                                     <td>
-                                         <PrismCode className="language-javascript">
-                                             {query.query}
-                                         </PrismCode>
-                                     </td>
-                                     {/* <td>
-                                         <PrismCode className="language-javascript">
-                                         db.{query.collection}.{query.type}(
-                                         </PrismCode>
-                                         </td>
-                                         <td>
-                                         <PrismCode className="language-javascript">
-                                         {query.query}
-                                         </PrismCode>
-                                         </td>
-                                         <td>
-                                         <PrismCode className="language-javascript">
-                                         )
-                                         </PrismCode>
-                                         </td> */}
-                                 </tr>
-                             );
-                         })}
-                    </tbody>
-                </table>
+                <div className="ui cards">
+                {
+                    application.unexpectedQueries.map(query => {
+                        return (
+                            <div className="ui fluid card">
+                                <div className="content">
+                                    <div className="right floated meta">
+                                        Last seen: <Moment fromNow>{query.queriedAt}</Moment>
+                                        {/* <button className="ui icon button">
+                                            <i className="trash icon"></i>
+                                            </button> */}
+                                    </div>
+                                    <div className="header">
+                                        <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${pretty(query.query)})`}</PrismCode>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                }
+                </div>
             )
         }
 
