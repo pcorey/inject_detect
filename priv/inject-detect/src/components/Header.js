@@ -32,7 +32,7 @@ class Header extends React.Component {
                             Inject Detect
                         </Link>
 
-                        <NavLink to="/dashboard" className="borderless item">Dashboard</NavLink>
+                        <NavLink to="/" exact={true} className="borderless item">Dashboard</NavLink>
 
                         <div className="ui simple dropdown borderless item">
                             Applications <i className="dropdown icon"></i>

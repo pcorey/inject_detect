@@ -22,10 +22,10 @@ ReactDOM.render(
                 <div className="ij-layout">
                     <Header/>
                     <div className="ij-layout-content ui main container">
-                        <Route exact path="/" component={GetStarted}/>
                         <Route path="/sign-in" component={SignIn}/>
+                        <Route path="/get-started" component={GetStarted}/>
                         <Route path="/verify/:token" component={VerifyRequestedToken}/>
-                        <PrivateRoute exact path="/dashboard" component={Dashboard}/>
+                        <PrivateRoute exact path="/" component={Dashboard}/>
                         <PrivateRoute path="/application/:id" component={Application}/>
                     </div>
                 </div>

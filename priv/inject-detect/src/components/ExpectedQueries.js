@@ -33,7 +33,6 @@ class ExpectedQueries extends React.Component {
                                      <td>
                                          <PrismCode className="language-javascript">
                                              {query.query}
-                                             {/* {"{foo: \"bar\", baz: \"asdf\", bar: {hello: \"how are you?\", fine: 12345}, another: {hello: \"how are you?\", fine: 12345}}"} */}
                                          </PrismCode>
                                      </td>
                                  </tr>

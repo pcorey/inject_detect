@@ -13,14 +13,14 @@ class Application extends React.Component {
 
     render() {
         let { application, loading } = this.props.data;
-        console.log(application)
+
         if (!application) {
             return null;
         }
 
         if (loading) {
             return (
-                <div>Loading...</div>
+                <div className="ui active loader"></div>
             );
         }
         else if (application) {

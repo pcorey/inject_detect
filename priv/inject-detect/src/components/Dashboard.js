@@ -6,7 +6,13 @@ import { graphql } from "react-apollo";
 class Dashboard extends React.Component {
 
     render() {
-        let { user } = this.props.data;
+        let { loading, user } = this.props.data;
+
+        if (loading) {
+            return (
+                <div className="ui active loader"></div>
+            );
+        }
 
         return (
 
