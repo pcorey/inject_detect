@@ -31,37 +31,15 @@ defmodule InjectDetect.Schema.Types do
     field :token, :string
     field :alerting, :boolean
     field :training_mode, :boolean
-    field :unexpected_queries, list_of(:unexpected_query) do
-      resolve fn
-        (application, _, _) ->
-          unexpected_queries = application.unexpected_queries
-          |> Enum.map(&InjectDetect.State.UnexpectedQuery.find(application.id, &1))
-          {:ok, unexpected_queries}
-      end
-    end
-    field :expected_queries, list_of(:expected_query) do
-      resolve fn
-        (application, _, _) ->
-          IO.puts("resolving #{inspect application}")
-          expected_queries = application.expected_queries
-          |> Enum.map(&InjectDetect.State.ExpectedQuery.find(application.id, &1))
-          {:ok, expected_queries}
-      end
-    end
+    field :unexpected_queries, list_of(:unexpected_query)
+    field :expected_queries, list_of(:expected_query)
   end
 
   object :user do
     field :id, :id
     field :email, :string
     field :auth_token, :string
-    field :applications, list_of(:application) do
-      resolve fn
-        (user, _, _) ->
-          applications = user.applications
-          |> Enum.map(&InjectDetect.State.Application.find/1)
-          {:ok, applications}
-      end
-    end
+    field :applications, list_of(:application)
   end
 
 end

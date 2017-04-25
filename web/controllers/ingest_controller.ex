@@ -2,22 +2,20 @@ defmodule InjectDetect.IngestController do
   use InjectDetect.Web, :controller
 
   alias InjectDetect.Command.IngestQueries
-  alias InjectDetect.State
+  alias InjectDetect.State.Application
 
   import InjectDetect.CommandHandler, only: [handle: 2]
 
   def create(conn, %{"application_token" => application_token,
                      "queries" => queries}) do
 
-    application_id = State.get()
-    |> elem(1)
-    |> get_in([:application_tokens, application_token])
+    application = Application.find(token: application_token)
 
     queries = Enum.map(queries, fn
       query -> for {k, v} <- query, into: %{}, do: {String.to_atom(k), v}
     end)
 
-    command = %IngestQueries{application_id: application_id, queries: queries}
+    command = %IngestQueries{application_id: application.id, queries: queries}
     case handle(command, %{}) do
       {:ok, _} ->
         json conn, %{ok: 100}
