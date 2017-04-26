@@ -27,13 +27,11 @@ class UnexpectedQueries extends React.Component {
                 {
                     application.unexpectedQueries.map(query => {
                         return (
-                            <div className="ui fluid card">
+                            <div className="ui fluid card" key={query.id}>
                                 <div className="content">
                                     <div className="right floated meta">
                                         Last seen: <Moment fromNow>{query.queriedAt}</Moment>
                                         <div className="ui icon buttons">
-                                            {/* <button className="ui button" data-tooltip="Mark this query as an expected query. Any further sightings of this query will be ignored." data-position="top right"><i className="checkmark icon"></i></button>
-                                                <button className="ui button" data-tooltip="Mark this query as handled. It's not an expected query, but you've fixed the problem and we shouldn't see it again." data-position="top right"><i className="trash icon"></i></button> */}
                                             <button className="ui button" data-tooltip="See more details about this unexpected query." data-position="top right"><i className="expand icon"></i></button>
                                         </div>
                                     </div>

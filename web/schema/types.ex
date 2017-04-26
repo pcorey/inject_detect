@@ -2,6 +2,7 @@ defmodule InjectDetect.Schema.Types do
   use Absinthe.Schema.Notation
 
   object :expected_query do
+    field :id, :string
     field :collection, :string
     field :query, :string do
       resolve fn
@@ -13,6 +14,7 @@ defmodule InjectDetect.Schema.Types do
   end
 
   object :unexpected_query do
+    field :id, :string
     field :collection, :string
     field :queried_at, :string
     field :query, :string do

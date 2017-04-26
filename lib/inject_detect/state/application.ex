@@ -44,8 +44,8 @@ defmodule InjectDetect.State.Application do
     application_lens(application_id)
     |> Lens.key(:expected_queries)
     |> Lens.filter(&(&1.id == query.id))
-    |> Lens.key(:seen)
-    |> Lens.map(state, &(&1 + 1))
+    |> Lens.map(state, &(%{&1 | queried_at: query.queried_at,
+                                seen: &1.seen + 1}))
   end
 
   def add_unexpected_query(state, application_id, query) do
@@ -58,8 +58,8 @@ defmodule InjectDetect.State.Application do
     application_lens(application_id)
     |> Lens.key(:unexpected_queries)
     |> Lens.filter(&(&1.id == query.id))
-    |> Lens.key(:seen)
-    |> Lens.map(state, &(&1 + 1))
+    |> Lens.map(state, &(%{&1 | queried_at: query.queried_at,
+                                seen: &1.seen + 1}))
   end
 
   defp application_lens(application_id) do

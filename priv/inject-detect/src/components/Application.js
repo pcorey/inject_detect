@@ -64,7 +64,7 @@ class Application extends React.Component {
                         <div className="section">
                             <h3 className="ui sub header">Expected queries:</h3>
                             <p className="instructions">
-                                Your application is expecting {application.expectedQueries.length} {application.expectedQueries.length == 1 ? "type of query" : "different queries"}. Add more queries by setting your application into <Link to="/">Training Mode</Link>, or marking unexpected queries as expected.
+                                Your application is expecting {application.expectedQueries.length} {application.expectedQueries.length == 1 ? "type of query" : "different queries"}. Add more queries by setting your application into <strong>Training Mode</strong>, or marking unexpected queries as expected.
                             </p>
                             <ExpectedQueries application={application}/>
                         </div>

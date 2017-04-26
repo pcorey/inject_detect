@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import Moment from 'react-moment';
 import { PrismCode } from "react-prism";
 
 class ExpectedQueries extends React.Component {
@@ -26,10 +27,13 @@ class ExpectedQueries extends React.Component {
                 {
                     application.expectedQueries.map(query => {
                         return (
-                            <div className="ui fluid card">
+                            <div className="ui fluid card" key={query.id}>
                                 <div className="content">
-                                    <div className="ui right floated icon button" data-tooltip="Remove query from set of 'expected queries'." data-position="top right">
-                                        <i className="trash icon"></i>
+                                    <div className="ui right floated meta">
+                                        Last seen: <Moment fromNow>{query.queriedAt}</Moment>
+                                        <button className="ui icon button" data-tooltip="Remove query from set of 'expected queries'." data-position="top right">
+                                            <i className="trash icon"></i>
+                                        </button>
                                     </div>
                                     <div className="header">
                                         <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${pretty(query.query)})`}</PrismCode>

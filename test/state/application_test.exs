@@ -57,7 +57,7 @@ defmodule InjectDetect.State.ApplicationTest do
   test "touch expected query" do
     user = %{id: 123, email: "foo@bar.com"}
     application = %{id: 234, name: "Foo"}
-    query = %{id: 345, collection: "foo", query: %{"_id" => "string"}, type: "find"}
+    query = %{id: 345, collection: "foo", queried_at: ~D[2017-04-05], query: %{"_id" => "string"}, type: "find"}
     state = Base.new()
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
@@ -65,8 +65,7 @@ defmodule InjectDetect.State.ApplicationTest do
     |> Application.touch_expected_query(application.id, query)
     assert Application.find(state, name: "Foo") ==
       %{Application.new(application)
-        | expected_queries: [%{ExpectedQuery.new(query)
-                               | seen: 1}]}
+        | expected_queries: [%{ExpectedQuery.new(query) | seen: 1, queried_at: ~D[2017-04-05]}]}
   end
 
   test "add unexpected query" do
@@ -85,7 +84,7 @@ defmodule InjectDetect.State.ApplicationTest do
   test "touch unexpected query" do
     user = %{id: 123, email: "foo@bar.com"}
     application = %{id: 234, name: "Foo"}
-    query = %{id: 345, collection: "foo", query: %{"_id" => "string"}, type: "find"}
+    query = %{id: 345, collection: "foo", queried_at: ~D[2017-04-05], query: %{"_id" => "string"}, type: "find"}
     state = Base.new()
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
@@ -93,8 +92,7 @@ defmodule InjectDetect.State.ApplicationTest do
     |> Application.touch_unexpected_query(application.id, query)
     assert Application.find(state, name: "Foo") ==
       %{Application.new(application)
-        | unexpected_queries: [%{UnexpectedQuery.new(query)
-                                 | seen: 1}]}
+        | unexpected_queries: [%{UnexpectedQuery.new(query) | seen: 1, queried_at: ~D[2017-04-05]}]}
   end
 
 end

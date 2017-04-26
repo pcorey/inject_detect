@@ -26,12 +26,14 @@ export const ApplicationQuery = gql`
             trainingMode
             alerting
             unexpectedQueries {
+                id,
                 collection,
                 queriedAt,
                 query,
                 type
             }
             expectedQueries {
+                id,
                 collection,
                 query,
                 type
