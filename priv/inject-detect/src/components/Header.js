@@ -56,7 +56,15 @@ class Header extends React.Component {
                                     <i className="caret down icon"></i>
                                     {user.email}
                                     <div className="menu">
-                                        <SignOutLink>Sign out</SignOutLink>
+                                        <Link to="/account" className="item">
+                                            <i className="settings icon"></i>
+                                            Account settings
+                                        </Link>
+                                        <div className="divider"></div>
+                                        <SignOutLink>
+                                            <i className="sign out icon"></i>
+                                            Sign out
+                                        </SignOutLink>
                                     </div>
                                 </button>
                             </div>

@@ -25,23 +25,27 @@ class UnexpectedQueries extends React.Component {
             return (
                 <div className="ui cards">
                 {
-                    application.unexpectedQueries.map(query => {
-                        return (
-                            <div className="ui fluid card" key={query.id}>
-                                <div className="content">
-                                    <div className="right floated meta">
-                                        Last seen: <Moment fromNow>{query.queriedAt}</Moment>
-                                        <div className="ui icon buttons">
-                                            <button className="ui button" data-tooltip="See more details about this unexpected query." data-position="top right"><i className="expand icon"></i></button>
-                                        </div>
-                                    </div>
-                                    <div className="header">
-                                        <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${pretty(query.query)})`}</PrismCode>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })
+                    _.chain(application.unexpectedQueries)
+                     .sortBy("queriedAt")
+                     .reverse()
+                     .map(query => {
+                         return (
+                             <div className="ui fluid card" key={query.id}>
+                                 <div className="content">
+                                     <div className="right floated meta">
+                                         Last seen: <Moment fromNow>{query.queriedAt}</Moment>
+                                         <div className="ui icon buttons">
+                                             <button className="ui button" data-tooltip="See more details about this unexpected query." data-position="top right"><i className="right arrow icon"></i></button>
+                                         </div>
+                                     </div>
+                                     <div className="header">
+                                         <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${pretty(query.query)})`}</PrismCode>
+                                     </div>
+                                 </div>
+                             </div>
+                         );
+                     })
+                     .value()
                 }
                 </div>
             )

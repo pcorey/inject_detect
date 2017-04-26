@@ -4,6 +4,7 @@ defmodule InjectDetect.Schema.Types do
   object :expected_query do
     field :id, :string
     field :collection, :string
+    field :queried_at, :string
     field :query, :string do
       resolve fn
         (expected_query, _, _) ->
@@ -11,6 +12,12 @@ defmodule InjectDetect.Schema.Types do
       end
     end
     field :type, :string
+    field :application, :application do
+      resolve fn
+        (expected_query, _, _) ->
+          {:ok, InjectDetect.State.Application.find(expected_query.application_id)}
+      end
+    end
   end
 
   object :unexpected_query do
@@ -24,6 +31,12 @@ defmodule InjectDetect.Schema.Types do
       end
     end
     field :type, :string
+    field :application, :application do
+      resolve fn
+        (expected_query, _, _) ->
+          {:ok, InjectDetect.State.Application.find(expected_query.application_id)}
+      end
+    end
   end
 
   object :application do

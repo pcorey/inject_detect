@@ -9,6 +9,11 @@
   .section
     margin-top 4em
 
+  .content.configuration
+    display flex!important
+    & > div
+      flex 1
+
   h1.header
     font-weight 100
     text-align center
@@ -23,6 +28,17 @@
     .card
       background-color #f8f8f8
       box-shadow none
+
+  .notification.card
+    font-size 16px
+    .content
+      padding 6px
+      p
+        line-height 36px
+        margin-left 6px
+    .buttons
+      .button
+        margin 0
 
 //  .ui.ribbon.label
 //    margin-bottom 1.3em

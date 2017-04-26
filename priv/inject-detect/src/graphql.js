@@ -35,6 +35,7 @@ export const ApplicationQuery = gql`
             expectedQueries {
                 id,
                 collection,
+                queriedAt,
                 query,
                 type
             }
