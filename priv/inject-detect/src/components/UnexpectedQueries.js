@@ -1,6 +1,7 @@
+import Moment from 'react-moment';
 import React from "react";
 import _ from "lodash";
-import Moment from 'react-moment';
+import { Link } from "react-router-dom";
 import { PrismCode } from "react-prism";
 
 class UnexpectedQueries extends React.Component {
@@ -35,7 +36,7 @@ class UnexpectedQueries extends React.Component {
                                      <div className="right floated meta">
                                          Last seen: <Moment fromNow>{query.queriedAt}</Moment>
                                          <div className="ui icon buttons">
-                                             <button className="ui button" data-tooltip="See more details about this unexpected query." data-position="top right"><i className="right arrow icon"></i></button>
+                                             <Link to={`/unexpected-query/${query.id}` }className="ui button" data-tooltip="See more details about this unexpected query." data-position="top right"><i className="right arrow icon"></i></Link>
                                          </div>
                                      </div>
                                      <div className="header">

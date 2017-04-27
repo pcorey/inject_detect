@@ -1,10 +1,10 @@
+import AddApplicationModal from "./AddApplicationModal";
 import React from "react";
+import SignOutLink from "./SignOutLink";
 import _ from "lodash";
 import { Link, NavLink } from "react-router-dom";
 import { UserQuery } from "../graphql";
 import { graphql } from "react-apollo";
-
-import SignOutLink from "./SignOutLink";
 
 class Header extends React.Component {
 
@@ -18,6 +18,11 @@ class Header extends React.Component {
 
     componentDidUpdate() {
         this.initDropdown();
+    }
+
+    showAddApplicationModal(e) {
+        e.preventDefault();
+        window.$(".ui.add-application-modal.modal").modal("show");
     }
 
     render() {
@@ -42,11 +47,12 @@ class Header extends React.Component {
                                   user.applications &&
                                   user.applications.map((application) => {
                                       return (
-                                          <Link to={`/application/${application.id}`} key={application.id} className="item"><i className="red warning icon"/>{application.name}</Link>
+                                          /* <Link to={`/application/${application.id}`} key={application.id} className="item"><i className="red warning icon"/>{application.name}</Link> */
+                                          <Link to={`/application/${application.id}`} key={application.id} className="item"><i className="icon"/>{application.name}</Link>
                                       );
                                   })}
 
-                                <Link to={`/dashboard/add`} className="item"><i className="plus icon"/>Add Application</Link>
+                                <a href="#" className="item" onClick={this.showAddApplicationModal.bind(this)}><i className="plus icon"/>Add Application</a>
                             </div>
                         </div>
 
@@ -70,6 +76,7 @@ class Header extends React.Component {
                             </div>
                         </div>
                     </div>
+                    <AddApplicationModal/>
                 </div>
             );
         }

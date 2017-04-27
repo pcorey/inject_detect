@@ -9,7 +9,6 @@ class Dashboard extends React.Component {
 
     render() {
         let { loading, user } = this.props.data;
-        console.log(user)
 
         if (loading) {
             return (
@@ -53,7 +52,7 @@ class Dashboard extends React.Component {
                         {
                             unexpectedQueries.map(query => {
                                 return (
-                                    <div className="ui fluid notification card">
+                                    <div key={query.id} className="ui fluid notification card">
                                         <div className="content">
                                             <div className="right floated meta">
                                                 <div className="ui icon buttons">

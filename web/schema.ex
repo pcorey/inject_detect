@@ -45,6 +45,18 @@ defmodule InjectDetect.Schema do
     end
   end
 
+  def resolve_unexpected_query(%{id: id}, %{context: %{user_id: user_id}}) do
+    unexpected_query = Lens.key(:users)
+    |> Lens.filter(&(&1.id == user_id))
+    |> Lens.key(:applications)
+    |> Lens.all
+    |> Lens.key(:unexpected_queries)
+    |> Lens.filter(&(&1.id == id))
+    |> Lens.to_list(State.get() |> elem(1))
+    |> List.first
+    {:ok, unexpected_query}
+  end
+
   query do
     field :users, list_of(:user) do
       resolve auth &resolve_users/2
@@ -57,6 +69,11 @@ defmodule InjectDetect.Schema do
     field :application, :application do
       arg :id, non_null(:string)
       resolve &resolve_application/2
+    end
+
+    field :unexpected_query, :unexpected_query do
+      arg :id, non_null(:string)
+      resolve &resolve_unexpected_query/2
     end
   end
 

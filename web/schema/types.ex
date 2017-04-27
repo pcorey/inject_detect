@@ -5,6 +5,7 @@ defmodule InjectDetect.Schema.Types do
     field :id, :string
     field :collection, :string
     field :queried_at, :string
+    field :seen, :integer
     field :query, :string do
       resolve fn
         (expected_query, _, _) ->
@@ -24,6 +25,7 @@ defmodule InjectDetect.Schema.Types do
     field :id, :string
     field :collection, :string
     field :queried_at, :string
+    field :seen, :integer
     field :query, :string do
       resolve fn
         (unexpected_query, _, _) ->
