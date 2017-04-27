@@ -4,18 +4,13 @@ import _ from "lodash";
 import gql from "graphql-tag";
 import { Link } from "react-router-dom";
 import { PrismCode } from "react-prism";
+import { block } from "./pretty";
 import { graphql } from "react-apollo";
 
 class UnexpectedQuery extends React.Component {
 
     render() {
         let { unexpectedQuery, loading } = this.props.data;
-
-        function pretty(query) {
-            return JSON.stringify(JSON.parse(query), null, 4)
-                .replace(/: "string"/g, ": String")
-                .replace(/: "date"/g, ": Date");
-        }
 
         if (loading) {
             return (
@@ -24,7 +19,7 @@ class UnexpectedQuery extends React.Component {
         }
         else if (unexpectedQuery) {
             return (
-                <div className="ij-unexpected-query ui mobile reversed stackable grid">
+                <div className="ij-unexpected-query ui mobile stackable grid">
 
                     <div className="sixteen wide column">
                         <h1 className="ui header">
@@ -32,13 +27,10 @@ class UnexpectedQuery extends React.Component {
                         </h1>
                     </div>
 
-                    <div className="sixteen wide column">
-                        <div className="section">
-                            <div className="ui grid">
                                 <div className="six wide column">
                                     <h3 className="ui sub header">Query Structure:</h3>
-                                    <PrismCode className="structure language-javascript">{`db.${unexpectedQuery.collection}.${unexpectedQuery.type}(${pretty(unexpectedQuery.query)})`}</PrismCode>
-                                    <button className="ui green labeled icon button">
+                                    <PrismCode className="structure language-javascript">{`db.${unexpectedQuery.collection}.${unexpectedQuery.type}(${block(unexpectedQuery.query)})`}</PrismCode>
+                                    <button className="ui labeled icon button">
                                         <i className="checkmark icon"/>
                                         Mark as expected
                                     </button>
@@ -46,23 +38,25 @@ class UnexpectedQuery extends React.Component {
                                         <i className="remove icon"/>
                                         Mark as handled
                                     </button>
-                                    <p className="instructions"><a href="#">What was the exact query?</a></p>
-                                    <p className="instructions"><a href="#">Is it NoSQL Injection?</a></p>
+                                    <h3 className="ui sub header">Help:</h3>
+                                    <div className="ui bulleted list">
+                                        <a className="item">What does this mean?</a>
+                                        <a className="item">What was the exact query?</a>
+                                        <a className="item">Was I attacked?</a>
+                                        <a className="item">What now?</a>
+                                    </div>
                                 </div>
                                 <div className="ten wide column">
                                     <h3 className="ui sub header">Information:</h3>
                                     <p className="instructions">
                                         This query has been detected <strong>{unexpectedQuery.seen}</strong> times in the "{unexpectedQuery.application.name}" application. It was last seen <strong><Moment fromNow>{unexpectedQuery.queriedAt}</Moment></strong>.
                                     </p>
-                                    <p className="instructions">If this doesn't look like a query your application would make, it may be the result of a <a href="#">NoSQL Injection attack</a>. Try to find locations in your application making similar queries and look for potential injection vulnerabilities.</p>
+                                    <p className="instructions">If this doesn't look like a type of query your application would make, it may be the result of a <a href="#">NoSQL Injection attack</a>. Try to find locations in your application making similar queries and look for potential injection vulnerabilities.</p>
                                     <p className="instructions">Here's the most similar expected query we have on record for your application:</p>
                                     <PrismCode className="language-javascript">{`db.${unexpectedQuery.collection}.${unexpectedQuery.type}(${unexpectedQuery.query})`}</PrismCode>
                                     <p className="instructions">Once you've identified where this unexpected query came from and fixed the vulnerability, mark this query as <strong>handled</strong>.</p>
                                     <p className="instructions">Otherwise, if this is a query that your application is expected to make, mark it as <strong>expected</strong>.</p>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
             );

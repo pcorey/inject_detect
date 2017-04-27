@@ -1,18 +1,13 @@
+import Moment from 'react-moment';
 import React from "react";
 import _ from "lodash";
-import Moment from 'react-moment';
 import { PrismCode } from "react-prism";
+import { line } from "./pretty";
 
 class ExpectedQueries extends React.Component {
 
     render() {
         let { application } = this.props;
-
-        function pretty(query) {
-            return query
-                .replace(/:"string"/g, ":String")
-                .replace(/:"date"/g, ":Date");
-        }
 
         if (_.isEmpty(application.expectedQueries)) {
             return (
@@ -39,7 +34,7 @@ class ExpectedQueries extends React.Component {
                                          </button>
                                      </div>
                                      <div className="header">
-                                         <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${pretty(query.query)})`}</PrismCode>
+                                         <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${line(query.query)})`}</PrismCode>
                                      </div>
                                  </div>
                              </div>

@@ -3,17 +3,12 @@ import React from "react";
 import _ from "lodash";
 import { Link } from "react-router-dom";
 import { PrismCode } from "react-prism";
+import { line } from "./pretty";
 
 class UnexpectedQueries extends React.Component {
 
     render() {
         let { application } = this.props;
-
-        function pretty(query) {
-            return query
-                .replace(/:"string"/g, ":String")
-                .replace(/:"date"/g, ":Date");
-        }
 
         if (_.isEmpty(application.unexpectedQueries)) {
             return (
@@ -40,7 +35,7 @@ class UnexpectedQueries extends React.Component {
                                          </div>
                                      </div>
                                      <div className="header">
-                                         <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${pretty(query.query)})`}</PrismCode>
+                                         <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${line(query.query)})`}</PrismCode>
                                      </div>
                                  </div>
                              </div>

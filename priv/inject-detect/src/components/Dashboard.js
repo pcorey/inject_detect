@@ -7,6 +7,18 @@ import { graphql } from "react-apollo";
 
 class Dashboard extends React.Component {
 
+    initProgress() {
+        window.$('.ui.progress').progress();
+    }
+
+    componentDidMount() {
+        this.initProgress();
+    }
+
+    componentDidUpdate() {
+        this.initProgress();
+    }
+
     render() {
         let { loading, user } = this.props.data;
 
@@ -38,7 +50,7 @@ class Dashboard extends React.Component {
                     <p className="instructions">
                         Your account current has <strong>2,532</strong> credits remaining. Your account is configured to purchase an additional <strong>100,000</strong> credits once it reaches <strong>2,000</strong> remaining credits. Feel free to edit these settings, or manually purchase additional credits in <Link to="/account">your account settings</Link>.
                     </p>
-                    <div className="ui progress">
+                    <div className="ui indicating progress" data-percent="5">
                         <div className="bar"></div>
                     </div>
                 </div>

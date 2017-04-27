@@ -26,7 +26,7 @@ class AddApplicationModal extends React.Component {
                         <div className="inline fields">
                             <div className="field">
                                 <div className="ui left icon input">
-                                    <i className="user icon"></i>
+                                    <i className="server icon"></i>
                                     <input type="text" name="application_name" placeholder="Application name" ref="application_name" required/>
                                 </div>
                             </div>
