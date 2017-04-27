@@ -36,7 +36,7 @@ class UnexpectedQuery extends React.Component {
                         <div className="section">
                             <div className="ui grid">
                                 <div className="six wide column">
-                                    <h3 className="ui sub header">Structure:</h3>
+                                    <h3 className="ui sub header">Query Structure:</h3>
                                     <PrismCode className="structure language-javascript">{`db.${unexpectedQuery.collection}.${unexpectedQuery.type}(${pretty(unexpectedQuery.query)})`}</PrismCode>
                                     <button className="ui green labeled icon button">
                                         <i className="checkmark icon"/>
@@ -46,6 +46,8 @@ class UnexpectedQuery extends React.Component {
                                         <i className="remove icon"/>
                                         Mark as handled
                                     </button>
+                                    <p className="instructions"><a href="#">What was the exact query?</a></p>
+                                    <p className="instructions"><a href="#">Is it NoSQL Injection?</a></p>
                                 </div>
                                 <div className="ten wide column">
                                     <h3 className="ui sub header">Information:</h3>
