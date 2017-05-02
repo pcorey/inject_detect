@@ -63,27 +63,39 @@ class Dashboard extends React.Component {
 
                 <div className="section" style={{width: "100%"}}>
                     <h3 className="ui sub header">Alerts:</h3>
-                    <p className="instructions">
-                        We've detected {unexpectedQueries.length} unexpected queries in your applications. These may be the result of NoSQL Injection attacks.
-                    </p>
-                    <div className="ui cards">
-                        {
-                            unexpectedQueries.map(query => {
-                                return (
-                                    <div key={query.id} className="ui fluid notification card">
-                                        <div className="content">
-                                            <div className="right floated meta">
-                                                <div className="ui icon buttons">
-                                                    <Link to={`/application/${query.application.id}`} className="ui button" data-tooltip="See more details about this unexpected query." data-position="top right"><i className="arrow right icon"></i></Link>
+                    {
+                        _.isEmpty(unexpectedQueries) ? (
+                            <div>
+                                <p className="instructions">
+                                    Your application hasn't made any unexpected queries. Congratulations!
+                                </p>
+                            </div>
+                        ) : (
+                            <div>
+                                <p className="instructions">
+                                    We've detected {unexpectedQueries.length} unexpected {unexpectedQueries.length == 1 ? "query" : "queries"} in your application{user.applications.length == 1 ? "" : "s"}. These may be the result of NoSQL Injection attacks.
+                                </p>
+                                <div className="ui cards">
+                                    {
+                                        unexpectedQueries.map(query => {
+                                            return (
+                                                <div key={query.id} className="ui fluid notification card">
+                                                    <div className="content">
+                                                        <div className="right floated meta">
+                                                            <div className="ui icon buttons">
+                                                                <Link to={`/application/${query.application.id}`} className="ui button" data-tooltip="See more details about this unexpected query." data-position="top right"><i className="arrow right icon"></i></Link>
+                                                            </div>
+                                                        </div>
+                                                        <p className="">We've detected an <strong style={{color: "#ea5e5e", margin: 0}}>unexpected query</strong> in <strong>{query.application.name}</strong>. The last time it was seen was <Moment fromNow>{query.queriedAt}</Moment>.</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <p className="">We've detected an <strong style={{color: "#ea5e5e", margin: 0}}>unexpected query</strong> in <strong>{query.application.name}</strong>. The last time it was seen was <Moment fromNow>{query.queriedAt}</Moment>.</p>
-                                        </div>
-                                    </div>
-                                );
-                            })
-                        }
-                    </div>
+                                            );
+                                        })
+                                    }
+                                </div>
+                            </div>
+                        )
+                    }
                 </div>
             </div>
         );

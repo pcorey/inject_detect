@@ -44,29 +44,69 @@ class Application extends React.Component {
 
                         <div className="section">
                             <h3 className="ui sub header">Unxpected queries:</h3>
-                            <div className="ui grid">
-                                <div className="thirteen wide column">
-                                    <p className="instructions">
-                                        We've detected {application.unexpectedQueries.length} unexpected queries made against this application. If any of the queries below seem suspicious, they may be the result of a NoSQL Injection attack. Use <Link to="/">our guides and suggestions</Link> to track down and fix any queries in your application that may be vulnerable to NoSQL Injection attacks.
-                                    </p>
-                                </div>
-                                <div className="three wide column graphic container">
-                                    <i className="ui warning sign graphic icon"/>
-                                </div>
-                            </div>
-                            <UnexpectedQueries application={application}/>
+                            {
+                                !application.unexpectedQueries.length ? (
+                                    <div>
+                                        <div className="ui grid">
+                                            <div className="thirteen wide column">
+                                                <p className="instructions">
+                                                    We've detected {application.unexpectedQueries.length} unexpected queries made against your application. If any of the queries below seem suspicious, they may be the result of a NoSQL Injection attack. Use <Link to="/">our guides and suggestions</Link> to track down and fix any queries in your application that may be vulnerable to NoSQL Injection attacks.
+                                                </p>
+                                            </div>
+                                            <div className="three wide column graphic container">
+                                                <i className="ui warning sign graphic icon"/>
+                                            </div>
+                                        </div>
+                                        <UnexpectedQueries application={application}/>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <div className="ui grid">
+                                            <div className="thirteen wide column">
+                                                <p className="instructions">
+                                                    <span>We haven't detected any unexpected queries made against your application. Congratulations! </span>
+                                                    {
+                                                        application.trainingMode ? (
+                                                            <span></span>
+                                                        ) : (
+                                                            <span>We'll keep an eye out for any unexpected queries.</span>
+                                                        )
+                                                    }
+                                                </p>
+                                            </div>
+                                            <div className="three wide column graphic container">
+                                                <i className="ui green checkmark graphic icon"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            }
                         </div>
 
                         <div className="section">
                             <h3 className="ui sub header">Expected queries:</h3>
-                            <div className="ui grid">
-                                <div className="thirteen wide column">
-                                    <p className="instructions">
-                                        Your application is expecting {application.expectedQueries.length} {application.expectedQueries.length == 1 ? "type of query" : "different queries"}. Add more queries by setting your application into <strong>Training Mode</strong>, or marking unexpected queries as expected.
-                                    </p>
-                                </div>
-                            </div>
-                            <ExpectedQueries application={application}/>
+                            {
+                                application.expectedQueries.length ? (
+                                    <div>
+                                        <div className="ui grid">
+                                            <div className="thirteen wide column">
+                                                <p className="instructions">
+                                                    Your application is expecting {application.expectedQueries.length} {application.expectedQueries.length == 1 ? "type of query" : "different queries"}. Add more queries by setting your application into <strong>Training Mode</strong>, or marking unexpected queries as expected.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <ExpectedQueries application={application}/>
+                                    </div>
+                                ) : (
+                                    <div className="ui grid">
+                                        <div className="thirteen wide column">
+                                            <p className="instructions">
+                                                Your application doesn't have any expected queries. Add more queries by setting your application into <strong>Training Mode</strong>, or marking unexpected queries as expected.
+                                            </p>
+                                        </div>
+                                    </div>
+                                )
+                            }
                         </div>
 
                     </div>
