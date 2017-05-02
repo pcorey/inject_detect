@@ -6,8 +6,17 @@ defmodule InjectDetect.State.UserTest do
   alias InjectDetect.State.User
 
   test "base user" do
-    assert User.new(%{}) == %{applications: []}
-    assert User.new(%{id: 123}) == %{id: 123, applications: []}
+    assert User.new(%{}) == %{applications: [],
+                              credits: 0,
+                              refill: true,
+                              refill_trigger: 5_000,
+                              refill_amount: 100_000}
+    assert User.new(%{id: 123}) == %{id: 123,
+                                     applications: [],
+                                     credits: 0,
+                                     refill: true,
+                                     refill_trigger: 5_000,
+                                     refill_amount: 100_000}
   end
 
   test "find by id" do

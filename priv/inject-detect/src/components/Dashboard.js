@@ -3,6 +3,7 @@ import React from "react";
 import _ from "lodash";
 import gql from "graphql-tag";
 import { Link } from "react-router-dom";
+import { commas } from "./pretty";
 import { graphql } from "react-apollo";
 
 class Dashboard extends React.Component {
@@ -48,9 +49,9 @@ class Dashboard extends React.Component {
                 <div className="section" style={{marginTop: 0}}>
                     <h3 className="ui sub header">Credits:</h3>
                     <p className="instructions">
-                        Your account current has <strong>2,532</strong> credits remaining. Your account is configured to purchase an additional <strong>100,000</strong> credits once it reaches <strong>2,000</strong> remaining credits. Feel free to edit these settings, or manually purchase additional credits in <Link to="/account">your account settings</Link>.
+                        Your account current has <strong>{commas(user.credits)}</strong> credits remaining. Your account is configured to purchase an additional <strong>{commas(user.refillAmount)}</strong> credits once it reaches <strong>{commas(user.refillTrigger)}</strong> remaining credits. Feel free to edit these settings, or manually purchase additional credits in <Link to="/account">your account settings</Link>.
                     </p>
-                    <div className="ui indicating progress" data-percent="5">
+                    <div className="ui indicating progress" data-percent={(user.credits/user.refillAmount) * 100}>
                         <div className="bar"></div>
                     </div>
                 </div>
@@ -90,6 +91,9 @@ export default graphql(gql`
     query {
         user {
             id
+            credits
+            refillTrigger
+            refillAmount
             applications {
                 name
                 unexpectedQueries {

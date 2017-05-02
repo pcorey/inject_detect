@@ -3,7 +3,14 @@ defmodule InjectDetect.State.User do
   alias InjectDetect.State
   alias InjectDetect.State.Application
 
-  def new(attrs), do: Map.put_new(attrs, :applications, [])
+  def new(attrs) do
+    attrs
+    |> Map.put_new(:applications, [])
+    |> Map.put_new(:credits, 0)
+    |> Map.put_new(:refill, true)
+    |> Map.put_new(:refill_trigger, 5_000)
+    |> Map.put_new(:refill_amount, 100_000)
+  end
 
   def find(attrs) do
     State.get()

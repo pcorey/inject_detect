@@ -9,3 +9,7 @@ export function line(query) {
         .replace(/:"string"/g, ":String")
         .replace(/:"date"/g, ":Date");
 }
+
+export function commas(number) {
+    return Number(number).toLocaleString();
+}
