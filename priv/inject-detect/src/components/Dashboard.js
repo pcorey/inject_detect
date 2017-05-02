@@ -37,19 +37,24 @@ class Dashboard extends React.Component {
                                  .value();
 
         return (
-
             <div className="ij-dashboard ui mobile stackable grid">
-
                 <div className="sixteen wide column">
                     <h1 className="ui header">
                         Dashboard
                     </h1>
                 </div>
-
                 <div className="section" style={{marginTop: 0}}>
                     <h3 className="ui sub header">Credits:</h3>
                     <p className="instructions">
-                        Your account current has <strong>{commas(user.credits)}</strong> credits remaining. Your account is configured to purchase an additional <strong>{commas(user.refillAmount)}</strong> credits once it reaches <strong>{commas(user.refillTrigger)}</strong> remaining credits. Feel free to edit these settings, or manually purchase additional credits in <Link to="/account">your account settings</Link>.
+                        <span>Your account current has <strong>{commas(user.credits)}</strong> credits remaining. </span>
+                        {
+                            user.refill ? (
+                                <span>Your account is configured to purchase an additional <strong>{commas(user.refillAmount)}</strong> credits once it reaches <strong>{commas(user.refillTrigger)}</strong> remaining credits. </span>
+                            ) : (
+                                <span>Your account is not configured to purchase additional credits. </span>
+                            )
+                        }
+                        <span>Feel free to edit these settings, or manually purchase additional credits in <Link to="/account">your account settings</Link>.</span>
                     </p>
                     <div className="ui indicating progress" data-percent={(user.credits/user.refillAmount) * 100}>
                         <div className="bar"></div>
@@ -59,7 +64,7 @@ class Dashboard extends React.Component {
                 <div className="section" style={{width: "100%"}}>
                     <h3 className="ui sub header">Alerts:</h3>
                     <p className="instructions">
-                      We've detected {unexpectedQueries.length} unexpected queries in your applications. These may be the result of NoSQL Injection attacks.
+                        We've detected {unexpectedQueries.length} unexpected queries in your applications. These may be the result of NoSQL Injection attacks.
                     </p>
                     <div className="ui cards">
                         {
@@ -78,11 +83,9 @@ class Dashboard extends React.Component {
                                 );
                             })
                         }
+                    </div>
                 </div>
-                </div>
-
-                </div>
-
+            </div>
         );
     }
 };
@@ -92,6 +95,7 @@ export default graphql(gql`
         user {
             id
             credits
+            refill
             refillTrigger
             refillAmount
             applications {

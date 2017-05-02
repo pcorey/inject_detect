@@ -57,6 +57,7 @@ defmodule InjectDetect.Schema.Types do
     field :email, :string
     field :auth_token, :string
     field :credits, :integer
+    field :refill, :boolean
     field :refill_trigger, :integer
     field :refill_amount, :integer
     field :applications, list_of(:application)
