@@ -45,7 +45,7 @@ class Application extends React.Component {
                         <div className="section">
                             <h3 className="ui sub header">Unxpected queries:</h3>
                             {
-                                !application.unexpectedQueries.length ? (
+                                application.unexpectedQueries.length ? (
                                     <div>
                                         <div className="ui grid">
                                             <div className="thirteen wide column">
