@@ -5,6 +5,8 @@ defmodule InjectDetect.State.UnexpectedQuery do
   def new(attrs) do
     attrs
     |> Map.put_new(:seen, 0)
+    |> Map.put_new(:expected, false)
+    |> Map.put_new(:handled, false)
   end
 
   def find(%{collection: collection, query: query, type: type}) do

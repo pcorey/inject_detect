@@ -7,8 +7,13 @@ defmodule InjectDetect.State.UnexpectedQueryTest do
   alias InjectDetect.State.User
 
   test "base expected query" do
-    assert UnexpectedQuery.new(%{}) == %{seen: 0}
-    assert UnexpectedQuery.new(%{id: 123}) == %{id: 123, seen: 0}
+    assert UnexpectedQuery.new(%{}) == %{seen: 0,
+                                         expected: false,
+                                         handled: false}
+    assert UnexpectedQuery.new(%{id: 123}) == %{id: 123,
+                                                seen: 0,
+                                                expected: false,
+                                                handled: false}
   end
 
   test "find by id" do
