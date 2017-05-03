@@ -28,6 +28,12 @@ defmodule InjectDetect.Schema.Types do
     field :seen, :integer
     field :expected, :boolean
     field :handled, :boolean
+    field :similar_query, :string do
+      resolve fn
+        (unexpected_query, _, _) ->
+          {:ok, Poison.encode!(unexpected_query[:similar_query])}
+      end
+    end
     field :query, :string do
       resolve fn
         (unexpected_query, _, _) ->

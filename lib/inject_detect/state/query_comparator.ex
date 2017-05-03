@@ -25,7 +25,7 @@ defmodule InjectDetect.State.QueryComparator do
     size
   end
 
-  def find_similar_query(query, expected_queries) do
+  def find_similar_query(expected_queries, query) do
     Enum.sort(expected_queries, &(distance(&1.query, query) <= distance(&2.query, query)))
     |> List.first
   end

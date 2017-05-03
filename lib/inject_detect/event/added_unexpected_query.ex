@@ -4,7 +4,8 @@ defmodule InjectDetect.Event.AddedUnexpectedQuery do
             collection: nil,
             queried_at: nil,
             query: nil,
-            type: nil
+            type: nil,
+            similar_query: nil
 
   def convert_from(event, _), do: struct(__MODULE__, event)
 

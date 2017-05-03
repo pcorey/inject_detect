@@ -14,6 +14,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   alias InjectDetect.State.Application
   alias InjectDetect.State.ExpectedQuery
   alias InjectDetect.State.UnexpectedQuery
+  alias InjectDetect.State.QueryComparator
 
   import InjectDetect, only: [generate_id: 0]
 
@@ -47,12 +48,27 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
     end
   end
 
-  def ingest_query(%{training_mode: false}, query, {added, events}) do
+  def find_similar_query(query, expected_queries) do
+    expected_queries
+    |> Enum.filter(fn
+                     %{collection: collection, type: type} ->
+                       collection == query.collection && type == query.type
+                   end)
+    |> QueryComparator.find_similar_query(query)
+    |> case do
+         nil -> nil
+         %{query: query} -> query
+       end
+  end
+
+  def ingest_query(application = %{training_mode: false}, query, {added, events}) do
     case {ExpectedQuery.find(query), find_unexpected_query(query, added)} do
       {nil, nil}       -> query = Map.put_new(query, :id, generate_id)
+                          similar_query = find_similar_query(query, application.expected_queries)
                           {[query | added],
                            events ++ [struct(IngestedQuery, query),
-                                      struct(AddedUnexpectedQuery, query),
+                                      struct(AddedUnexpectedQuery,
+                                             Map.put_new(query, :similar_query, similar_query)),
                                       struct(IngestedUnexpectedQuery, query)]}
       {nil, %{id: id}} -> query = Map.put_new(query, :id, id)
                           {added,

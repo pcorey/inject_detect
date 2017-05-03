@@ -64,8 +64,16 @@ class UnexpectedQuery extends React.Component {
                                         This query has been detected <strong>{unexpectedQuery.seen}</strong> times in the "{unexpectedQuery.application.name}" application. It was last seen <strong><Moment fromNow>{unexpectedQuery.queriedAt}</Moment></strong>.
                                     </p>
                                     <p className="instructions">If this doesn't look like a type of query your application would make, it may be the result of a <a href="#">NoSQL Injection attack</a>. Try to find locations in your application making similar queries and look for potential injection vulnerabilities.</p>
-                                    <p className="instructions">Here's the most similar expected query we have on record for your application:</p>
-                                    <PrismCode className="language-javascript">{`db.${unexpectedQuery.collection}.${unexpectedQuery.type}(${line(similar(unexpectedQuery.query))})`}</PrismCode>
+                                    {
+                                        JSON.parse(unexpectedQuery.similarQuery) ? (
+                                            <div>
+                                                <p className="instructions">Here's the most similar expected query we had on record at the time we spotted this query:</p>
+                                                <PrismCode className="language-javascript">{`db.${unexpectedQuery.collection}.${unexpectedQuery.type}(${line(unexpectedQuery.similarQuery)})`}</PrismCode>
+                                            </div>
+                                        ) : (
+                                            <p className="instructions">We didn't have any similar expected queries on record when we spotted this query.</p>
+                                        )
+                                    }
                                     <p className="instructions">Once you've identified where this unexpected query came from and fixed the vulnerability, mark this query as <strong>handled</strong>.</p>
                                     <p className="instructions">Otherwise, if this is a query that your application is expected to make, mark it as <strong>expected</strong>.</p>
                                 </div>
@@ -89,6 +97,7 @@ export default graphql(gql`
             queriedAt
             collection
             seen
+            similarQuery
             type
             expected
             handled
