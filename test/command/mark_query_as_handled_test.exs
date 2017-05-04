@@ -22,7 +22,6 @@ defmodule InjectDetect.MarkQueryAsHandledTest do
     :ok
   end
 
-
   test "marks an unexpected query as expected" do
     %GetStarted{email: "email@example.com",
                 application_name: "Foo Application",

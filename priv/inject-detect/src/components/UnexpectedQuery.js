@@ -9,12 +9,38 @@ import { graphql } from "react-apollo";
 
 class UnexpectedQuery extends React.Component {
 
+    state = {
+        markingAsExpected: false,
+        markingAsHandled: false
+    }
+
+    markAsExpected = () => {
+        let unexpectedQuery = this.props.data.unexpectedQuery;
+        this.setState({ markingAsExpected: true });
+        this.props.markAsExpected(unexpectedQuery.application.id, unexpectedQuery.id)
+            .catch((err) => {
+                console.error(err);
+            })
+            .then(() => {
+                this.setState({ markingAsExpected: false });
+            });
+    }
+
+    markAsHandled = () => {
+        let unexpectedQuery = this.props.data.unexpectedQuery;
+        this.setState({ markingAsHandled: true });
+        this.props.markAsHandled(unexpectedQuery.application.id, unexpectedQuery.id)
+            .catch((err) => {
+                console.error(err);
+            })
+            .then(() => {
+                this.setState({ markingAsHandled: false });
+            });
+    }
+
     render() {
         let { unexpectedQuery, loading } = this.props.data;
-
-        function similar(query) {
-            return query;
-        }
+        let { markingAsExpected, markingAsHandled } = this.state;
 
         if (loading) {
             return (
@@ -36,7 +62,7 @@ class UnexpectedQuery extends React.Component {
                                     <PrismCode className="structure language-javascript">{`db.${unexpectedQuery.collection}.${unexpectedQuery.type}(${block(unexpectedQuery.query)})`}</PrismCode>
                                     {
                                         !unexpectedQuery.handled ? (
-                                            <button disabled={unexpectedQuery.expected || unexpectedQuery.handled} className="ui labeled icon button">
+                                            <button disabled={unexpectedQuery.expected || unexpectedQuery.handled} className={`ui labeled icon button ${markingAsExpected ? "loading" : ""}` }onClick={this.markAsExpected}>
                                                 <i className="checkmark icon"/>
                                                 Mark{unexpectedQuery.expected ? "ed" : ""} as expected
                                             </button>
@@ -44,7 +70,7 @@ class UnexpectedQuery extends React.Component {
                                     }
                                     {
                                         !unexpectedQuery.expected ? (
-                                            <button disabled={unexpectedQuery.expected || unexpectedQuery.handled} className="ui brand labeled icon button">
+                                            <button disabled={unexpectedQuery.expected || unexpectedQuery.handled} className={`ui brand labeled icon button ${markingAsHandled ? "loading" : ""}` }onClick={this.markAsHandled}>
                                                 <i className="remove icon"/>
                                                 Mark{unexpectedQuery.handled ? "ed" : ""} as handled
                                             </button>
@@ -89,7 +115,31 @@ class UnexpectedQuery extends React.Component {
     }
 };
 
-export default graphql(gql`
+const MarkAsExpected = graphql(gql`
+    mutation markQueryAsExpected ($application_id: String!, $query_id: String!) {
+        markQueryAsExpected(application_id: $application_id, query_id: $query_id) {
+            id
+        }
+    }
+`, {
+    props: ({ mutate }) => ({
+        markAsExpected: (application_id, query_id) => mutate({ variables: { application_id, query_id } })
+    })
+});
+
+const MarkAsHandled = graphql(gql`
+    mutation markQueryAsHandled ($application_id: String!, $query_id: String!) {
+        markQueryAsHandled(application_id: $application_id, query_id: $query_id) {
+            id
+        }
+    }
+`, {
+    props: ({ mutate }) => ({
+        markAsHandled: (application_id, query_id) => mutate({ variables: { application_id, query_id } })
+    })
+});
+
+const Query = graphql(gql`
     query unexpectedQuery($id: String!) {
         unexpectedQuery(id: $id) {
             id
@@ -114,4 +164,6 @@ export default graphql(gql`
         },
         pollInterval: 5000
     })
-})(UnexpectedQuery);
+});
+
+export default MarkAsExpected(MarkAsHandled(Query(UnexpectedQuery)));

@@ -3,6 +3,8 @@ defmodule InjectDetect.Schema do
 
   alias InjectDetect.Command.{
     GetStarted,
+    MarkQueryAsExpected,
+    MarkQueryAsHandled,
     RequestSignInToken,
     SignOut,
     ToggleTrainingMode,
