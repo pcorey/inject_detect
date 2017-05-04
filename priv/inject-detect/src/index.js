@@ -1,4 +1,5 @@
 import "./styles/index.styl";
+import Account from "./components/Account";
 import Application from "./components/Application";
 import Dashboard from "./components/Dashboard";
 import GetStarted from "./components/GetStarted";
@@ -25,6 +26,7 @@ ReactDOM.render(
                         <Route path="/get-started" component={GetStarted}/>
                         <Route path="/verify/:token" component={VerifyRequestedToken}/>
                         <PrivateRoute exact path="/" component={Dashboard}/>
+                        <PrivateRoute path="/account" component={Account}/>
                         <PrivateRoute path="/application/:id" component={Application}/>
                         <PrivateRoute path="/unexpected-query/:id" component={UnexpectedQuery}/>
                     </div>
