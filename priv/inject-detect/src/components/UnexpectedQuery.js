@@ -50,7 +50,7 @@ class UnexpectedQuery extends React.Component {
                                             </button>
                                         ) : (null)
                                     }
-                                    <h3 className="ui sub header">Help:</h3>
+                                    <h3 className="ui sub header">Help / FAQ:</h3>
                                     <div className="ui bulleted list">
                                         <a className="item">What does this mean?</a>
                                         <a className="item">What was the exact query?</a>
@@ -67,11 +67,11 @@ class UnexpectedQuery extends React.Component {
                                     {
                                         JSON.parse(unexpectedQuery.similarQuery) ? (
                                             <div>
-                                                <p className="instructions">Here's the most similar expected query we had on record at the time we spotted this query:</p>
+                                                <p className="instructions">Here's the most <Link to="#">similar expected query</Link> we found when we spotted this query:</p>
                                                 <PrismCode className="language-javascript">{`db.${unexpectedQuery.collection}.${unexpectedQuery.type}(${line(unexpectedQuery.similarQuery)})`}</PrismCode>
                                             </div>
                                         ) : (
-                                            <p className="instructions">We didn't have any similar expected queries on record when we spotted this query.</p>
+                                            <p className="instructions">We couldn't find any <Link to="#">similar expected queries</Link> when we spotted this query.</p>
                                         )
                                     }
                                     <p className="instructions">Once you've identified where this unexpected query came from and fixed the vulnerability, mark this query as <strong>handled</strong>.</p>
