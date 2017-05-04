@@ -2,7 +2,7 @@ import Moment from 'react-moment';
 import React from "react";
 import _ from "lodash";
 import gql from "graphql-tag";
-import { Link } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import { PrismCode } from "react-prism";
 import { block, line } from "./pretty";
 import { graphql } from "react-apollo";
@@ -11,7 +11,8 @@ class UnexpectedQuery extends React.Component {
 
     state = {
         markingAsExpected: false,
-        markingAsHandled: false
+        markingAsHandled: false,
+        redirect: false
     }
 
     markAsExpected = () => {
@@ -22,7 +23,7 @@ class UnexpectedQuery extends React.Component {
                 console.error(err);
             })
             .then(() => {
-                this.setState({ markingAsExpected: false });
+                this.setState({ markingAsExpected: false, redirect: true });
             });
     }
 
@@ -34,13 +35,19 @@ class UnexpectedQuery extends React.Component {
                 console.error(err);
             })
             .then(() => {
-                this.setState({ markingAsHandled: false });
+                this.setState({ markingAsHandled: false, redirect: true });
             });
     }
 
     render() {
         let { unexpectedQuery, loading } = this.props.data;
-        let { markingAsExpected, markingAsHandled } = this.state;
+        let { markingAsExpected, markingAsHandled, redirect } = this.state;
+
+        if (redirect) {
+            return (
+                <Redirect to={`/application/${unexpectedQuery.application.id}`}/>
+            );
+        }
 
         if (loading) {
             return (

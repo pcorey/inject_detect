@@ -98,6 +98,17 @@ defmodule InjectDetect.Schema do
     Application.find(application_id)
   end
 
+  def unexpected_query(%{application_id: application_id, query_id: query_id}) do
+    Lens.key(:users)
+    |> Lens.all
+    |> Lens.key(:applications)
+    |> Lens.filter(&(&1.id == application_id))
+    |> Lens.key(:unexpected_queries)
+    |> Lens.filter(&(&1.id == query_id))
+    |> Lens.to_list(State.get() |> elem(1))
+    |> List.first
+  end
+
   mutation do
     field :get_started, type: :user do
       arg :email, non_null(:string)
@@ -131,16 +142,16 @@ defmodule InjectDetect.Schema do
       resolve auth handle(ToggleAlerting, &application/1)
     end
 
-    field :mark_query_as_expected, type: :application do
+    field :mark_query_as_expected, type: :unexpected_query do
       arg :application_id, non_null(:string)
       arg :query_id, non_null(:string)
-      resolve auth handle(MarkQueryAsExpected, &application/1)
+      resolve auth handle(MarkQueryAsExpected, &unexpected_query/1)
     end
 
-    field :mark_query_as_handled, type: :application do
+    field :mark_query_as_handled, type: :unexpected_query do
       arg :application_id, non_null(:string)
       arg :query_id, non_null(:string)
-      resolve auth handle(MarkQueryAsHandled, &application/1)
+      resolve auth handle(MarkQueryAsHandled, &unexpected_query/1)
     end
 
   end

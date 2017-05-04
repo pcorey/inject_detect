@@ -127,6 +127,20 @@ export default graphql(ApplicationQuery, {
         variables: {
             id: _.get(props, "match.params.id")
         },
+        reducer: (previousResults, action) => {
+            switch (action.operationName) {
+                case "getStarted":
+                    return _.extend({}, previousResults, {
+                        user: _.get(action, "result.data.getStarted")
+                    });
+                case "signOut":
+                    return _.extend({}, previousResults, {
+                        user: null
+                    });
+                default:
+                    return previousResults;
+            }
+        },
         pollInterval: 5000
     })
 })(Application);

@@ -17,8 +17,9 @@ defimpl InjectDetect.Command,
   end
 
   def handle_for_query(query, application_id) do
+    context = %{application_id: application_id, query_id: query.id}
     {:ok, [%MarkedQueryAsHandled{application_id: application_id,
-                                  query_id: query.id}]}
+                                  query_id: query.id}], context}
   end
 
   def handle_for_application(nil, _command) do
