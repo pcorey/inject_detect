@@ -2,11 +2,16 @@ import ExpectedQueries from "./ExpectedQueries";
 import React from "react";
 import UnexpectedQueries from "./UnexpectedQueries";
 import _ from "lodash";
+import gql from "graphql-tag";
 import { ApplicationQuery } from "../graphql";
 import { Link } from "react-router-dom";
 import { graphql } from "react-apollo";
 
 class Application extends React.Component {
+
+    removeExpectedQuery = (query_id) => {
+        
+    }
 
     render() {
         let { application, loading } = this.props.data;
@@ -122,7 +127,7 @@ class Application extends React.Component {
     }
 };
 
-export default graphql(ApplicationQuery, {
+const Query = graphql(ApplicationQuery, {
     options: props => ({
         variables: {
             id: _.get(props, "match.params.id")
@@ -143,4 +148,27 @@ export default graphql(ApplicationQuery, {
         },
         pollInterval: 5000
     })
-})(Application);
+});
+
+const RemoveExpectedQuery = graphql(gql`
+    mutation removeExpectedQuery ($application_id: String!, $query_id: String!) {
+        removeExpectedQuery(application_id: $application_id, query_id: $query_id) {
+            id
+            expectedQueries {
+                id
+            }
+        }
+    }
+`, {
+    props: ({ mutate }) => ({
+        removeExpectedQuery: (application_id, query_id) => mutate({
+            variables: { application_id, query_id },
+            refetchQueries: [{
+                query: ApplicationQuery,
+                variables: { id: application_id }
+            }]
+        })
+    })
+})
+
+export default RemoveExpectedQuery(Query(Application));

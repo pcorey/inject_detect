@@ -1,5 +1,6 @@
 import Moment from 'react-moment';
 import React from "react";
+import RemoveExpectedQuery from "./RemoveExpectedQuery";
 import _ from "lodash";
 import { PrismCode } from "react-prism";
 import { line } from "./pretty";
@@ -29,9 +30,7 @@ class ExpectedQueries extends React.Component {
                                  <div className="content">
                                      <div className="ui right floated meta">
                                          Last seen: <Moment fromNow>{query.queriedAt}</Moment>
-                                         <button className="ui icon button" data-tooltip="Remove query from set of 'expected queries'." data-position="top right">
-                                             <i className="trash icon"></i>
-                                         </button>
+                                         <RemoveExpectedQuery application_id={application.id} query_id={query.id}/>
                                      </div>
                                      <div className="header">
                                          <PrismCode className="language-javascript">{`db.${query.collection}.${query.type}(${line(query.query)})`}</PrismCode>

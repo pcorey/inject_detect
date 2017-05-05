@@ -5,6 +5,7 @@ defmodule InjectDetect.Schema do
     GetStarted,
     MarkQueryAsExpected,
     MarkQueryAsHandled,
+    RemoveExpectedQuery,
     RequestSignInToken,
     SignOut,
     ToggleTrainingMode,
@@ -152,6 +153,12 @@ defmodule InjectDetect.Schema do
       arg :application_id, non_null(:string)
       arg :query_id, non_null(:string)
       resolve auth handle(MarkQueryAsHandled, &application/1)
+    end
+
+    field :remove_expected_query, type: :application do
+      arg :application_id, non_null(:string)
+      arg :query_id, non_null(:string)
+      resolve auth handle(RemoveExpectedQuery, &application/1)
     end
 
   end
