@@ -142,16 +142,16 @@ defmodule InjectDetect.Schema do
       resolve auth handle(ToggleAlerting, &application/1)
     end
 
-    field :mark_query_as_expected, type: :unexpected_query do
+    field :mark_query_as_expected, type: :application do
       arg :application_id, non_null(:string)
       arg :query_id, non_null(:string)
-      resolve auth handle(MarkQueryAsExpected, &unexpected_query/1)
+      resolve auth handle(MarkQueryAsExpected, &application/1)
     end
 
-    field :mark_query_as_handled, type: :unexpected_query do
+    field :mark_query_as_handled, type: :application do
       arg :application_id, non_null(:string)
       arg :query_id, non_null(:string)
-      resolve auth handle(MarkQueryAsHandled, &unexpected_query/1)
+      resolve auth handle(MarkQueryAsHandled, &application/1)
     end
 
   end

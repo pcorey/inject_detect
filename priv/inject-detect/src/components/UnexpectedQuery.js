@@ -2,8 +2,9 @@ import Moment from 'react-moment';
 import React from "react";
 import _ from "lodash";
 import gql from "graphql-tag";
-import { Redirect, Link } from "react-router-dom";
+import { ApplicationQuery } from "../graphql";
 import { PrismCode } from "react-prism";
+import { Redirect, Link } from "react-router-dom";
 import { block, line } from "./pretty";
 import { graphql } from "react-apollo";
 
@@ -126,11 +127,24 @@ const MarkAsExpected = graphql(gql`
     mutation markQueryAsExpected ($application_id: String!, $query_id: String!) {
         markQueryAsExpected(application_id: $application_id, query_id: $query_id) {
             id
+            unexpectedQueries {
+                id
+                collection
+                queriedAt
+                query
+                type
+            }
         }
     }
 `, {
     props: ({ mutate }) => ({
-        markAsExpected: (application_id, query_id) => mutate({ variables: { application_id, query_id } })
+        markAsExpected: (application_id, query_id) => mutate({
+            variables: { application_id, query_id },
+            refetchQueries: [{
+                query: ApplicationQuery,
+                variables: { id: application_id }
+            }]
+        })
     })
 });
 
@@ -138,11 +152,24 @@ const MarkAsHandled = graphql(gql`
     mutation markQueryAsHandled ($application_id: String!, $query_id: String!) {
         markQueryAsHandled(application_id: $application_id, query_id: $query_id) {
             id
+            unexpectedQueries {
+                id
+                collection
+                queriedAt
+                query
+                type
+            }
         }
     }
 `, {
     props: ({ mutate }) => ({
-        markAsHandled: (application_id, query_id) => mutate({ variables: { application_id, query_id } })
+        markAsHandled: (application_id, query_id) => mutate({
+            variables: { application_id, query_id },
+            refetchQueries: [{
+                query: ApplicationQuery,
+                variables: { id: application_id }
+            }]
+        })
     })
 });
 
