@@ -1,3 +1,4 @@
+import Confirm from "./Confirm";
 import React from "react";
 import _ from "lodash";
 import gql from "graphql-tag";
@@ -15,7 +16,7 @@ class Application extends React.Component {
         this.setState({
             removing: true
         });
-        this.props.removeExpectedQuery(application_id, query_id)
+        return this.props.removeExpectedQuery(application_id, query_id)
             .catch((err) => {
                 console.error(err);
             })
@@ -30,9 +31,11 @@ class Application extends React.Component {
         let { removing } = this.state;
 
         return (
-            <button className={`ui icon button`} disabled={removing} data-tooltip="Remove query from set of 'expected queries'." data-position="top right" onClick={this.removeExpectedQuery}>
-                <i className="trash icon"></i>
-            </button>
+            <Confirm header="Remove Expected Query?" prompt="Are you sure you want to remove this expected query? Once removed, any other instances of this type of query will be reported as unexpected queries." positive="Remove" negative="Cancel" callback={this.removeExpectedQuery}>
+                <button className={`ui icon button`} disabled={removing} data-tooltip="Remove query from set of 'expected queries'." data-position="top right">
+                    <i className="trash icon"></i>
+                </button>
+            </Confirm>
         );
     }
 };

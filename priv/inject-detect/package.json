@@ -54,7 +54,8 @@
     "react-dom": "^15.4.2",
     "react-moment": "^0.2.2",
     "react-prism": "^4.0.0",
-    "react-router-dom": "^4.0.0"
+    "react-router-dom": "^4.0.0",
+    "semantic-ui-react": "^0.68.3"
   },
   "scripts": {
     "start": "node scripts/start.js",

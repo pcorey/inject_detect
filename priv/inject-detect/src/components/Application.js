@@ -1,4 +1,5 @@
 import ExpectedQueries from "./ExpectedQueries";
+import ApplicationSettings from "./ApplicationSettings";
 import React from "react";
 import UnexpectedQueries from "./UnexpectedQueries";
 import _ from "lodash";
@@ -8,10 +9,6 @@ import { Link } from "react-router-dom";
 import { graphql } from "react-apollo";
 
 class Application extends React.Component {
-
-    removeExpectedQuery = (query_id) => {
-        
-    }
 
     render() {
         let { application, loading } = this.props.data;
@@ -41,9 +38,7 @@ class Application extends React.Component {
                                     <div className="header">Application configuration</div>
                                     <p>Training mode is <strong>{application.training_mode ? "on" : "off"}</strong>. Alerting is <strong>{application.alerting ? "on" : "off"}</strong>.</p>
                                 </div>
-                                <button className="ui icon button">
-                                    <i className="settings icon"></i>
-                                </button>
+                                <ApplicationSettings application={application}/>
                             </div>
                         </div>
 
