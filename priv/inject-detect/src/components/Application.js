@@ -31,12 +31,12 @@ class Application extends React.Component {
                             Application: {application.name}
                         </h1>
 
-                        <div className="ui icon message" style={{marginTop: "4em"}}>
+                        <div className="ui icon message application-configuration" style={{marginTop: "4em"}}>
                             <i className="settings icon"></i>
                             <div className="content configuration">
                                 <div>
                                     <div className="header">Application configuration</div>
-                                    <p>Training mode is <strong>{application.training_mode ? "on" : "off"}</strong>. Alerting is <strong>{application.alerting ? "on" : "off"}</strong>.</p>
+                                    <p>Training mode is <strong>{application.trainingMode ? "on" : "off"}</strong>. Alerting is <strong>{application.alerting ? "on" : "off"}</strong>.</p>
                                 </div>
                                 <ApplicationSettings application={application}/>
                             </div>

@@ -5,9 +5,11 @@ defmodule InjectDetect.Schema do
     GetStarted,
     MarkQueryAsExpected,
     MarkQueryAsHandled,
+    RegenerateApplicationToken,
     RemoveExpectedQuery,
     RequestSignInToken,
     SignOut,
+    ToggleAlerting,
     ToggleTrainingMode,
     VerifyRequestedToken,
   }
@@ -136,6 +138,12 @@ defmodule InjectDetect.Schema do
       arg :application_id, non_null(:string)
       middleware Auth
       resolve handle(ToggleAlerting, &application/1)
+    end
+
+    field :regenerate_application_token, type: :application do
+      arg :application_id, non_null(:string)
+      middleware Auth
+      resolve handle(RegenerateApplicationToken, &application/1)
     end
 
     field :mark_query_as_expected, type: :application do

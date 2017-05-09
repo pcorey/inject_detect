@@ -59,6 +59,6 @@ const RemoveExpectedQuery = graphql(gql`
             }]
         })
     })
-})
+});
 
 export default RemoveExpectedQuery(Application);
