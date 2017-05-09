@@ -15,23 +15,14 @@ defmodule InjectDetect.Schema do
   alias InjectDetect.State
   alias InjectDetect.State.User
   alias InjectDetect.State.Application
+  alias InjectDetect.Web.Middleware.Auth
 
   import_types InjectDetect.Schema.Types
-
-  def auth(resolver) do
-    error = {:error, %{code: :not_authenticated,
-                       error: "Not authenticated",
-                       message: "Not authenticated"}}
-    fn
-      (_args, %{context: %{user_id: nil}})     -> error
-      (args, info = %{context: %{user_id: _}}) -> resolver.(args, info)
-      (_args, _info)                           -> error
-    end
-  end
 
   def resolve_user(_args, %{context: %{user_id: user_id}}) do
     {:ok, User.find(user_id)}
   end
+  def resolve_user(_args, _), do: {:ok, nil}
 
   def resolve_users(_args, %{context: %{user_id: _user_id}}) do
     {:ok, state} = State.get()
@@ -62,7 +53,8 @@ defmodule InjectDetect.Schema do
 
   query do
     field :users, list_of(:user) do
-      resolve auth &resolve_users/2
+      middleware Auth
+      resolve &resolve_users/2
     end
 
     field :user, :user do
@@ -130,35 +122,41 @@ defmodule InjectDetect.Schema do
     end
 
     field :sign_out, type: :user do
-      resolve auth handle(SignOut, &user/1)
+      middleware Auth
+      resolve handle(SignOut, &user/1)
     end
 
     field :toggle_training_mode, type: :application do
       arg :application_id, non_null(:string)
-      resolve auth handle(ToggleTrainingMode, &application/1)
+      middleware Auth
+      resolve handle(ToggleTrainingMode, &application/1)
     end
 
     field :toggle_alerting, type: :application do
       arg :application_id, non_null(:string)
-      resolve auth handle(ToggleAlerting, &application/1)
+      middleware Auth
+      resolve handle(ToggleAlerting, &application/1)
     end
 
     field :mark_query_as_expected, type: :application do
       arg :application_id, non_null(:string)
       arg :query_id, non_null(:string)
-      resolve auth handle(MarkQueryAsExpected, &application/1)
+      middleware Auth
+      resolve handle(MarkQueryAsExpected, &application/1)
     end
 
     field :mark_query_as_handled, type: :application do
       arg :application_id, non_null(:string)
       arg :query_id, non_null(:string)
-      resolve auth handle(MarkQueryAsHandled, &application/1)
+      middleware Auth
+      resolve handle(MarkQueryAsHandled, &application/1)
     end
 
     field :remove_expected_query, type: :application do
       arg :application_id, non_null(:string)
       arg :query_id, non_null(:string)
-      resolve auth handle(RemoveExpectedQuery, &application/1)
+      middleware Auth
+      resolve handle(RemoveExpectedQuery, &application/1)
     end
 
   end

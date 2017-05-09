@@ -31,11 +31,13 @@ defmodule InjectDetect.Router do
     post "/ingest", IngestController, :create
   end
 
-  forward "/graphiql", Absinthe.Plug.GraphiQL, schema: InjectDetect.Schema
+  scope "/graphiql" do
+    pipe_through :graphql
+    forward "/", Absinthe.Plug.GraphiQL, schema: InjectDetect.Schema
+  end
 
   scope "/graphql" do
     pipe_through :graphql
-
     forward "/", Absinthe.Plug, schema: InjectDetect.Schema
   end
 
