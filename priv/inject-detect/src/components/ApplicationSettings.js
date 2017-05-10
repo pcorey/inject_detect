@@ -24,7 +24,7 @@ class ApplicationSettings extends React.Component {
     }
 
     regenerateApplicationToken = () => {
-        console.log("regenerate")
+        this.props.regenerateApplicationToken(this.props.application.id);
     }
 
     callback = () => {
@@ -73,7 +73,7 @@ class ApplicationSettings extends React.Component {
                             <p className="instructions" style={{marginTop: 0}}>Your <strong>application secret</strong> should be given to your Meteor plugin and is used to identify your application as it sends queries to Inject Detect:</p>
 
                             <Form.Field>
-                                <Input type="text" value={application.token} icon={<Icon name="refresh" circular link onClick={this.regenerateApplicationSecret}/>}/>
+                                <Input readOnly type="text" value={application.token} icon={<Icon name="refresh" circular link onClick={this.regenerateApplicationToken}/>}/>
                             </Form.Field>
                         </Form>
 
@@ -116,4 +116,19 @@ const ToggleAlerting = graphql(gql`
     })
 });
 
-export default ToggleTrainingMode(ToggleAlerting(ApplicationSettings));
+const RegenerateApplicationToken = graphql(gql`
+    mutation regenerateApplicationToken ($application_id: String!) {
+        regenerateApplicationToken (application_id: $application_id) {
+            id
+            token
+        }
+    }
+`, {
+    props: ({ mutate }) => ({
+        regenerateApplicationToken: (application_id) => mutate({
+            variables: { application_id }
+        })
+    })
+});
+
+export default RegenerateApplicationToken(ToggleTrainingMode(ToggleAlerting(ApplicationSettings)));
