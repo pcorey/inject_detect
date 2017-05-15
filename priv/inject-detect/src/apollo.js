@@ -3,12 +3,12 @@ import gql from "graphql-tag";
 import _ from "lodash";
 
 const networkInterface = createNetworkInterface({
-    uri: _.get(process.env, "REACT_APP_GRAPHQL_URL"),
-    dataIdFromObject: object => object.id
+    uri: _.get(process.env, "REACT_APP_GRAPHQL_URL")
 });
 
 export const client = new ApolloClient({
     networkInterface,
+    dataIdFromObject: object => object.id
 });
 
 networkInterface.use([{

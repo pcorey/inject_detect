@@ -1,12 +1,16 @@
-import Moment from 'react-moment';
 import React from "react";
+import StripeCheckout from 'react-stripe-checkout';
 import _ from "lodash";
 import gql from "graphql-tag";
-import { Link } from "react-router-dom";
+import { Button } from "semantic-ui-react";
 import { commas } from "./pretty";
 import { graphql } from "react-apollo";
 
 class Account extends React.Component {
+
+    state = {
+        token: undefined
+    }
 
     initProgress() {
         window.$('.ui.progress').progress();
@@ -18,6 +22,19 @@ class Account extends React.Component {
 
     componentDidUpdate() {
         this.initProgress();
+    }
+
+    onToken = (token) => {
+        console.log("token", token)
+        this.setState({ token });
+        /* fetch('/save-stripe-token', {
+         *     method: 'POST',
+         *     body: JSON.stringify(token),
+         * }).then(response => {
+         *     response.json().then(data => {
+         *         alert(`We are in business, ${data.email}`);
+         *     });
+         * });*/
     }
 
     render() {
@@ -64,8 +81,18 @@ class Account extends React.Component {
                         }
                     </p>
                     <p className="instructions">
-                        Stripe Checkout goes here...
+                        {
+                            this.state.token ? this.state.token.card.last4 : null
+                        }
                     </p>
+                    <StripeCheckout name="Inject Detect"
+                                    email={user.email}
+                                    panelLabel="Update"
+                                    description="Recurring payment information."
+                                    stripeKey="pk_test_9Eb30CotIL95wj3aeTkTVDrL"
+                                    token={this.onToken}>
+                        <Button primary>Update your payment information.</Button>
+                    </StripeCheckout>
                 </div>
             </div>
         );

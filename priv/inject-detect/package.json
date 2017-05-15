@@ -55,6 +55,7 @@
     "react-moment": "^0.2.2",
     "react-prism": "^4.0.0",
     "react-router-dom": "^4.0.0",
+    "react-stripe-checkout": "^2.2.5",
     "semantic-ui-react": "^0.68.3"
   },
   "scripts": {
