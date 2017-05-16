@@ -100,9 +100,17 @@ class Application extends React.Component {
                                 ) : (
                                     <div className="ui grid">
                                         <div className="thirteen wide column">
-                                            <p className="instructions">
-                                                Your application doesn't have any expected queries. Add more queries by setting your application into <strong>Training Mode</strong>, or marking unexpected queries as expected.
-                                            </p>
+                                            {
+                                                application.trainingMode ? (
+                                                    <p className="instructions">
+                                                        Your application doesn't have any expected queries. Your application is in <strong>Training Mode</strong> so any detected queries will automatically become expected queries for this application.
+                                                    </p>
+                                                ) : (
+                                                    <p className="instructions">
+                                                        Your application doesn't have any expected queries. Add more expected queries by turning on <strong>Training Mode</strong> and generating queries within your application, or by marking unexpected queries as expected.
+                                                    </p>
+                                                )
+                                            }
                                         </div>
                                     </div>
                                 )

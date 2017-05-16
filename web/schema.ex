@@ -2,10 +2,12 @@ defmodule InjectDetect.Schema do
   use Absinthe.Schema
 
   alias InjectDetect.Command.{
+    AddApplication,
     GetStarted,
     MarkQueryAsExpected,
     MarkQueryAsHandled,
     RegenerateApplicationToken,
+    RemoveApplication,
     RemoveExpectedQuery,
     RequestSignInToken,
     SignOut,
@@ -25,12 +27,6 @@ defmodule InjectDetect.Schema do
     {:ok, User.find(user_id)}
   end
   def resolve_user(_args, _), do: {:ok, nil}
-
-  def resolve_users(_args, %{context: %{user_id: _user_id}}) do
-    {:ok, state} = State.get()
-    users = for {_id, user} <- state.users, do: user
-    {:ok, users}
-  end
 
   def resolve_application(%{id: id}, %{context: %{user_id: user_id}}) do
     case application = Application.find(id) do
@@ -54,11 +50,6 @@ defmodule InjectDetect.Schema do
   end
 
   query do
-    field :users, list_of(:user) do
-      middleware Auth
-      resolve &resolve_users/2
-    end
-
     field :user, :user do
       resolve &resolve_user/2
     end
@@ -165,6 +156,18 @@ defmodule InjectDetect.Schema do
       arg :query_id, non_null(:string)
       middleware Auth
       resolve handle(RemoveExpectedQuery, &application/1)
+    end
+
+    field :add_application, type: :application do
+      arg :user_id, non_null(:string)
+      arg :application_name, non_null(:string)
+      arg :application_size, non_null(:string)
+      resolve handle(AddApplication, &application/1)
+    end
+
+    field :remove_application, type: :user do
+      arg :application_id, non_null(:string)
+      resolve handle(RemoveApplication, &user/1)
     end
 
   end

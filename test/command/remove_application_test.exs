@@ -1,8 +1,9 @@
-defmodule InjectDetect.AddCreditsTest do
+defmodule InjectDetect.RemoveApplicationTest do
   use ExUnit.Case
 
+  alias InjectDetect.Command.AddApplication
+  alias InjectDetect.Command.RemoveApplication
   alias InjectDetect.Command.GetStarted
-  alias InjectDetect.Command.AddCredits
   alias InjectDetect.State.Application
   alias InjectDetect.State.User
 
@@ -18,29 +19,30 @@ defmodule InjectDetect.AddCreditsTest do
     :ok
   end
 
-  test "toggles training mode" do
+  test "removes an application" do
     %GetStarted{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}
-    |> handle(%{})
+                |> handle(%{})
 
     user = User.find(email: "email@example.com")
-    user_id = user.id
 
-    assert user.credits == 0
+    %AddApplication{user_id: user.id,
+                    application_name: "Bar Application",
+                    application_size: "Small"}
+                    |> handle(%{user_id: user.id})
 
-    %AddCredits{user_id: user.id, credits: 100_000}
+    application = Application.find(name: "Foo Application")
+
+    %RemoveApplication{application_id: application.id}
     |> handle(%{user_id: user.id})
 
-    user = User.find(email: "email@example.com")
-    assert user.credits == 100_000
+    application = Application.find(name: "Foo Application")
+    refute application
 
-    %AddCredits{user_id: user.id, credits: 5_000}
-    |> handle(%{user_id: user.id})
-
-    user = User.find(email: "email@example.com")
-    assert user.credits == 105_000
+    application = Application.find(name: "Bar Application")
+    assert application
   end
 
 end

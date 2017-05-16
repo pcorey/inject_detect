@@ -52,7 +52,7 @@ class Header extends React.Component {
                                       );
                                   })}
 
-                                <a href="#" className="item" onClick={this.showAddApplicationModal.bind(this)}><i className="plus icon"/>Add Application</a>
+                                <AddApplicationModal user={user}/>
                             </div>
                         </div>
 
@@ -76,7 +76,6 @@ class Header extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <AddApplicationModal/>
                 </div>
             );
         }

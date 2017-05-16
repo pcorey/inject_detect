@@ -83,7 +83,7 @@ class Dashboard extends React.Component {
                                                     <div className="content">
                                                         <div className="right floated meta">
                                                             <div className="ui icon buttons">
-                                                                <Link to={`/application/${query.application.id}`} className="ui button" data-tooltip="See more details about this unexpected query." data-position="top right"><i className="arrow right icon"></i></Link>
+                                                                <Link to={`/application/${query.application.id}`} className="ui button" title="See more details"><i className="arrow right icon"></i></Link>
                                                             </div>
                                                         </div>
                                                         <p className="">We've detected an <strong style={{color: "#ea5e5e", margin: 0}}>unexpected query</strong> in <strong>{query.application.name}</strong>. The last time it was seen was <Moment fromNow>{query.queriedAt}</Moment>.</p>

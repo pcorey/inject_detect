@@ -2,6 +2,7 @@ import React from "react";
 import _ from "lodash";
 import gql from "graphql-tag";
 import { Button, Checkbox, Form, Icon, Input, Modal } from "semantic-ui-react";
+import { Redirect } from "react-router-dom";
 import { graphql } from "react-apollo";
 
 class ApplicationSettings extends React.Component {
@@ -27,6 +28,14 @@ class ApplicationSettings extends React.Component {
         this.props.regenerateApplicationToken(this.props.application.id);
     }
 
+    removeApplication = (e) => {
+        e.preventDefault();
+        this.props.removeApplication(this.props.application.id)
+            .then(() => {
+                this.setState({ redirect: true });
+            });
+    }
+
     callback = () => {
         if (this.props.callback) {
             this.setState({ loading: true });
@@ -46,8 +55,12 @@ class ApplicationSettings extends React.Component {
     }
 
     render() {
-        let { errors, loading, open } = this.state;
+        let { errors, loading, open, redirect } = this.state;
         let { application } = this.props;
+
+        if (redirect) {
+            return ( <Redirect to="/" /> );
+        }
 
         return (
             <Modal size="small"
@@ -70,10 +83,20 @@ class ApplicationSettings extends React.Component {
                                 <Checkbox defaultChecked={application.alerting} label="Alerting" onChange={this.toggleAlerting}/>
                             </Form.Field>
 
+                            <hr/>
+
                             <p className="instructions" style={{marginTop: 0}}>Your <strong>application secret</strong> should be given to your Meteor plugin and is used to identify your application as it sends queries to Inject Detect:</p>
 
                             <Form.Field>
                                 <Input readOnly type="text" value={application.token} icon={<Icon name="refresh" circular link onClick={this.regenerateApplicationToken}/>}/>
+                            </Form.Field>
+
+                            <hr/>
+
+                            <p className="instructions" style={{marginTop: 0}}>Removing this application will delete all records about the application, including all settings, expected queries, and unexpected queries from Inject Detect. Removing application is non-reversible.</p>
+
+                            <Form.Field style={{textAlign: "center"}}>
+                                <Button onClick={this.removeApplication}>Remove application</Button>
                             </Form.Field>
                         </Form>
 
@@ -131,4 +154,21 @@ const RegenerateApplicationToken = graphql(gql`
     })
 });
 
-export default RegenerateApplicationToken(ToggleTrainingMode(ToggleAlerting(ApplicationSettings)));
+const RemoveApplication = graphql(gql`
+    mutation removeApplication ($application_id: String!) {
+        removeApplication (application_id: $application_id) {
+            id
+            applications {
+                name
+            }
+        }
+    }
+`, {
+    props: ({ mutate }) => ({
+        removeApplication: (application_id) => mutate({
+            variables: { application_id }
+        })
+    })
+});
+
+export default RemoveApplication(RegenerateApplicationToken(ToggleTrainingMode(ToggleAlerting(ApplicationSettings))));

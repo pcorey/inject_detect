@@ -39,6 +39,13 @@ defmodule InjectDetect.State.User do
     |> Lens.map(state, &([Application.new(application) | &1]))
   end
 
+  def remove_application(state, user_id, application_id) do
+    Lens.key(:users)
+    |> Lens.filter(&(&1.id == user_id))
+    |> Lens.key(:applications)
+    |> Lens.map(state, &Enum.filter(&1, fn %{id: id} -> id != application_id end))
+  end
+
   def add_credits(state, user_id, credits) do
     Lens.key(:users)
     |> Lens.filter(&(&1.id == user_id))
