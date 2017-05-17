@@ -19,7 +19,7 @@ defmodule InjectDetect.Mixfile do
   def application do
     [mod: {InjectDetect, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+                    :phoenix_ecto, :postgrex, :bamboo]]
   end
 
   # Specifies which paths to compile per environment.
@@ -42,7 +42,9 @@ defmodule InjectDetect.Mixfile do
      {:absinthe, "~> 1.3"},
      {:absinthe_plug, "~> 1.3.0-rc.0"},
      {:cors_plug, "~> 1.2"},
-     {:lens, "~> 0.3.0"}]
+     {:lens, "~> 0.3.0"},
+     {:bamboo, "~> 0.7"},
+     {:bamboo_smtp, "~> 1.2.1"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

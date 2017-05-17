@@ -117,7 +117,7 @@ class UnexpectedQuery extends React.Component {
         }
         else {
             return (
-                <div>Query not found...</div>
+                <Redirect to="/"/>
             );
         }
     }
