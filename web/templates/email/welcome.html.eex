@@ -1,6 +1,6 @@
 <p>Welcome to Inject Detect!</p>
 
-<p>Your first application, <%= @application.name %> is configured and ready to accept queries from your Meteor server.</p>
+<p>We're ready and waiting to accept queries from your Meteor server.</p>
 
 <p>At first, all queries we detect will automatically be marked as "expected queries". Once your application has performed all expected queries, turn off "training mode", and we'll start watching for unexpected queries.</p>
 

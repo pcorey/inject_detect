@@ -3,19 +3,19 @@ defmodule Email do
 
   @from "hello@injectdetect.com"
 
-  def welcome_text_email(to, application) do
+  def welcome_text_email(to) do
     new_email()
     |> to(to)
     |> from(@from)
     |> subject("Welcome to Inject Detect!")
     |> put_text_layout({InjectDetect.LayoutView, "email.text"})
-    |> render("welcome.text", application: application)
+    |> render("welcome.text")
   end
 
-  def welcome_html_email(to, application) do
-    welcome_text_email(to, application)
+  def welcome_html_email(to) do
+    welcome_text_email(to)
     |> put_html_layout({InjectDetect.LayoutView, "email.html"})
-    |> render("welcome.html", application: application)
+    |> render("welcome.html")
   end
 
   def verify_text_email(to, requested_token) do

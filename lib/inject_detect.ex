@@ -17,8 +17,7 @@ defmodule InjectDetect do
 
       # Supervise event listeners:
       worker(InjectDetect.Listener.EmailToken, []),
-      # worker(InjectDetect.Listener.TrainingModeInterceptor, []),
-      # worker(InjectDetect.Listener.UnexpectedQueryDetector, []),
+      worker(InjectDetect.Listener.SendWelcomeEmail, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
