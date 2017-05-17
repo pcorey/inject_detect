@@ -17,3 +17,8 @@ config :inject_detect, InjectDetect.Repo,
   database: "inject_detect_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :inject_detect, InjectDetect.Mailer,
+  adapter: Bamboo.LocalAdapter,
+  username: "username",
+  password: "password"
