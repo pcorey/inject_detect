@@ -1,9 +1,9 @@
-defmodule InjectDetect.Listener.EmailToken do
+defmodule InjectDetect.Listener.SendSignInEmail do
   use GenServer
 
   require Logger
 
-  alias InjectDetect.Command.SendVerifyEmail
+  alias InjectDetect.Command.SendSignInEmail
   alias InjectDetect.Listener
   alias InjectDetect.State.User
 
@@ -16,7 +16,7 @@ defmodule InjectDetect.Listener.EmailToken do
   end
 
   def send_email(user_id, requested_token, email) do
-    %SendVerifyEmail{user_id: user_id,
+    %SendSignInEmail{user_id: user_id,
                      requested_token: requested_token,
                      email: email}
                      |> InjectDetect.CommandHandler.handle

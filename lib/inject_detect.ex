@@ -16,7 +16,7 @@ defmodule InjectDetect do
       worker(InjectDetect.State, []),
 
       # Supervise event listeners:
-      worker(InjectDetect.Listener.EmailToken, []),
+      worker(InjectDetect.Listener.SendSignInEmail, []),
       worker(InjectDetect.Listener.SendWelcomeEmail, []),
     ]
 

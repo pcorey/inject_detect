@@ -1,4 +1,4 @@
-defmodule InjectDetect.Event.SentVerifyEmail do
+defmodule InjectDetect.Event.SentSignInEmail do
   defstruct user_id: nil,
             requested_token: nil,
             email: nil
@@ -8,7 +8,7 @@ defmodule InjectDetect.Event.SentVerifyEmail do
 end
 
 defimpl InjectDetect.State.Reducer,
-   for: InjectDetect.Event.SentVerifyEmail do
+   for: InjectDetect.Event.SentSignInEmail do
 
   def apply(event, state), do: state
 

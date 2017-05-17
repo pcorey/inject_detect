@@ -1,18 +1,18 @@
-defmodule InjectDetect.Command.SendVerifyEmail do
+defmodule InjectDetect.Command.SendSignInEmail do
   defstruct user_id: nil,
             email: nil,
             requested_token: nil
 end
 
 defimpl InjectDetect.Command,
-   for: InjectDetect.Command.SendVerifyEmail do
+   for: InjectDetect.Command.SendSignInEmail do
 
-  alias InjectDetect.Event.SentVerifyEmail
+  alias InjectDetect.Event.SentSignInEmail
 
   def handle(command, _context) do
     Email.verify_html_email(command.email, command.requested_token)
     |> InjectDetect.Mailer.deliver_now
-    {:ok, [%SentVerifyEmail{user_id: command.user_id,
+    {:ok, [%SentSignInEmail{user_id: command.user_id,
                             email: command.email,
                             requested_token: command.requested_token}]}
   end
