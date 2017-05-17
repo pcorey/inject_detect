@@ -1,0 +1,4 @@
+We've detected an unexpected query against the "<%= @unexpected_query.collection %>" collection in your "<%= @application.name %>" application.
+
+See more information about the unexpected query and take action here:
+https://app.injectdetect.com/unexpected-query/<%= @unexpected_query.id %>

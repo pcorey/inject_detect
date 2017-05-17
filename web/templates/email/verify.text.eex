@@ -1,0 +1,4 @@
+Someone has requested to sign into your Inject Detect account.
+
+If this was you, click this link to sign into your dashboard on Inject Detect:
+https://app.injectdetect.com/verify/<%= @requested_token %>

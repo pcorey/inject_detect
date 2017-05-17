@@ -1,0 +1,4 @@
+<p>Someone has requested to sign into your Inject Detect account.</p>
+
+<p>If this was you, click this link to sign into your dashboard on Inject Detect:</p>
+<p><a href="https://app.injectdetect.com/verify/<%= @requested_token %>">Sign in!</a></p>
