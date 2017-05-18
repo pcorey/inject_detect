@@ -16,10 +16,8 @@ defmodule InjectDetect.Listener.SendSignInEmail do
   end
 
   def send_email(user_id, requested_token, email) do
-    %SendSignInEmail{user_id: user_id,
-                     requested_token: requested_token,
-                     email: email}
-                     |> InjectDetect.CommandHandler.handle
+    %SendSignInEmail{user_id: user_id, requested_token: requested_token, email: email}
+    |> InjectDetect.CommandHandler.handle
   end
 
   def handle_call({%{requested_token: requested_token, user_id: user_id}, _}, _, _) do
