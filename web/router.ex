@@ -41,6 +41,10 @@ defmodule InjectDetect.Router do
     forward "/", Absinthe.Plug, schema: InjectDetect.Schema
   end
 
+  if Mix.env == :dev do
+    forward "/sent_emails", Bamboo.EmailPreviewPlug
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", InjectDetect do
   #   pipe_through :api

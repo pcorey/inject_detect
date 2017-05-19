@@ -18,6 +18,7 @@ defmodule InjectDetect do
       # Supervise event listeners:
       worker(InjectDetect.Listener.SendSignInEmail, []),
       worker(InjectDetect.Listener.SendWelcomeEmail, []),
+      worker(InjectDetect.Listener.SendUnexpectedEmail, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

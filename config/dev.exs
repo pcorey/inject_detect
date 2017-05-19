@@ -42,3 +42,6 @@ config :inject_detect, InjectDetect.Repo,
   database: "inject_detect_dev",
   hostname: "localhost",
   pool_size: 10
+
+config :inject_detect, InjectDetect.Mailer,
+  adapter: Bamboo.LocalAdapter
