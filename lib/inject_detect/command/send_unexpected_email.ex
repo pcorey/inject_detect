@@ -20,7 +20,7 @@ defimpl InjectDetect.Command,
          unexpected_query <- UnexpectedQuery.find(state, command.query_id)
     do
       Email.unexpected_html_email(user.email, application, unexpected_query)
-      |> InjectDetect.Mailer.deliver_now
+      |> InjectDetect.Mailer.deliver_later
       {:ok, [%SentUnexpectedEmail{user_id: command.user_id,
                                   application_id: command.application_id,
                                   query_id: command.query_id}]}
