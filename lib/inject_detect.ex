@@ -12,13 +12,7 @@ defmodule InjectDetect do
       supervisor(InjectDetect.Endpoint, []),
       supervisor(Registry, [:duplicate, InjectDetect.Listener.Registry]),
 
-      worker(InjectDetect.CommandHandler, []),
-      worker(InjectDetect.State, []),
-
-      # Supervise event listeners:
-      worker(InjectDetect.Listener.SendSignInEmail, []),
-      worker(InjectDetect.Listener.SendWelcomeEmail, []),
-      worker(InjectDetect.Listener.SendUnexpectedEmail, []),
+      worker(InjectDetect.State, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

@@ -7,7 +7,10 @@ use Mix.Config
 
 # General application configuration
 config :inject_detect,
-  ecto_repos: [InjectDetect.Repo]
+  ecto_repos: [InjectDetect.Repo],
+  listeners: [&InjectDetect.Listener.SendSignInEmail.handle/2,
+              &InjectDetect.Listener.SendUnexpectedEmail.handle/2,
+              &InjectDetect.Listener.SendWelcomeEmail.handle/2]
 
 # Configures the endpoint
 config :inject_detect, InjectDetect.Endpoint,
