@@ -1,7 +1,7 @@
 defmodule Email do
   use Bamboo.Phoenix, view: InjectDetect.EmailView
 
-  @from "hello@injectdetect.com"
+  @from {"Inject Detect", "hello@injectdetect.com"}
 
   def welcome_text_email(to) do
     new_email()
