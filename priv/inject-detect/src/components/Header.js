@@ -30,7 +30,7 @@ class Header extends React.Component {
 
         if (user) {
             return (
-                <div className="ui fixed menu ij-header">
+                <div className="ui menu ij-header">
                     <div className="ui container">
                         <Link to="/" className="header borderless item">
                             <img alt="Inject Detect Logo" src="https://s3.amazonaws.com/www.injectdetect.com/logo.png" className="icon"/>
@@ -81,7 +81,7 @@ class Header extends React.Component {
         }
         else {
             return (
-                <div className="ui fixed menu ij-header">
+                <div className="ui menu ij-header">
                     <div className="ui container">
                         <Link to="/" className="header borderless item">
                             <img alt="Inject Detect Logo" src="https://s3.amazonaws.com/www.injectdetect.com/logo.png" className="icon"/>
