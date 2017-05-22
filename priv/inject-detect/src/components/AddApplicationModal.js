@@ -58,10 +58,7 @@ class AddApplicationModal extends React.Component {
                    open={open}
                    onOpen={this.open}
                    onClose={this.close}>
-                <i className="close icon"></i>
-                <div className="header">
-                    Add a new application
-                </div>
+                <Modal.Header>Add a new application</Modal.Header>
                 <div className="content">
                     <form className="ui large form">
                         <p className="information">All we need to get started is the name of your new application, and a rough estimate of its size. The application name helps you track down where queries are being made, and the application size helps us give better token usage estimates.</p>
