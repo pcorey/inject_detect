@@ -1,4 +1,5 @@
-<p>We've detected an unexpected query in your <b><%= @application.name %></b> application.</p>
+<p>We've detected an <b>unexpected query</b> in your "<%= @application.name %>" application.</p>
 
-<p>See more information about the unexpected query and take action here:</p>
-<p><a href="<%= InjectDetect.Endpoint.url %>/unexpected-query/<%= @unexpected_query.id %>">See unexpected query.</a></p>
+<p>Check <a href="<%= InjectDetect.Endpoint.url %>" style="color: #ea5e5e;">your dashboard</a> to see the structure of the unexpected queries, the number of times we've detected it, and the most similar expected query was have on file for your application.</p>
+
+<p>For more information on unexpected queries and NoSQL Injection, take a look at <a href="#" style="color: #ea5e5e;">our FAQ and guides</a>.</p>

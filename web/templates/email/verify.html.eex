@@ -1,4 +1,1 @@
-<p>Someone has requested to sign into your Inject Detect account.</p>
-
-<p>If this was you, click this link to sign into your dashboard on Inject Detect:</p>
-<p><a href="<%= InjectDetect.Endpoint.url %>/verify/<%= @requested_token %>">Sign in!</a></p>
+<p>Someone has requested to sign into your Inject Detect account. If you requested this link, <a href="<%= InjectDetect.Endpoint.url %>/verify/<%= @requested_token %>" style="color: #ea5e5e;">click here to sign into your dashboard</a> on Inject Detect.</p>

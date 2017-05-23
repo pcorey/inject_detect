@@ -1,7 +1,5 @@
 Welcome to Inject Detect!
 
-We're ready and waiting to accept queries from your Meteor server.
+Follow our Getting Started guide to configure your Meteor application to communicate with Inject Detect.
 
-At first, all queries we detect will automatically be marked as "expected queries". Once your application has performed all expected queries, turn off "training mode", and we'll start watching for unexpected queries.
-
-If you have any questions, don't hesitate to reach out!
+Your application will start in "training mode", which means that any queries your application makes will be marked as "expected queries". Once you're ready, turn off training mode and we'll start watching for unexpected queries.
