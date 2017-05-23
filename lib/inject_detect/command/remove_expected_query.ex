@@ -29,7 +29,7 @@ defimpl InjectDetect.Command,
   end
 
   def handle_for_application(%{user_id: user_id}, command, %{user_id: user_id}) do
-    ExpectedQuery.find(command.query_id)
+    ExpectedQuery.find(command.application_id, command.query_id)
     |> handle_for_query(command.application_id)
   end
 

@@ -42,7 +42,7 @@ defmodule InjectDetect.MarkQueryAsHandledTest do
                                query: %{"_id" => "string"}}]}
     |> handle(%{})
 
-    query = UnexpectedQuery.find(type: "find")
+    query = UnexpectedQuery.find(application.id, type: "find")
 
     %MarkQueryAsHandled{application_id: application.id,
                          query_id: query.id}

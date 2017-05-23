@@ -12,7 +12,7 @@ defimpl InjectDetect.State.Reducer,
   alias InjectDetect.State.ExpectedQuery
 
   def apply(event, state) do
-    ExpectedQuery.remove(state, event.query_id)
+    ExpectedQuery.remove(state, event.application_id, event.query_id)
   end
 
 end

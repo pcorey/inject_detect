@@ -13,9 +13,9 @@ defimpl InjectDetect.State.Reducer,
   alias InjectDetect.State.UnexpectedQuery
 
   def apply(event, state) do
-    query = UnexpectedQuery.find(state, event.query_id)
+    query = UnexpectedQuery.find(state, event.application_id, event.query_id)
     state
-    |> UnexpectedQuery.remove(event.query_id)
+    |> UnexpectedQuery.remove(event.application_id, event.query_id)
     |> Application.add_expected_query(event.application_id, query)
   end
 

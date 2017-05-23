@@ -26,16 +26,16 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
     end)
   end
 
-  def find_expected_query(query, added) do
-    find_query(query, added, &ExpectedQuery.find/1)
+  def find_expected_query(application_id, query, added) do
+    find_query(query, added, &ExpectedQuery.find(application_id, &1))
   end
 
-  def find_unexpected_query(query, added) do
-    find_query(query, added, &UnexpectedQuery.find/1)
+  def find_unexpected_query(application_id, query, added) do
+    find_query(query, added, &UnexpectedQuery.find(application_id, &1))
   end
 
-  def ingest_query(%{training_mode: true}, query, {added, events}) do
-    case find_expected_query(query, added) do
+  def ingest_query(application = %{training_mode: true}, query, {added, events}) do
+    case find_expected_query(application.id, query, added) do
       nil       -> query = Map.put_new(query, :id, generate_id)
                    {[query | added],
                     events ++ [struct(IngestedQuery, query),
@@ -62,7 +62,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   end
 
   def ingest_query(application = %{training_mode: false}, query, {added, events}) do
-    case {ExpectedQuery.find(query), find_unexpected_query(query, added)} do
+    case {ExpectedQuery.find(application.id, query), find_unexpected_query(application.id, query, added)} do
       {nil, nil}       -> query = Map.put_new(query, :id, generate_id)
                           similar_query = find_similar_query(query, application.expected_queries)
                           {[query | added],

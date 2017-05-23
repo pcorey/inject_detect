@@ -41,7 +41,7 @@ defmodule InjectDetect.RemoveExpectedQueryTest do
     %ToggleTrainingMode{application_id: application.id}
     |> handle(%{user_id: user.id})
 
-    query = ExpectedQuery.find(type: "find")
+    query = ExpectedQuery.find(application.id, type: "find")
 
     %RemoveExpectedQuery{application_id: application.id,
                          query_id: query.id}

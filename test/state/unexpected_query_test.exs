@@ -19,7 +19,7 @@ defmodule InjectDetect.State.UnexpectedQueryTest do
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
     |> Application.add_unexpected_query(application.id, query)
-    assert UnexpectedQuery.find(state, 345) == UnexpectedQuery.new(query)
+    assert UnexpectedQuery.find(state, 234, 345) == UnexpectedQuery.new(query)
   end
 
   test "find by query" do
@@ -30,7 +30,7 @@ defmodule InjectDetect.State.UnexpectedQueryTest do
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
     |> Application.add_unexpected_query(application.id, query)
-    assert UnexpectedQuery.find(state, query: %{"_id" => "string"}) == UnexpectedQuery.new(query)
+    assert UnexpectedQuery.find(state, 234, query: %{"_id" => "string"}) == UnexpectedQuery.new(query)
   end
 
 end
