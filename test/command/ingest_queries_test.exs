@@ -30,7 +30,11 @@ defmodule InjectDetect.IngestQueriesTest do
                 agreed_to_tos: true}
     |> handle(%{})
 
+    user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
+
+    %AddCredits{user_id: user.id, credits: 100}
+    |> handle(%{user_id: user.id})
 
     %IngestQueries{application_id: application.id,
                    queries: [%{collection: "users",
@@ -116,7 +120,8 @@ defmodule InjectDetect.IngestQueriesTest do
     user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
 
-
+    %AddCredits{user_id: user.id, credits: 100}
+    |> handle(%{user_id: user.id})
 
     %IngestQueries{application_id: application.id,
                    queries: [%{collection: "users",

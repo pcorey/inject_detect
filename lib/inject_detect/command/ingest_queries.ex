@@ -14,6 +14,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   alias InjectDetect.State.Application
   alias InjectDetect.State.ExpectedQuery
   alias InjectDetect.State.UnexpectedQuery
+  alias InjectDetect.State.User
   alias InjectDetect.State.QueryComparator
 
   import InjectDetect, only: [generate_id: 0]
@@ -97,8 +98,16 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   end
 
   def handle(command, _context) do
-    Application.find(command.application_id)
-    |> ingest_for_application(command)
+    with application <- Application.find(command.application_id),
+         user <- User.find(application.user_id),
+         true <- user.credits > 0
+    do
+      ingest_for_application(application, command)
+    else
+        false -> {:error, %{code: :not_enough_credits,
+                            error: "Not enough credits",
+                            message: "Not enough credits"}}
+    end
   end
 
 end

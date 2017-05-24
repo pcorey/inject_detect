@@ -1,6 +1,7 @@
 defmodule InjectDetect.RemoveExpectedQueryTest do
   use ExUnit.Case
 
+  alias InjectDetect.Command.AddCredits
   alias InjectDetect.Command.GetStarted
   alias InjectDetect.Command.IngestQueries
   alias InjectDetect.Command.RemoveExpectedQuery
@@ -30,6 +31,9 @@ defmodule InjectDetect.RemoveExpectedQueryTest do
 
     user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
+
+    %AddCredits{user_id: user.id, credits: 100}
+    |> handle(%{user_id: user.id})
 
     %IngestQueries{application_id: application.id,
                    queries: [%{collection: "users",

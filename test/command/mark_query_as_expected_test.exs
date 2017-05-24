@@ -1,6 +1,7 @@
 defmodule InjectDetect.MarkQueryAsExpectedTest do
   use ExUnit.Case
 
+  alias InjectDetect.Command.AddCredits
   alias InjectDetect.Command.GetStarted
   alias InjectDetect.Command.IngestQueries
   alias InjectDetect.Command.MarkQueryAsExpected
@@ -32,6 +33,9 @@ defmodule InjectDetect.MarkQueryAsExpectedTest do
 
     user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
+
+    %AddCredits{user_id: user.id, credits: 100}
+    |> handle(%{user_id: user.id})
 
     %ToggleTrainingMode{application_id: application.id}
     |> handle(%{user_id: user.id})
