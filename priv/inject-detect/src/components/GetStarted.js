@@ -45,7 +45,7 @@ class GetStarted extends React.Component {
 
         return (
             <div className="ij-get-started ui middle aligned center aligned grid">
-                <div className="eight wide left aligned column">
+                <div className="eight wide center aligned column">
 
                     <h2 className="ui icon header">
                         <div className="content">
@@ -54,8 +54,8 @@ class GetStarted extends React.Component {
                     </h2>
 
                     <form className="ui large form" onSubmit={this.getStarted.bind(this)}>
-                        <p className="ui left aligned">Getting started with Inject Detect is easy! First things first, we'll need your email address.</p>
-                        <div className="ui stacked segment">
+                        <p className="ui center aligned">Getting started with Inject Detect is easy! First things first, we'll need your email address.</p>
+                        <div className="ui left aligned stacked segment">
                             <div className="field">
                                 <div className="ui left icon input">
                                     <i className="user icon"></i>
@@ -101,6 +101,10 @@ class GetStarted extends React.Component {
 
                     { success && <div className="ui success message">You're all set!</div>}
                     { errors && errors.map(({ error }) => (<div key={error} className="ui error message">{error}</div>)) }
+
+                    <div className="ui message">
+                        Already have an account? <a href="/sign-in">Sign in!</a>
+                    </div>
 
                 </div>
             </div>
