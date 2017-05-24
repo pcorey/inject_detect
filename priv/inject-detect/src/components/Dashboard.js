@@ -111,6 +111,7 @@ export default graphql(gql`
             refillTrigger
             refillAmount
             applications {
+                id
                 name
                 unexpectedQueries {
                     id

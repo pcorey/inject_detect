@@ -47,7 +47,6 @@ class Header extends React.Component {
                                   user.applications &&
                                   user.applications.map((application) => {
                                       return (
-                                          /* <Link to={`/application/${application.id}`} key={application.id} className="item"><i className="red warning icon"/>{application.name}</Link> */
                                           <Link to={`/application/${application.id}`} key={application.id} className="item"><i className="server outline icon"/>{application.name}</Link>
                                       );
                                   })}
