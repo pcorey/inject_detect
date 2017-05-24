@@ -12,8 +12,14 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.IngestedQuery do
 
+  alias InjectDetect.State.Application
+
   def apply(event, state) do
-    state
+    application = Application.find(state, event.application_id)
+    Lens.key(:users)
+    |> Lens.filter(&(&1.id == application.user_id))
+    |> Lens.key(:credits)
+    |> Lens.map(state, &(&1 - 1))
   end
 
 end

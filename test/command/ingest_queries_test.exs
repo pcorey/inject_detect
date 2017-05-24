@@ -1,6 +1,7 @@
 defmodule InjectDetect.IngestQueriesTest do
   use ExUnit.Case
 
+  alias InjectDetect.Command.AddCredits
   alias InjectDetect.Command.GetStarted
   alias InjectDetect.Command.IngestQueries
   alias InjectDetect.Command.ToggleTrainingMode
@@ -66,6 +67,10 @@ defmodule InjectDetect.IngestQueriesTest do
     |> handle(%{})
 
     user = User.find(email: "email@example.com")
+
+    %AddCredits{user_id: user.id, credits: 100}
+    |> handle(%{user_id: user.id})
+
     application = Application.find(name: "Foo Application")
 
     %ToggleTrainingMode{application_id: application.id}
@@ -96,6 +101,9 @@ defmodule InjectDetect.IngestQueriesTest do
     assert UnexpectedQuery.find(application.id, collection: "orders",
                                 type: "remove",
                                 query: %{"_id" => %{"$gte" => "string"}})
+
+    user = User.find(email: "email@example.com")
+    assert user.credits == 97
   end
 
   test "ingests an expected and unexpected queries" do
@@ -107,6 +115,8 @@ defmodule InjectDetect.IngestQueriesTest do
 
     user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
+
+
 
     %IngestQueries{application_id: application.id,
                    queries: [%{collection: "users",
