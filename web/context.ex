@@ -32,11 +32,14 @@ defmodule InjectDetect.Web.Context do
   end
 
   defp authorize(auth_token) do
-    InjectDetect.State.User.find(auth_token: auth_token)
-    |> case do
-         nil  -> {:error, "Invalid authorization token"}
-         user -> {:ok, user.id}
-       end
+    with user <- InjectDetect.State.User.find(auth_token: auth_token),
+         user_id <- user.id,
+         {:ok, user_id} <- InjectDetect.verify_token(user.auth_token)
+    do
+      {:ok, user.id}
+    else
+      _ -> {:error, "Invalid authorization token"}
+    end
   end
 
 end
