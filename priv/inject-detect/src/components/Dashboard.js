@@ -132,4 +132,8 @@ export default graphql(gql`
             }
         }
     }
-`)(Dashboard);
+`, {
+    options: props => ({
+        pollInterval: 5000
+    })
+})(Dashboard);
