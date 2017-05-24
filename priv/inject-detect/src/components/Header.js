@@ -3,10 +3,15 @@ import React from "react";
 import SignOutLink from "./SignOutLink";
 import _ from "lodash";
 import { Link, NavLink } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { UserQuery } from "../graphql";
 import { graphql } from "react-apollo";
 
 class Header extends React.Component {
+
+    state = {
+        redirect: false
+    }
 
     initDropdown() {
         window.$('.ui.dropdown').dropdown();
@@ -25,12 +30,23 @@ class Header extends React.Component {
         window.$(".ui.add-application-modal.modal").modal("show");
     }
 
+    onSignOut = () => {
+        this.setState({ redirect: true });
+    }
+
     render() {
         let { user } = this.props.data;
 
         if (user) {
             return (
                 <div className="ui menu ij-header">
+                    {
+                        this.state.redirect ? (
+                            <Redirect to="/"/>
+                        ) : (
+                            null
+                        )
+                    }
                     <div className="ui container">
                         <Link to="/" className="header borderless item">
                             <img alt="Inject Detect Logo" src="https://s3.amazonaws.com/www.injectdetect.com/logo.png" className="icon"/>
@@ -66,7 +82,7 @@ class Header extends React.Component {
                                             Account settings
                                         </Link>
                                         <div className="divider"></div>
-                                        <SignOutLink>
+                                        <SignOutLink onSignOut={this.onSignOut}>
                                             <i className="sign out icon"></i>
                                             Sign out
                                         </SignOutLink>
@@ -81,6 +97,13 @@ class Header extends React.Component {
         else {
             return (
                 <div className="ui menu ij-header">
+                    {
+                        this.state.redirect ? (
+                            <Redirect to="/"/>
+                        ) : (
+                            null
+                        )
+                    }
                     <div className="ui container">
                         <Link to="/" className="header borderless item">
                             <img alt="Inject Detect Logo" src="https://s3.amazonaws.com/www.injectdetect.com/logo.png" className="icon"/>

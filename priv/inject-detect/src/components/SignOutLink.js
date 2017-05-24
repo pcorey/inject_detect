@@ -1,6 +1,5 @@
 import React from "react";
 import _ from "lodash";
-import { Redirect } from "react-router-dom";
 import { SignOutMutation } from "../graphql";
 import { graphql } from "react-apollo";
 
@@ -15,14 +14,11 @@ class SignOutLink extends React.Component {
         this.props.signOut()
             .then(() => {
                 localStorage.removeItem("authToken");
-                this.setState({ redirect: true });
-            });
+            })
+            .then(this.props.onSignOut);
     }
 
     render() {
-        if (this.state.redirect) {
-            return ( <Redirect to="/"/> );
-        }
         return (
             <a href="#"
                className="item"
