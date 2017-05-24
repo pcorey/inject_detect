@@ -31,6 +31,6 @@ defmodule InjectDetect do
   def generate_id, do: Ecto.UUID.generate()
 
   def generate_token(value) do
-    Phoenix.Token.sign(InjectDetect.Endpoint, :crypto.strong_rand_bytes(32), value)
+    Phoenix.Token.sign(InjectDetect.Endpoint, "user", value)
   end
 end
