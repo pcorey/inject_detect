@@ -43,7 +43,6 @@ defmodule InjectDetect.State do
     {:reply, {:ok, state}, {id, state}}
   end
 
-  def handle_call(:reset, _, _), do:
-    {:reply, :ok, {0, @initial}}
+  def handle_call(:reset, _, _), do: {:reply, :ok, {0, @initial}}
 
 end
