@@ -24,9 +24,9 @@ defmodule InjectDetect.CommandHandler do
 
   def handle(command, context, listeners) do
     with {:ok, events, context} <- handle_command(command, context),
-         {:ok, _}               <- store_events(events),
-         _                      <- notify_listeners(events, context, listeners)
+         {:ok, _}               <- store_events(events)
     do
+      notify_listeners(events, context, listeners)
       {:ok, context}
     end
   end
