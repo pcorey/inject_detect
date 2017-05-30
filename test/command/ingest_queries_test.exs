@@ -107,7 +107,7 @@ defmodule InjectDetect.IngestQueriesTest do
                                 query: %{"_id" => %{"$gte" => "string"}})
 
     user = User.find(email: "email@example.com")
-    assert user.credits == 97
+    assert user.credits == 10097
   end
 
   test "ingests an expected and unexpected queries" do

@@ -9,6 +9,7 @@ end
 defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
 
   alias InjectDetect.Event.AddedApplication
+  alias InjectDetect.Event.AddedCredits
   alias InjectDetect.Event.GivenAuthToken
   alias InjectDetect.Event.GotStarted
   alias InjectDetect.Event.SetStripeToken
@@ -24,6 +25,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
        [%GotStarted{agreed_to_tos: data.agreed_to_tos,
                     email: data.email,
                     user_id: user_id},
+        %AddedCredits{user_id: user_id, credits: 10_000},
         %AddedApplication{id: application_id,
                           name: data.application_name,
                           size: data.application_size,

@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { GetStartedMutation } from '../graphql';
+import { Redirect } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 
 class GetStarted extends React.Component {
@@ -62,8 +63,9 @@ class GetStarted extends React.Component {
             .then(stripeToken => this.props.getStarted(email, applicationName, agreedToTos, stripeToken))
             .then(res => {
                 this.setState({ success: true });
-                let authToken = _.get(res, 'data.getStarted.auth_token');
+                let authToken = _.get(res, 'data.getStarted.authToken');
                 localStorage.setItem('authToken', authToken);
+                setTimeout(() => this.setState({ redirect: true }), 1000);
             })
             .catch(error => {
                 console.log('error', JSON.stringify(error));
@@ -84,7 +86,11 @@ class GetStarted extends React.Component {
     };
 
     render() {
-        const { email, applicationName, errors, loading, success } = this.state;
+        const { email, applicationName, errors, loading, redirect, success } = this.state;
+
+        if (redirect) {
+            return <Redirect to="/" />;
+        }
 
         return (
             <div className="ij-get-started ui middle stackable aligned center aligned grid">

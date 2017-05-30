@@ -28,19 +28,19 @@ defmodule InjectDetect.AddCreditsTest do
     user = User.find(email: "email@example.com")
     user_id = user.id
 
-    assert user.credits == 0
+    assert user.credits == 10000
 
     %AddCredits{user_id: user.id, credits: 100_000}
     |> handle(%{user_id: user.id})
 
     user = User.find(email: "email@example.com")
-    assert user.credits == 100_000
+    assert user.credits == 110_000
 
     %AddCredits{user_id: user.id, credits: 5_000}
     |> handle(%{user_id: user.id})
 
     user = User.find(email: "email@example.com")
-    assert user.credits == 105_000
+    assert user.credits == 115_000
   end
 
 end
