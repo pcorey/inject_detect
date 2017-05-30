@@ -10,6 +10,8 @@ defmodule InjectDetect.Schema do
     RemoveApplication,
     RemoveExpectedQuery,
     RequestSignInToken,
+    SetRefillAmount,
+    SetRefillTrigger,
     SignOut,
     ToggleAlerting,
     ToggleTrainingMode,
@@ -169,6 +171,18 @@ defmodule InjectDetect.Schema do
     field :remove_application, type: :user do
       arg :application_id, non_null(:string)
       resolve handle(RemoveApplication, &user/1)
+    end
+
+    field :set_refill_amount, type: :user do
+      arg :user_id, non_null(:string)
+      arg :refill_amount, non_null(:integer)
+      resolve handle(SetRefillAmount, &application/1)
+    end
+
+    field :set_refill_trigger, type: :user do
+      arg :user_id, non_null(:string)
+      arg :refill_trigger, non_null(:integer)
+      resolve handle(SetRefillTrigger, &application/1)
     end
 
   end
