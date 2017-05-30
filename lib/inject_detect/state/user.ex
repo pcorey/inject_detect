@@ -10,6 +10,7 @@ defmodule InjectDetect.State.User do
     |> Map.put_new(:refill, true)
     |> Map.put_new(:refill_trigger, 5_000)
     |> Map.put_new(:refill_amount, 100_000)
+    |> Map.put_new(:stripe_token, nil)
   end
 
   def find(attrs) do

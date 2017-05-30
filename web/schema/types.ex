@@ -1,6 +1,18 @@
 defmodule InjectDetect.Schema.Types do
   use Absinthe.Schema.Notation
 
+  input_object :stripe_card do
+    field :id, :string
+    field :exp_month, :integer
+    field :exp_year, :integer
+    field :last4, :string
+  end
+
+  input_object :stripe_token do
+    field :id, :string
+    field :card, :stripe_card
+  end
+
   object :expected_query do
     field :id, :string
     field :collection, :string

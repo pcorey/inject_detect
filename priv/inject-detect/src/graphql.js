@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 export const UserProps = `
     id
@@ -46,12 +46,12 @@ export const ApplicationQuery = gql`
 export const GetStartedMutation = gql`
     mutation getStarted ($email: String!,
                          $applicationName: String!,
-                         $applicationSize: String!,
-                         $agreedToTos: Boolean) {
+                         $agreedToTos: Boolean,
+                         $stripeToken: StripeToken) {
         getStarted(email: $email,
                    applicationName: $applicationName,
-                   applicationSize: $applicationSize,
-                   agreedToTos: $agreedToTos) {
+                   agreedToTos: $agreedToTos,
+                   stripeToken: $stripeToken) {
             authToken
             ${UserProps}
         }

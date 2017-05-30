@@ -1,14 +1,13 @@
-import React from "react";
-import _ from "lodash";
-import { RequestSignInTokenMutation } from "../graphql";
-import { graphql } from "react-apollo";
+import React from 'react';
+import _ from 'lodash';
+import { RequestSignInTokenMutation } from '../graphql';
+import { graphql } from 'react-apollo';
 
 class SignIn extends React.Component {
-
     state = {
         loading: false,
         success: false
-    }
+    };
 
     requestSignInToken(e) {
         e.preventDefault();
@@ -16,14 +15,13 @@ class SignIn extends React.Component {
         this.setState({ errors: false, success: false, loading: true });
 
         let email = this.refs.email.value;
-        this.props.request(email)
+        this.props
+            .request(email)
             .then(() => {
                 this.setState({ success: true });
             })
-            .catch((error) => {
-                let errors = _.isEmpty(error.graphQLErrors) ?
-                              [{error: "Unexpected error"}] :
-                              error.graphQLErrors;
+            .catch(error => {
+                let errors = _.isEmpty(error.graphQLErrors) ? [{ error: 'Unexpected error' }] : error.graphQLErrors;
                 this.setState({ errors });
             })
             .then(() => {
@@ -39,26 +37,41 @@ class SignIn extends React.Component {
                 <div className="column">
 
                     <h2 className="ui icon header">
-                        <div className="content">
+                        <h1 className="ui header">
                             Request a Sign-in Link
-                        </div>
+                        </h1>
                     </h2>
 
                     <form className="ui large form" onSubmit={this.requestSignInToken.bind(this)}>
-                        <p className="ui left aligned">Enter your email address and we'll send you a magic link that will sign you in instantly!</p>
+                        <p className="ui left aligned">
+                            Enter your email address and we'll send you a magic link that will sign you in instantly!
+                        </p>
                         <div className="ui stacked segment">
                             <div className="field">
                                 <div className="ui left icon input">
-                                    <i className="user icon"></i>
-                                    <input type="email" name="email" placeholder="E-mail address" ref="email" required/>
+                                    <i className="user icon" />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="E-mail address"
+                                        ref="email"
+                                        required
+                                    />
                                 </div>
                             </div>
-                            <button className={`ui large fluid ${loading ? "loading" : ""} submit brand button`} disabled={loading} type="sumbit">Send link</button>
+                            <button
+                                className={`ui large fluid ${loading ? 'loading' : ''} submit brand button`}
+                                disabled={loading}
+                                type="sumbit"
+                            >
+                                Send link
+                            </button>
                         </div>
                     </form>
 
-                    { success && <div className="ui success message">We've sent you a sign-in link. Check your email!</div>}
-                    { errors && errors.map(({ error }) => (<div key={error} className="ui error message">{error}</div>)) }
+                    {success &&
+                        <div className="ui success message">We've sent you a sign-in link. Check your email!</div>}
+                    {errors && errors.map(({ error }) => <div key={error} className="ui error message">{error}</div>)}
 
                     <div className="ui message">
                         Don't have an account? <a href="/get-started">Get started!</a>
@@ -68,10 +81,10 @@ class SignIn extends React.Component {
             </div>
         );
     }
-};
+}
 
 SignIn.propTypes = {
-    request: React.PropTypes.func.isRequired,
+    request: React.PropTypes.func.isRequired
 };
 
 export default graphql(RequestSignInTokenMutation, {
