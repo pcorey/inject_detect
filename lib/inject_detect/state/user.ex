@@ -7,7 +7,7 @@ defmodule InjectDetect.State.User do
     attrs
     |> Map.put_new(:applications, [])
     |> Map.put_new(:credits, 0)
-    |> Map.put_new(:refill, true)
+    |> Map.put_new(:refill, false)
     |> Map.put_new(:refill_trigger, 1_000)
     |> Map.put_new(:refill_amount, 10_000)
     |> Map.put_new(:stripe_token, nil)

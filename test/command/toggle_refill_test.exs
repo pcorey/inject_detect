@@ -26,12 +26,6 @@ defmodule InjectDetect.ToggleRefillTest do
     |> handle(%{})
 
     user = User.find(email: "email@example.com")
-    assert user.refill == true
-
-    %ToggleRefill{user_id: user.id}
-    |> handle(%{user_id: user.id})
-
-    user = User.find(email: "email@example.com")
     assert user.refill == false
 
     %ToggleRefill{user_id: user.id}
@@ -39,6 +33,12 @@ defmodule InjectDetect.ToggleRefillTest do
 
     user = User.find(email: "email@example.com")
     assert user.refill == true
+
+    %ToggleRefill{user_id: user.id}
+    |> handle(%{user_id: user.id})
+
+    user = User.find(email: "email@example.com")
+    assert user.refill == false
   end
 
 end
