@@ -47,7 +47,7 @@ export const GetStartedMutation = gql`
     mutation getStarted ($email: String!,
                          $applicationName: String!,
                          $agreedToTos: Boolean,
-                         $stripeToken: StripeToken) {
+                         $stripeToken: StripeTokenInput) {
         getStarted(email: $email,
                    applicationName: $applicationName,
                    agreedToTos: $agreedToTos,

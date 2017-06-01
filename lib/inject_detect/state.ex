@@ -20,7 +20,7 @@ defmodule InjectDetect.State do
   # TODO: Add version
   defp convert_to_event(%{type: type, data: data}) do
     type = String.to_atom(type)
-    data = for {k, v} <- data, into: %{}, do: {String.to_atom(k), v}
+    data = InjectDetect.atomify(data)
     apply(type, :convert_from, [data, 0])
   end
 

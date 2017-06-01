@@ -6,6 +6,7 @@ defmodule InjectDetect.Schema do
     GetStarted,
     MarkQueryAsExpected,
     MarkQueryAsHandled,
+    OneTimePurchase,
     RegenerateApplicationToken,
     RemoveApplication,
     RemoveExpectedQuery,
@@ -103,7 +104,7 @@ defmodule InjectDetect.Schema do
       arg :application_name, non_null(:string)
       arg :application_size, :string
       arg :agreed_to_tos, :boolean
-      arg :stripe_token, non_null(:stripe_token)
+      arg :stripe_token, non_null(:stripe_token_input)
       resolve handle(GetStarted, &user/1)
     end
 
@@ -183,6 +184,13 @@ defmodule InjectDetect.Schema do
       arg :user_id, non_null(:string)
       arg :refill_trigger, non_null(:integer)
       resolve handle(SetRefillTrigger, &application/1)
+    end
+
+    field :one_time_purchase, type: :user do
+      arg :user_id, non_null(:string)
+      arg :credits, non_null(:integer)
+      arg :stripe_token, non_null(:stripe_token_input)
+      resolve handle(OneTimePurchase, &user/1)
     end
 
   end

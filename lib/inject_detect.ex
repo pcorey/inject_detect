@@ -38,4 +38,8 @@ defmodule InjectDetect do
     Phoenix.Token.verify(InjectDetect.Endpoint, "user", value, max_age: 60 * 60 * 24 * 14)
   end
 
+  def atomify(map) do
+    for {k, v} <- map, into: %{}, do: {String.to_atom(k), v}
+  end
+
 end

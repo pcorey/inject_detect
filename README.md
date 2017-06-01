@@ -23,3 +23,5 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
 
 - `SMTP_USERNAME`
 - `SMTP_PASSWORD`
+- `STRIPE_SECRET`
+- `STRIPE_PUBLISHABLE`

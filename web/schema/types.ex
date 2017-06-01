@@ -1,16 +1,35 @@
 defmodule InjectDetect.Schema.Types do
   use Absinthe.Schema.Notation
 
-  input_object :stripe_card do
+  input_object :stripe_card_input do
     field :id, :string
     field :exp_month, :integer
     field :exp_year, :integer
     field :last4, :string
   end
 
-  input_object :stripe_token do
+  input_object :stripe_token_input do
+    field :id, :string
+    field :card, :stripe_card_input
+  end
+
+  object :stripe_card do
+    field :id, :string
+    field :exp_month, :integer
+    field :exp_year, :integer
+    field :last4, :string
+  end
+
+  object :stripe_token do
     field :id, :string
     field :card, :stripe_card
+  end
+
+  object :stripe_charge do
+    field :id, :string
+    field :amount, :integer
+    field :description, :string
+    field :created, :integer
   end
 
   object :expected_query do
@@ -80,7 +99,17 @@ defmodule InjectDetect.Schema.Types do
     field :refill, :boolean
     field :refill_trigger, :integer
     field :refill_amount, :integer
+    field :stripe_token, :stripe_token
     field :applications, list_of(:application)
+    field :charges, list_of(:stripe_charge) do
+      resolve fn
+        (user, _, _) ->
+          with {:ok, charges} <- Stripe.get_charges(user.customer_id) do
+            IO.inspect(charges)
+            {:ok, Enum.map(charges, &InjectDetect.atomify/1)}
+          end
+      end
+    end
   end
 
 end
