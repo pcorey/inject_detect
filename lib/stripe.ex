@@ -3,7 +3,7 @@ defmodule Stripe do
   @base_url "https://api.stripe.com/v1"
 
   defp post(route, body) do
-    headers = [{"Authorization", "Bearer #{System.get_env("STRIPE_SECRET)}"},
+    headers = [{"Authorization", "Bearer #{System.get_env("STRIPE_SECRET")}"},
                {"Content-Type", "application/json"}]
     with {:ok, response } <- HTTPoison.post("#{@base_url}/#{route}", {:form, body}, headers) do
       Poison.decode(response.body)
