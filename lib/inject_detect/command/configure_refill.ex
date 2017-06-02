@@ -10,14 +10,14 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.ConfigureRefill do
 
   alias InjectDetect.Event.SetRefillAmount
   alias InjectDetect.Event.SetRefillTrigger
-  alias InjectDetect.Event.TurnOnRefill
+  alias InjectDetect.Event.TurnedOnRefill
   alias InjectDetect.State.User
 
 
   def set_refill_amount(user = %{id: user_id}, command, %{user_id: user_id}) do
     {:ok, [%SetRefillAmount{user_id: user_id, refill_amount: command.refill_amount},
            %SetRefillTrigger{user_id: user_id, refill_trigger: command.refill_trigger},
-           %TurnOnRefill{user_id: user_id}]}
+           %TurnedOnRefill{user_id: user_id}]}
   end
   def set_refill_amount(_, _, _), do: InjectDetect.error("Not authorized.")
 
