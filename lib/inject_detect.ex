@@ -1,6 +1,7 @@
 defmodule InjectDetect do
   use Application
 
+
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
@@ -21,6 +22,7 @@ defmodule InjectDetect do
     Supervisor.start_link(children, opts)
   end
 
+
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   def config_change(changed, _new, removed) do
@@ -28,19 +30,24 @@ defmodule InjectDetect do
     :ok
   end
 
+
   def generate_id, do: Ecto.UUID.generate()
+
 
   def generate_token(value) do
     Phoenix.Token.sign(InjectDetect.Endpoint, "user", value)
   end
 
+
   def verify_token(value) do
     Phoenix.Token.verify(InjectDetect.Endpoint, "user", value, max_age: 60 * 60 * 24 * 14)
   end
 
+
   def atomify(map) do
     for {k, v} <- map, into: %{}, do: {String.to_atom(k), v}
   end
+
 
   def error(message) do
     code = message
@@ -48,9 +55,8 @@ defmodule InjectDetect do
     |> String.replace(~r/\s+/, "_")
     |> String.downcase
     |> String.to_atom
-    {:error, %{code: code,
-               error: message,
-               message: message}}
+    {:error, %{code: code, error: message, message: message}}
   end
+
 
 end
