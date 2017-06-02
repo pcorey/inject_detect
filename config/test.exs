@@ -22,3 +22,6 @@ config :inject_detect, InjectDetect.Mailer,
   adapter: Bamboo.LocalAdapter,
   username: "username",
   password: "password"
+
+config :inject_detect,
+  stripe_module: Stripe.Mock

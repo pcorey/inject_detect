@@ -10,15 +10,13 @@ defmodule InjectDetect.State.UserTest do
                               credits: 0,
                               refill: false,
                               refill_trigger: 1_000,
-                              refill_amount: 10_000,
-                              stripe_token: nil}
+                              refill_amount: 10_000}
     assert User.new(%{id: 123}) == %{id: 123,
                                      applications: [],
                                      credits: 0,
                                      refill: false,
                                      refill_trigger: 1_000,
-                                     refill_amount: 10_000,
-                                     stripe_token: nil}
+                                     refill_amount: 10_000}
   end
 
   test "find by id" do

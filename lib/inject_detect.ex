@@ -42,4 +42,15 @@ defmodule InjectDetect do
     for {k, v} <- map, into: %{}, do: {String.to_atom(k), v}
   end
 
+  def error(message) do
+    code = message
+    |> String.replace(~r/[^a-zA-Z\s]/, "")
+    |> String.replace(~r/\s+/, "_")
+    |> String.downcase
+    |> String.to_atom
+    {:error, %{code: code,
+               error: message,
+               message: message}}
+  end
+
 end
