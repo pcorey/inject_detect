@@ -12,6 +12,14 @@ defmodule Stripe.API do
     end
   end
 
+  defp get(route) do
+    headers = [{"Authorization", "Bearer #{System.get_env("STRIPE_SECRET")}"},
+               {"Content-Type", "application/json"}]
+    with {:ok, response } <- HTTPoison.get("#{@base_url}/#{route}", headers) do
+      Poison.decode(response.body)
+    end
+  end
+
 
   def create_customer(user_id) do
     post("customers", [description: user_id])
@@ -25,6 +33,10 @@ defmodule Stripe.API do
 
   def charge_customer(customer_id, amount) do
     post("charges", [amount: amount, currency: "usd", customer: customer_id])
+  end
+
+  def get_charges(customer_id) do
+    with {:ok, %{"data" => charges}} <- get("charges?customer=#{customer_id}"), do: {:ok, charges}
   end
 
 

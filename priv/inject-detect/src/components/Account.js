@@ -1,6 +1,7 @@
+import Charges from './Charges';
 import OneTimePurchase from './OneTimePurchase';
-import RecurringPurchase from './RecurringPurchase';
 import React from 'react';
+import RecurringPurchase from './RecurringPurchase';
 import _ from 'lodash';
 import gql from 'graphql-tag';
 import { Button, Form } from 'semantic-ui-react';
@@ -61,14 +62,14 @@ class Account extends React.Component {
                     </h1>
                 </div>
 
-                <div className="section" style={{ marginTop: 0 }}>
+                {/* <div className="section" style={{ marginTop: 0 }}>
                     <h3 className="ui sub header">User information:</h3>
                     <p className="instructions">
-                        Your email address is <strong>{user.email}</strong>.
+                    Your email address is <strong>{user.email}</strong>.
                     </p>
-                </div>
+                    </div> */}
 
-                <div className="section" style={{ width: '100%' }}>
+                <div className="sixteen wide column section" style={{ marginTop: 0 }}>
                     <h3 className="ui sub header">Credits and Payments:</h3>
                     <p className="instructions">
                         <span>
@@ -94,10 +95,9 @@ class Account extends React.Component {
                               </span>}
                     </p>
 
-                    <p>Recent purchases:</p>
-                    {_.map(user.charges, charge => {
-                        return <p key={charge.id}>{charge.id}: {charge.amount} - {charge.description}</p>;
-                    })}
+                    {user.stripeToken
+                        ? <p className="instructions">Credit card on file: {user.stripeToken.last4}</p>
+                        : null}
 
                     <div className="ui segment">
                         <Form>
@@ -115,6 +115,11 @@ class Account extends React.Component {
                         </Form>
                     </div>
 
+                </div>
+
+                <div className="sixteen wide column section">
+                    <h3 className="ui sub header">Recent purchases:</h3>
+                    <Charges />
                 </div>
 
             </div>
@@ -136,6 +141,11 @@ export default graphql(gql`
                 amount
                 created
                 description
+            }
+            stripeToken {
+                card {
+                    last4
+                }
             }
         }
     }

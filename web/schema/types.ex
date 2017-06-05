@@ -104,9 +104,9 @@ defmodule InjectDetect.Schema.Types do
     field :charges, list_of(:stripe_charge) do
       resolve fn
         (user, _, _) ->
-          with {:ok, charges} <- Stripe.get_charges(user.customer_id) do
-            IO.inspect(charges)
-            {:ok, Enum.map(charges, &InjectDetect.atomify/1)}
+          case Stripe.get_charges(user.customer_id) do
+            {:ok, charges} -> {:ok, charges}
+            _ -> InjectDetect.error("Unable to resolve charges.")
           end
       end
     end
