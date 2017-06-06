@@ -11,9 +11,11 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.ToggleAlerting do
   def toggle_alerting(application = %{user_id: user_id}, command, %{user_id: user_id}) do
     case application.alerting do
       true ->
-        {:ok, [%TurnedOffAlerting{application_id: command.application_id}], %{application_id: application.id}}
+        {:ok, [%TurnedOffAlerting{application_id: command.application_id,
+                                  user_id: user_id}], %{application_id: application.id}}
       false ->
-        {:ok, [%TurnedOnAlerting{application_id: command.application_id}], %{application_id: application.id}}
+        {:ok, [%TurnedOnAlerting{application_id: command.application_id,
+                                 user_id: user_id}], %{application_id: application.id}}
     end
   end
 

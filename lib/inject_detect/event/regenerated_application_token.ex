@@ -1,6 +1,7 @@
 defmodule InjectDetect.Event.RegeneratedApplicationToken do
-  defstruct id: nil,
-            token: nil
+  defstruct application_id: nil,
+            token: nil,
+            user_id: nil
 
   def convert_from(event, _), do: struct(__MODULE__, event)
 
@@ -11,9 +12,9 @@ defimpl InjectDetect.State.Reducer,
 
   def apply(event, state) do
     put_in(state, [Lens.key(:users),
-                   Lens.all,
+                   Lens.filter(&(&1.id == event.user_id)),
                    Lens.key(:applications),
-                   Lens.filter(&(&1.id == event.id)),
+                   Lens.filter(&(&1.id == event.application_id)),
                    Lens.key(:token)], event.token)
   end
 

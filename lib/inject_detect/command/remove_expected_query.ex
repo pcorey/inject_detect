@@ -19,7 +19,8 @@ defimpl InjectDetect.Command,
   def handle_for_query(query, application_id) do
     context = %{application_id: application_id, query_id: query.id}
     {:ok, [%RemovedExpectedQuery{application_id: application_id,
-                                 query_id: query.id}], context}
+                                 query_id: query.id,
+                                 user_id: query.user_id}], context}
   end
 
   def handle_for_application(nil, _command) do

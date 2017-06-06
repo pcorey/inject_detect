@@ -10,8 +10,9 @@ defimpl InjectDetect.Command,
 
   def regenerate_application_token(application = %{user_id: user_id}, _command, %{user_id: user_id}) do
     application_token = InjectDetect.generate_token(application.id)
-    {:ok, [%RegeneratedApplicationToken{id: application.id,
-                                        token: application_token}], %{application_id: application.id}}
+    {:ok, [%RegeneratedApplicationToken{application_id: application.id,
+                                        token: application_token,
+                                        user_id: user_id}], %{application_id: application.id}}
   end
 
   def regenerate_application_token(_application, _command, _context) do

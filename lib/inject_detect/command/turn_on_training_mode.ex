@@ -14,7 +14,8 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.TurnOnTrainingMode do
   end
 
   def turn_on_training_mode(application = %{user_id: user_id}, command, %{user_id: user_id}) do
-    {:ok, [%TurnedOnTrainingMode{application_id: command.application_id}], %{application_id: application.id}}
+    {:ok, [%TurnedOnTrainingMode{application_id: command.application_id,
+                                 user_id: user_id}], %{application_id: application.id}}
   end
 
   def turn_on_training_mode(_, _, _) do

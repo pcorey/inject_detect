@@ -1,6 +1,7 @@
 defmodule InjectDetect.Event.RemovedExpectedQuery do
   defstruct application_id: nil,
-    query_id: nil
+            query_id: nil,
+            user_id: nil
 
   def convert_from(event, _), do: struct(__MODULE__, event)
 
@@ -12,7 +13,7 @@ defimpl InjectDetect.State.Reducer,
   alias InjectDetect.State.ExpectedQuery
 
   def apply(event, state) do
-    ExpectedQuery.remove(state, event.application_id, event.query_id)
+    ExpectedQuery.remove(state, event.user_id, event.application_id, event.query_id)
   end
 
 end

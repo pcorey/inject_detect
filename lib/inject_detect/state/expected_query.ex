@@ -39,9 +39,9 @@ defmodule InjectDetect.State.ExpectedQuery do
     |> List.first
   end
 
-  def remove(state, application_id, id) do
+  def remove(state, user_id, application_id, id) do
     Lens.key(:users)
-    |> Lens.all
+    |> Lens.filter(&(&1.id == user_id))
     |> Lens.key(:applications)
     |> Lens.filter(&(&1.id == application_id))
     |> Lens.key(:expected_queries)

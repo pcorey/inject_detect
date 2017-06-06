@@ -11,9 +11,11 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.ToggleTrainingMode do
   def toggle_training_mode(application = %{user_id: user_id}, command, %{user_id: user_id}) do
     case application.training_mode do
       true ->
-        {:ok, [%TurnedOffTrainingMode{application_id: command.application_id}], %{application_id: application.id}}
+        {:ok, [%TurnedOffTrainingMode{application_id: command.application_id,
+                                      user_id: user_id}], %{application_id: application.id}}
       false ->
-        {:ok, [%TurnedOnTrainingMode{application_id: command.application_id}], %{application_id: application.id}}
+        {:ok, [%TurnedOnTrainingMode{application_id: command.application_id,
+                                     user_id: user_id}], %{application_id: application.id}}
     end
   end
 
