@@ -1,9 +1,8 @@
-defmodule InjectDetect.Command.OneTimePurchase do
-  defstruct user_id: nil,
-            credits: nil
+defmodule InjectDetect.Command.RefillCredits do
+  defstruct user_id: nil
 end
 
-defimpl InjectDetect.Command, for: InjectDetect.Command.OneTimePurchase do
+defimpl InjectDetect.Command, for: InjectDetect.Command.RefillCredits do
 
 
   alias InjectDetect.Event.AddedCredits
@@ -19,16 +18,16 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.OneTimePurchase do
   def handle_charge_customer(_, _, _), do: InjectDetect.error("Unable to charge customer.")
 
 
-  def handle_for_user(nil, _), do: InjectDetect.error("User not found.")
-  def handle_for_user(user, credits) do
-    Stripe.charge_customer(user.customer_id, Pricing.amount_for(credits))
-    |> handle_charge_customer(user, credits, Pricing.amount_for(credits))
+  def handle_for_user(nil), do: InjectDetect.error("User not found.")
+  def handle_for_user(user) do
+    Stripe.charge_customer(user.customer_id, Pricing.amount_for(user.refill_amount))
+    |> handle_charge_customer(user, user.refill_amount, Pricing.amount_for(user.refill_amount))
   end
 
 
   def handle(command = %{user_id: user_id}, %{user_id: user_id}) do
     User.find(user_id)
-    |> handle_for_user(command.credits)
+    |> handle_for_user
   end
   def handle(_, _), do: InjectDetect.error("Not authorized.")
 
