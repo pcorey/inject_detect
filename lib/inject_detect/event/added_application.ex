@@ -4,9 +4,6 @@ defmodule InjectDetect.Event.AddedApplication do
             size: nil,
             token: nil,
             user_id: nil
-
-  def convert_from(event, _), do: struct(__MODULE__, event)
-
 end
 
 defimpl InjectDetect.State.Reducer,

@@ -1,9 +1,6 @@
 defmodule InjectDetect.Event.GivenAuthToken do
   defstruct auth_token: nil,
             user_id: nil
-
-  def convert_from(event, _), do: struct(__MODULE__, event)
-
 end
 
 defimpl InjectDetect.State.Reducer,

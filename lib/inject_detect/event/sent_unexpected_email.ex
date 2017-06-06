@@ -3,9 +3,6 @@ defmodule InjectDetect.Event.SentUnexpectedEmail do
             application_id: nil,
             query_id: nil,
             sent_at: nil
-
-  def convert_from(event, _), do: struct(__MODULE__, event)
-
 end
 
 defimpl InjectDetect.State.Reducer,

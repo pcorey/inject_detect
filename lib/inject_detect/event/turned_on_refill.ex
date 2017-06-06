@@ -1,8 +1,5 @@
 defmodule InjectDetect.Event.TurnedOnRefill do
   defstruct user_id: nil
-
-  def convert_from(event, _), do: struct(__MODULE__, event)
-
 end
 
 defimpl InjectDetect.State.Reducer,

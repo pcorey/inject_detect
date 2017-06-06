@@ -6,9 +6,6 @@ defmodule InjectDetect.Event.AddedExpectedQuery do
             query: nil,
             type: nil,
             user_id: nil
-
-  def convert_from(event, _), do: struct(__MODULE__, event)
-
 end
 
 defimpl InjectDetect.State.Reducer,

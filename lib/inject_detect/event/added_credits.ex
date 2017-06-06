@@ -1,9 +1,6 @@
 defmodule InjectDetect.Event.AddedCredits do
   defstruct user_id: nil,
             credits: nil
-
-  def convert_from(event, _), do: struct(__MODULE__, event)
-
 end
 
 defimpl InjectDetect.State.Reducer,

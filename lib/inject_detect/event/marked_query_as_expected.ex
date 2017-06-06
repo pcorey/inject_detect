@@ -2,9 +2,6 @@ defmodule InjectDetect.Event.MarkedQueryAsExpected do
   defstruct application_id: nil,
             query_id: nil,
             user_id: nil
-
-  def convert_from(event, _), do: struct(__MODULE__, event)
-
 end
 
 defimpl InjectDetect.State.Reducer,

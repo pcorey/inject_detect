@@ -2,9 +2,6 @@ defmodule InjectDetect.Event.RegeneratedApplicationToken do
   defstruct application_id: nil,
             token: nil,
             user_id: nil
-
-  def convert_from(event, _), do: struct(__MODULE__, event)
-
 end
 
 defimpl InjectDetect.State.Reducer,

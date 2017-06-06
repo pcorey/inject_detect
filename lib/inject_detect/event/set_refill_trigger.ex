@@ -1,9 +1,6 @@
 defmodule InjectDetect.Event.SetRefillTrigger do
   defstruct user_id: nil,
             refill_trigger: nil
-
-  def convert_from(event, _), do: struct(__MODULE__, event)
-
 end
 
 defimpl InjectDetect.State.Reducer,

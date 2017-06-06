@@ -1,11 +1,6 @@
 defmodule InjectDetect.Event.CreatedCustomer do
   defstruct user_id: nil,
             customer_id: nil
-
-
-  def convert_from(event, _), do: struct(__MODULE__, event)
-
-
 end
 
 

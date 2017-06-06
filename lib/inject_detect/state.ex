@@ -17,11 +17,10 @@ defmodule InjectDetect.State do
     GenServer.call(__MODULE__, :reset)
   end
 
-  # TODO: Add version
   defp convert_to_event(%{type: type, data: data}) do
     type = String.to_atom(type)
     data = InjectDetect.atomify(data)
-    apply(type, :convert_from, [data, 0])
+    InjectDetect.Event.convert_from(struct(type, data), 0)
   end
 
   defp get_events_since(id) do
