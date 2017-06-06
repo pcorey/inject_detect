@@ -6,7 +6,11 @@ defmodule Stripe.Mock do
   end
 
 
-  def update_customer(customer_id, stripe_token) do
+  def add_default_token(customer_id, stripe_token) do
+    {:ok, %{"id" => "customer_12345"}}
+  end
+
+  def add_token(customer_id, stripe_token) do
     {:ok, %{"id" => "customer_12345"}}
   end
 

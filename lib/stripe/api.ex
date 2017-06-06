@@ -26,7 +26,12 @@ defmodule Stripe.API do
   end
 
 
-  def update_customer(customer_id, stripe_token) do
+  def add_token(customer_id, stripe_token) do
+    post("customers/#{customer_id}", [source: stripe_token])
+  end
+
+
+  def add_default_token(customer_id, stripe_token) do
     post("customers/#{customer_id}", [default_source: stripe_token])
   end
 

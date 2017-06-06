@@ -19,7 +19,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.UpdateStripeToken do
 
   def handle_for_user(nil, _), do: InjectDetect.error("User not found.")
   def handle_for_user(user, stripe_token) do
-    Stripe.update_customer(user.customer_id, stripe_token.id)
+    Stripe.add_default_token(user.customer_id, stripe_token.id)
     |> handle_update_customer(user)
   end
 

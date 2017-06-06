@@ -7,9 +7,15 @@ defmodule Stripe do
   end
 
 
-  def update_customer(user_id, stripe_token_id) do
+  def add_default_token(user_id, stripe_token_id) do
     stripe_module = Application.fetch_env!(:inject_detect, :stripe_module)
-    apply(stripe_module, :update_customer, [user_id, stripe_token_id])
+    apply(stripe_module, :add_default_token, [user_id, stripe_token_id])
+  end
+
+
+  def add_token(user_id, stripe_token_id) do
+    stripe_module = Application.fetch_env!(:inject_detect, :stripe_module)
+    apply(stripe_module, :add_token, [user_id, stripe_token_id])
   end
 
 
