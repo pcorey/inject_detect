@@ -36,6 +36,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   end
 
   def ingest_query(application = %{training_mode: true}, query, {added, events}) do
+    query = Map.put_new(query, :user_id, application.user_id)
     case find_expected_query(application.id, query, added) do
       nil       -> query = Map.put_new(query, :id, generate_id)
                    {[query | added],
@@ -63,6 +64,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   end
 
   def ingest_query(application = %{training_mode: false}, query, {added, events}) do
+    query = Map.put_new(query, :user_id, application.user_id)
     case {ExpectedQuery.find(application.id, query), find_unexpected_query(application.id, query, added)} do
       {nil, nil}       -> query = Map.put_new(query, :id, generate_id)
                           similar_query = find_similar_query(query, application.expected_queries)

@@ -18,7 +18,7 @@ defmodule InjectDetect.State.ExpectedQueryTest do
     state = Base.new()
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
-    |> Application.add_expected_query(application.id, query)
+    |> Application.add_expected_query(user.id, application.id, query)
     assert ExpectedQuery.find(state, 234, 345) == ExpectedQuery.new(query)
   end
 
@@ -29,7 +29,7 @@ defmodule InjectDetect.State.ExpectedQueryTest do
     state = Base.new()
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
-    |> Application.add_expected_query(application.id, query)
+    |> Application.add_expected_query(user.id, application.id, query)
     assert ExpectedQuery.find(state, 234, query: %{"_id" => "string"}) == ExpectedQuery.new(query)
   end
 

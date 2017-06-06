@@ -29,42 +29,45 @@ defmodule InjectDetect.State.Application do
   end
 
   def find(state, id) do
-    application_lens(id)
+    Lens.key(:users)
+    |> Lens.all
+    |> Lens.key(:applications)
+    |> Lens.filter(&(&1.id == id))
     |> Lens.to_list(state)
     |> List.first
   end
 
-  def add_expected_query(state, application_id, query) do
-    application_lens(application_id)
+  def add_expected_query(state, user_id, application_id, query) do
+    application_lens(user_id, application_id)
     |> Lens.key(:expected_queries)
     |> Lens.map(state, &([ExpectedQuery.new(query) | &1]))
   end
 
-  def touch_expected_query(state, application_id, query) do
-    application_lens(application_id)
+  def touch_expected_query(state, user_id, application_id, query) do
+    application_lens(user_id, application_id)
     |> Lens.key(:expected_queries)
     |> Lens.filter(&(&1.id == query.id))
     |> Lens.map(state, &(%{&1 | queried_at: query.queried_at,
                                 seen: &1.seen + 1}))
   end
 
-  def add_unexpected_query(state, application_id, query) do
-    application_lens(application_id)
+  def add_unexpected_query(state, user_id, application_id, query) do
+    application_lens(user_id, application_id)
     |> Lens.key(:unexpected_queries)
     |> Lens.map(state, &([UnexpectedQuery.new(query) | &1]))
   end
 
-  def touch_unexpected_query(state, application_id, query) do
-    application_lens(application_id)
+  def touch_unexpected_query(state, user_id, application_id, query) do
+    application_lens(user_id, application_id)
     |> Lens.key(:unexpected_queries)
     |> Lens.filter(&(&1.id == query.id))
     |> Lens.map(state, &(%{&1 | queried_at: query.queried_at,
                                 seen: &1.seen + 1}))
   end
 
-  defp application_lens(application_id) do
+  defp application_lens(user_id, application_id) do
     Lens.key(:users)
-    |> Lens.all
+    |> Lens.filter(&(&1.id == user_id))
     |> Lens.key(:applications)
     |> Lens.filter(&(&1.id == application_id))
   end

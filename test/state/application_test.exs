@@ -48,7 +48,7 @@ defmodule InjectDetect.State.ApplicationTest do
     state = Base.new()
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
-    |> Application.add_expected_query(application.id, query)
+    |> Application.add_expected_query(user.id, application.id, query)
     assert Application.find(state, name: "Foo") ==
       %{Application.new(application)
         | expected_queries: [ExpectedQuery.new(query)]}
@@ -61,8 +61,8 @@ defmodule InjectDetect.State.ApplicationTest do
     state = Base.new()
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
-    |> Application.add_expected_query(application.id, query)
-    |> Application.touch_expected_query(application.id, query)
+    |> Application.add_expected_query(user.id, application.id, query)
+    |> Application.touch_expected_query(user.id, application.id, query)
     assert Application.find(state, name: "Foo") ==
       %{Application.new(application)
         | expected_queries: [%{ExpectedQuery.new(query) | seen: 1, queried_at: ~D[2017-04-05]}]}
@@ -75,10 +75,9 @@ defmodule InjectDetect.State.ApplicationTest do
     state = Base.new()
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
-    |> Application.add_unexpected_query(application.id, query)
+    |> Application.add_unexpected_query(user.id, application.id, query)
     assert Application.find(state, name: "Foo") ==
-      %{Application.new(application)
-        | unexpected_queries: [UnexpectedQuery.new(query)]}
+      %{Application.new(application) | unexpected_queries: [UnexpectedQuery.new(query)]}
   end
 
   test "touch unexpected query" do
@@ -88,8 +87,8 @@ defmodule InjectDetect.State.ApplicationTest do
     state = Base.new()
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
-    |> Application.add_unexpected_query(application.id, query)
-    |> Application.touch_unexpected_query(application.id, query)
+    |> Application.add_unexpected_query(user.id, application.id, query)
+    |> Application.touch_unexpected_query(user.id, application.id, query)
     assert Application.find(state, name: "Foo") ==
       %{Application.new(application)
         | unexpected_queries: [%{UnexpectedQuery.new(query) | seen: 1, queried_at: ~D[2017-04-05]}]}
