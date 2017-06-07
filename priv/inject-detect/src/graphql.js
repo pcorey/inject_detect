@@ -46,12 +46,12 @@ export const ApplicationQuery = gql`
 export const GetStartedMutation = gql`
     mutation getStarted ($email: String!,
                          $applicationName: String!,
-                         $agreedToTos: Boolean,
-                         $stripeToken: StripeTokenInput) {
+                         $referralCode: String!,
+                         $agreedToTos: Boolean) {
         getStarted(email: $email,
                    applicationName: $applicationName,
                    agreedToTos: $agreedToTos,
-                   stripeToken: $stripeToken) {
+                   referralCode: $referralCode) {
             authToken
             ${UserProps}
         }

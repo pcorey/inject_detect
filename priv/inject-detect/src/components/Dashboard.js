@@ -71,7 +71,10 @@ class Dashboard extends React.Component {
                             .
                         </span>
                     </p>
-                    <div className="ui indicating progress" data-percent={user.credits / user.refillAmount * 100}>
+                    <div
+                        className="ui indicating progress"
+                        data-percent={Math.min(user.credits / user.refillAmount, 1) * 100}
+                    >
                         <div className="bar" />
                     </div>
                 </div>

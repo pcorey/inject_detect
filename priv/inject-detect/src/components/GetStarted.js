@@ -10,29 +10,6 @@ class GetStarted extends React.Component {
         success: false
     };
 
-    style = {
-        base: {
-            fontFamily: "Lato,'Helvetica Neue',Arial,Helvetica,sans-serif",
-            '::placeholder': {
-                color: '#ccc'
-            }
-        }
-    };
-
-    initStripeElements() {
-        const stripe = window.Stripe(_.get(process.env, 'REACT_APP_STRIPE_SECRET'));
-        const elements = stripe.elements();
-        const card = elements.create('card', { style: this.style });
-        card.mount('#card-element');
-        this.stripe = stripe;
-        this.elements = elements;
-        this.card = card;
-    }
-
-    componentDidMount() {
-        this.initStripeElements();
-    }
-
     getStarted(e) {
         e.preventDefault();
 
@@ -41,26 +18,10 @@ class GetStarted extends React.Component {
         let email = this.state.email;
         let applicationName = this.state.applicationName;
         let agreedToTos = this.refs.agreedToTos.checked;
+        let referralCode = this.refs.referralCode.value;
 
-        this.stripe
-            .createToken(this.card)
-            .then(result => {
-                if (result.error) {
-                    throw { graphQLErrors: [{ error: result.error.message }] };
-                } else {
-                    return result.token;
-                }
-            })
-            .then(stripeToken => ({
-                id: stripeToken.id,
-                card: {
-                    id: _.get(stripeToken, 'card.id'),
-                    expMonth: _.get(stripeToken, 'card.exp_month'),
-                    expYear: _.get(stripeToken, 'card.exp_year'),
-                    last4: _.get(stripeToken, 'card.last4')
-                }
-            }))
-            .then(stripeToken => this.props.getStarted(email, applicationName, agreedToTos, stripeToken))
+        return this.props
+            .getStarted(email, applicationName, referralCode, agreedToTos)
             .then(res => {
                 this.setState({ success: true });
                 let authToken = _.get(res, 'data.getStarted.authToken');
@@ -102,23 +63,19 @@ class GetStarted extends React.Component {
                         <strong>Getting started with Inject Detect is easy!</strong>
                     </p>
                     <p className="instructions" style={{ textAlign: 'left' }}>
-                        First things first, we'll need your
+                        First things first, we'll need your email address and your application's name. We use
                         {' '}
-                        email address
-                        and your
+                        <a
+                            target="_blank"
+                            href="http://www.east5th.co/blog/2017/04/24/passwordless-authentication-with-phoenix-tokens/"
+                        >
+                            passwordless authentication{' '}
+                        </a>
                         {' '}
-                        application's name
-                        . We use
-                        {' '}
-                        <a href="#">passwordless authentication </a>
                         to keep your account secure and to improve your experience.
                     </p>
                     <p className="instructions" style={{ textAlign: 'left' }}>
-                        Next, we'll set up your payment information. Inject Detect uses an
-                        {' '}
-                        <a href="#">on demand billing system</a>
-                        {' '}
-                        which means you'll only pay for the services you use.{' '}
+                        Next, enter a referral code if you have one. Referral codes can give you additional free credits on top of the inital 10,000 credits we give each new account!
                     </p>
                     <p className="instructions" style={{ textAlign: 'left' }}>
                         Lastly, please be sure to read through our <a href="#">terms of service</a> before signing up.
@@ -161,20 +118,14 @@ class GetStarted extends React.Component {
                             <hr style={{ border: '0', borderBottom: '1px solid #ddd', margin: '1em 2em' }} />
 
                             <div className="field">
-                                <div
-                                    id="card-element"
-                                    style={{
-                                        border: '1px solid rgba(34,36,38,.15)',
-                                        borderRadius: '.28571429rem',
-                                        padding: '.67857143em 1em'
-                                    }}
-                                />
-                            </div>
-
-                            <div className="field">
                                 <div className="ui left icon input">
                                     <i className="heart icon" />
-                                    <input type="text" name="coupon" placeholder="Coupon code" ref="coupon" />
+                                    <input
+                                        type="text"
+                                        name="referralCode"
+                                        placeholder="Referral code"
+                                        ref="referralCode"
+                                    />
                                 </div>
                             </div>
 
@@ -222,13 +173,13 @@ GetStarted.propTypes = {
 
 export default graphql(GetStartedMutation, {
     props: ({ mutate }) => ({
-        getStarted: (email, applicationName, agreedToTos, stripeToken) =>
+        getStarted: (email, applicationName, referralCode, agreedToTos) =>
             mutate({
                 variables: {
                     email,
                     applicationName,
                     agreedToTos,
-                    stripeToken
+                    referralCode
                 }
             })
     })

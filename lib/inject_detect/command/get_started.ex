@@ -2,8 +2,8 @@ defmodule InjectDetect.Command.GetStarted do
   defstruct email: nil,
             application_name: nil,
             application_size: nil,
-            agreed_to_tos: nil,
-            stripe_token: nil
+            referral_code: nil,
+            agreed_to_tos: nil
 end
 
 defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
@@ -21,6 +21,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
     with {:ok, customer} <- Stripe.create_customer(user_id) do
       {:ok, [%GotStarted{agreed_to_tos: command.agreed_to_tos,
                          email: command.email,
+                         referral_code: command.referral_code,
                          user_id: user_id},
              %AddedApplication{id: application_id,
                                name: command.application_name,

@@ -103,8 +103,8 @@ defmodule InjectDetect.Schema do
       arg :email, non_null(:string)
       arg :application_name, non_null(:string)
       arg :application_size, :string
-      arg :agreed_to_tos, :boolean
-      arg :stripe_token, non_null(:stripe_token_input)
+      arg :agreed_to_tos, non_null(:boolean)
+      arg :referral_code, non_null(:string)
       resolve handle(GetStarted, &user/1)
     end
 
