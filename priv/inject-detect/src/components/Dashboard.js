@@ -44,56 +44,41 @@ class Dashboard extends React.Component {
                         </h1>
                     </div>
                     <div className="section" style={{ marginTop: 0 }}>
-                        {/* <h3 className="ui sub header">Credits:</h3> */}
                         <p className="instructions">
-                            We've gone ahead and set up your
+                            We've gone ahead and set up your new account and your
                             {' '}
                             <Link to={`/application/${user.applications[0].id}`}>first application</Link>
                             . Check out our
                             {' '}
                             <a href="#">Getting Started</a>
                             {' '}
-                            guide to get your Meteor application up and running with your new Inject Detect account.
-                            {' '}
+                            guide for instructions on getting your Meteor application up and running with your new Inject Detect account.
                         </p>
-                        <hr
-                            style={{ border: 0, 'border-bottom': '1px solid #ddd', width: '75%', margin: '2em auto' }}
-                        />
                         <p className="instructions">
-                            Your application is currently in
+                            Your first application automatically starts out in
                             {' '}
                             <strong>training mode</strong>
-                            . Every query made by your application will automatically be marked as an expected query. While in training mode, run your application through all of it's normal user stories to generate your application's complete set of expected queries. Once you're satisfied that you've captured every query made by your application,
+                            , which means that every query it makes will automatically be marked as an
                             {' '}
-                            <strong>turn off training mode</strong>
-                            .
+                            <strong>expected query</strong>
+                            . We suggest running your application through its courses, hitting all expected user stories before turning off training mode. Once out of training mode, we immediately notify you if the application makes any
+                            {' '}
+                            <strong>unexpected queries</strong>
+                            {' '}
+                            that may be the result of a NoSQL Injection attack.
                         </p>
                         <p className="instructions">
-                            Once out of training mode, we'll compare every query made by your application against your set of expected queries. If we detect an
+                            We've loaded your account with an initial
                             {' '}
-                            <strong>unexpected query</strong>
-                            , we'll send you en email alert, letting you know immediately.
-                        </p>
-                        <hr
-                            style={{ border: 0, 'border-bottom': '1px solid #ddd', width: '75%', margin: '2em auto' }}
-                        />
-                        <p className="instructions">
-                            Every query your application makes consumes an Inject Detect
+                            {Number(user.credits).toLocaleString()}
                             {' '}
-                            <strong>credit</strong>
-                            . Your account is initially loaded with 10,000 credits, which means we'll handle up to 10,000 queries made by your application. Once your account runs out of credits, we'll stop monitoring incoming queries made by your application.
-                        </p>
-                        <p className="instructions">
-                            You can
+                            credits, which means we'll process
                             {' '}
-                            <strong>buy more credits</strong>
+                            {Number(user.credits).toLocaleString()}
                             {' '}
-                            or configure
+                            queries from your Meteor application before needing a refill. You can buy more credits or set up an automatic refill on your
                             {' '}
-                            <strong>automatic token purchases </strong>
-                            in your
-                            {' '}
-                            <Link to="/account">account settings</Link>
+                            <Link to="/account">account settings page</Link>
                             .
                         </p>
                     </div>
