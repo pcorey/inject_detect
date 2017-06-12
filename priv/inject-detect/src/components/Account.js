@@ -1,5 +1,6 @@
 import Charges from './Charges';
 import OneTimePurchase from './OneTimePurchase';
+import OneTimePurchaseModal from './OneTimePurchaseModal';
 import React from 'react';
 import RecurringPurchase from './RecurringPurchase';
 import _ from 'lodash';
@@ -32,6 +33,18 @@ class Account extends React.Component {
         this.card = card;
     }
 
+    initProgress() {
+        window.$('.ui.progress').progress();
+    }
+
+    componentDidMount() {
+        this.initProgress();
+    }
+
+    componentDidUpdate() {
+        this.initProgress();
+    }
+
     componentWillUpdate() {
         if (!this.props.data.loading) {
             this.initStripeElements();
@@ -62,15 +75,8 @@ class Account extends React.Component {
                     </h1>
                 </div>
 
-                {/* <div className="section" style={{ marginTop: 0 }}>
-                    <h3 className="ui sub header">User information:</h3>
-                    <p className="instructions">
-                    Your email address is <strong>{user.email}</strong>.
-                    </p>
-                    </div> */}
-
                 <div className="sixteen wide column section" style={{ marginTop: 0 }}>
-                    <h3 className="ui sub header">Credits and Payments:</h3>
+                    {/* <h3 className="ui sub header">Credits and Payments:</h3> */}
                     <p className="instructions">
                         <span>
                             Your account current has <strong>{commas(user.credits)}</strong> credits remaining.{' '}
@@ -85,7 +91,7 @@ class Account extends React.Component {
                                   {' '}
                                   <strong>{commas(user.refillTrigger)}</strong>
                                   {' '}
-                                  remaining credits.
+                                  remaining credits using a card ending in <strong>{user.stripeToken.last4}</strong>.
                                   {' '}
                               </span>
                             : <span>
@@ -94,33 +100,74 @@ class Account extends React.Component {
                                   </strong>
                               </span>}
                     </p>
+                    <div
+                        className="ui indicating progress"
+                        data-percent={Math.min(user.credits / user.refillAmount, 1) * 100}
+                    >
+                        <div className="bar" />
+                    </div>
+                </div>
 
-                    {user.stripeToken
+                <hr style={{ border: 0, borderBottom: '1px solid #ddd', width: '75%', margin: '1em auto 2em' }} />
+
+                <div className="sixteen wide column" style={{ marginTop: 0 }}>
+                    <div className="ui grid">
+                        <div
+                            className="sixteen wide column section"
+                            style={{ marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
+                        >
+                            <OneTimePurchaseModal user={user} />
+                        </div>
+
+                        <div
+                            className="sixteen wide column section"
+                            style={{ marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
+                        >
+                            <Button
+                                primary
+                                fluid
+                                icon="repeat"
+                                size="big"
+                                content="Configure automatic refills"
+                                labelPosition="right"
+                            />
+                        </div>
+
+                        <div
+                            className="sixteen wide column section"
+                            style={{ marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
+                        >
+                            <Button
+                                className="brand"
+                                fluid
+                                icon="remove"
+                                size="big"
+                                content="Turn off automatic refills"
+                                labelPosition="right"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* {user.stripeToken
                         ? <p className="instructions">Credit card on file: {user.stripeToken.last4}</p>
                         : null}
 
-                    <div className="ui segment">
+                        <div className="ui segment">
                         <Form>
-                            <Form.Radio
-                                label="Recurring purchase"
-                                onChange={this.setOneTimePurchase(false)}
-                                checked={!oneTimePurchase}
-                            />
-                            <Form.Radio
-                                label="One time purchase"
-                                onChange={this.setOneTimePurchase(true)}
-                                checked={oneTimePurchase}
-                            />
-                            {oneTimePurchase ? <OneTimePurchase user={user} /> : <RecurringPurchase user={user} />}
+                        <Form.Radio
+                        label="Recurring purchase"
+                        onChange={this.setOneTimePurchase(false)}
+                        checked={!oneTimePurchase}
+                        />
+                        <Form.Radio
+                        label="One time purchase"
+                        onChange={this.setOneTimePurchase(true)}
+                        checked={oneTimePurchase}
+                        />
+                        {oneTimePurchase ? <OneTimePurchase user={user} /> : <RecurringPurchase user={user} />}
                         </Form>
-                    </div>
-
-                </div>
-
-                <div className="sixteen wide column section">
-                    <h3 className="ui sub header">Recent purchases:</h3>
-                    <Charges />
-                </div>
+                        </div> */}
 
             </div>
         );
@@ -136,12 +183,6 @@ export default graphql(gql`
             refillTrigger
             refillAmount
             email
-            charges {
-                id
-                amount
-                created
-                description
-            }
             stripeToken {
                 card {
                     last4
