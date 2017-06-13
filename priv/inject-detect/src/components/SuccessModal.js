@@ -2,9 +2,9 @@ import React from 'react';
 import _ from 'lodash';
 import { Button, Modal } from 'semantic-ui-react';
 
-class ConfirmModal extends React.Component {
+class SuccessModal extends React.Component {
     state = {
-        open: false
+        open: true
     };
 
     open = () => this.setState({ open: true });
@@ -12,7 +12,9 @@ class ConfirmModal extends React.Component {
 
     click = () => {
         this.close();
-        this.props.callback();
+        if (this.props.callback) {
+            this.props.callback();
+        }
     };
 
     render() {
@@ -23,7 +25,6 @@ class ConfirmModal extends React.Component {
                 size="small"
                 className="confirm-modal"
                 closeIcon="close"
-                trigger={this.props.trigger}
                 open={open}
                 onOpen={this.open}
                 onClose={this.close}
@@ -33,9 +34,6 @@ class ConfirmModal extends React.Component {
                     <p className="instructions">{this.props.text}</p>
                 </div>
                 <div className="actions">
-                    <Button onClick={this.close}>
-                        {this.props.negative || 'Cancel'}
-                    </Button>
                     <Button positive onClick={this.click}>
                         {this.props.positive || 'Ok'}
                     </Button>
@@ -45,4 +43,4 @@ class ConfirmModal extends React.Component {
     }
 }
 
-export default ConfirmModal;
+export default SuccessModal;

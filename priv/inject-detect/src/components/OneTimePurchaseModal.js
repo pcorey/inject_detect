@@ -1,4 +1,5 @@
 import ConfirmModal from './ConfirmModal';
+import SuccessModal from './SuccessModal';
 import React from 'react';
 import _ from 'lodash';
 import gql from 'graphql-tag';
@@ -11,7 +12,8 @@ class OneTimePurchaseModal extends React.Component {
         open: false,
         loading: false,
         success: false,
-        stripeLoaded: false
+        credits: undefined,
+        creditPrice: undefined
     };
 
     style = {
@@ -33,27 +35,44 @@ class OneTimePurchaseModal extends React.Component {
         this.card = card;
     }
 
-    componentDidUpdate() {
-        this.initStripeElements();
+    componentDidUpdate(prevProps, prevState) {
+        if (!prevState.open && this.state.open) {
+            this.initStripeElements();
+        }
     }
 
-    open = () => this.setState({ open: true });
+    open = () => this.setState({ open: true, credits: undefined });
     close = () => this.setState({ open: false });
 
-    oneTimePurchase = e => {
-        e.preventDefault();
-
+    oneTimePurchase = () => {
         this.setState({ errors: false, success: false, loading: true });
 
         let userId = this.props.user.id;
-        let credits = this.refs.credits.value || undefined;
-        // TODO: get stripe token
-        let stripeToken = undefined;
-        this.props
-            .oneTimePurchase(userId, credits, stripeToken)
+        let credits = this.state.credits;
+
+        this.stripe
+            .createToken(this.card)
+            .then(result => {
+                if (result.error) {
+                    throw { graphQLErrors: [{ error: result.error.message }] };
+                } else {
+                    return result.token;
+                }
+            })
+            .then(stripeToken => ({
+                id: stripeToken.id,
+                card: {
+                    id: _.get(stripeToken, 'card.id'),
+                    expMonth: _.get(stripeToken, 'card.exp_month'),
+                    expYear: _.get(stripeToken, 'card.exp_year'),
+                    last4: _.get(stripeToken, 'card.last4')
+                }
+            }))
+            .then(stripeToken => this.props.oneTimePurchase(userId, credits, stripeToken))
             .then(res => {
                 this.setState({
-                    success: true
+                    success: true,
+                    open: false
                 });
             })
             .catch(error => {
@@ -65,12 +84,30 @@ class OneTimePurchaseModal extends React.Component {
             });
     };
 
+    changeCredits = (e, select) => {
+        this.setState({
+            credits: select.value,
+            creditPrice: _.find(select.options, o => o.value == select.value).text
+        });
+    };
+
     render() {
         const { user } = this.props;
-        const { errors, loading, open, success, applicationId } = this.state;
+        const { credits, creditPrice, errors, loading, open, success, applicationId } = this.state;
 
         if (applicationId) {
             return <Redirect to={`/application/${applicationId}`} />;
+        }
+
+        if (success) {
+            return (
+                <SuccessModal
+                    header="Credits Purchased!"
+                    text={`Your purchase was successful! We've gone ahead and added those ${Number(credits).toLocaleString()} to your account.`}
+                    positive="Return to account"
+                    callback={() => this.setState({ success: false })}
+                />
+            );
         }
 
         return (
@@ -95,12 +132,14 @@ class OneTimePurchaseModal extends React.Component {
                 <Modal.Header>One time credit purchase</Modal.Header>
                 <div className="content">
                     <form className="ui large form">
-                        <p className="instructions">
-                            Select the number of credits you want to buy along with your payment information. Your purchased credits will immediately be available to your account.
-                        </p>
                         <div>
+                            <p className="instructions">
+                                Select the number of credits you want to buy along with your payment information. Your purchased credits will immediately be available to your account.
+                            </p>
                             <Form.Select
                                 label="Credits to purchase:"
+                                value={credits}
+                                onChange={this.changeCredits}
                                 options={[
                                     { key: 100000, text: '100,000 credits for $10.00', value: 100000 },
                                     { key: 200000, text: '200,000 credits for $20.00', value: 200000 },
@@ -121,28 +160,32 @@ class OneTimePurchaseModal extends React.Component {
                                     }}
                                 />
                             </div>
-
-                            {success && <div className="ui success message">Credits purchased!</div>}
-                            {errors &&
-                                errors.map(({ error }) => <div key={error} className="ui error message">{error}</div>)}
-
                         </div>
-                    </form>
 
-                    {success && <div className="ui success message">Application added!</div>}
-                    {errors && errors.map(({ error }) => <div key={error} className="ui error message">{error}</div>)}
+                        {errors &&
+                            errors.map(({ error }) => <div key={error} className="ui error message">{error}</div>)}
+
+                    </form>
 
                 </div>
                 <div className="actions">
-                    <Button onClick={this.close}>
+                    <Button onClick={this.close} disabled={loading}>
                         Cancel
                     </Button>
                     <ConfirmModal
-                        header="Are you sure?"
-                        text="Are you sure you want to make a one time purchase of credits?"
+                        header="Purchase credits?"
+                        text={`Are you sure you want to make a one time purchase of ${creditPrice}`}
                         positive="Purchase credits"
                         callback={this.oneTimePurchase}
-                        trigger={<Button positive icon="dollar" labelPosition="right" content="Purchase credits" />}
+                        trigger={
+                            <Button
+                                positive
+                                loading={loading}
+                                icon="dollar"
+                                labelPosition="right"
+                                content="Purchase credits"
+                            />
+                        }
                     />
                 </div>
             </Modal>
@@ -154,7 +197,7 @@ export default graphql(
     gql`
     mutation oneTimePurchase ($userId: String!,
                               $credits: String!,
-                              $stripeToken: StripeToken!) {
+                              $stripeToken: StripeTokenInput!) {
         oneTimePurchase(userId: $userId,
                         credits: $credits,
                         stripeToken: $stripeToken) {

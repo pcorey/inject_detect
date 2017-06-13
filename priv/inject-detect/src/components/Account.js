@@ -65,8 +65,6 @@ class Account extends React.Component {
             return <div className="ui active loader" />;
         }
 
-        console.log(user);
-
         return (
             <div className="ij-dashboard ui stackable grid">
                 <div className="sixteen wide column">
@@ -148,26 +146,6 @@ class Account extends React.Component {
                         </div>
                     </div>
                 </div>
-
-                {/* {user.stripeToken
-                        ? <p className="instructions">Credit card on file: {user.stripeToken.last4}</p>
-                        : null}
-
-                        <div className="ui segment">
-                        <Form>
-                        <Form.Radio
-                        label="Recurring purchase"
-                        onChange={this.setOneTimePurchase(false)}
-                        checked={!oneTimePurchase}
-                        />
-                        <Form.Radio
-                        label="One time purchase"
-                        onChange={this.setOneTimePurchase(true)}
-                        checked={oneTimePurchase}
-                        />
-                        {oneTimePurchase ? <OneTimePurchase user={user} /> : <RecurringPurchase user={user} />}
-                        </Form>
-                        </div> */}
 
             </div>
         );
