@@ -24,8 +24,6 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.TurnOnTrainingMode do
                message: "Not authorized"}}
   end
 
-  # TODO: authorization
-
   def handle(command, context) do
     Application.find(command.application_id)
     |> turn_on_training_mode(command, context)

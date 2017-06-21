@@ -11,7 +11,7 @@ defmodule InjectDetect.Web.Context do
         put_private(conn, :absinthe, %{context: context})
       {:error, reason} ->
         conn
-        |> send_resp(403, reason)
+        |> send_resp(403, "Unauthorized")
         |> halt()
       _ ->
         conn

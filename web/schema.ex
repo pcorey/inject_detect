@@ -13,6 +13,9 @@ defmodule InjectDetect.Schema do
     RequestSignInToken,
     SetRefillAmount,
     SetRefillTrigger,
+    SetStripeToken,
+    TurnOnRefill,
+    TurnOffRefill,
     SignOut,
     ToggleAlerting,
     ToggleTrainingMode,
@@ -123,6 +126,18 @@ defmodule InjectDetect.Schema do
       resolve handle(SignOut, &user/1)
     end
 
+    field :turn_on_refill, type: :user do
+      arg :user_id, non_null(:string)
+      middleware Auth
+      resolve handle(TurnOnRefill, &user/1)
+    end
+
+    field :turn_off_refill, type: :user do
+      arg :user_id, non_null(:string)
+      middleware Auth
+      resolve handle(TurnOffRefill, &user/1)
+    end
+
     field :toggle_training_mode, type: :application do
       arg :application_id, non_null(:string)
       middleware Auth
@@ -174,16 +189,22 @@ defmodule InjectDetect.Schema do
       resolve handle(RemoveApplication, &user/1)
     end
 
+    field :set_stripe_token, type: :user do
+      arg :user_id, non_null(:string)
+      arg :stripe_token, non_null(:stripe_token_input)
+      resolve handle(SetStripeToken, &user/1)
+    end
+
     field :set_refill_amount, type: :user do
       arg :user_id, non_null(:string)
       arg :refill_amount, non_null(:integer)
-      resolve handle(SetRefillAmount, &application/1)
+      resolve handle(SetRefillAmount, &user/1)
     end
 
     field :set_refill_trigger, type: :user do
       arg :user_id, non_null(:string)
       arg :refill_trigger, non_null(:integer)
-      resolve handle(SetRefillTrigger, &application/1)
+      resolve handle(SetRefillTrigger, &user/1)
     end
 
     field :one_time_purchase, type: :user do

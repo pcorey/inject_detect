@@ -1,8 +1,10 @@
 import Charges from './Charges';
+import ConfigureAutomaticRefillsModal from './ConfigureAutomaticRefillsModal';
 import OneTimePurchase from './OneTimePurchase';
 import OneTimePurchaseModal from './OneTimePurchaseModal';
 import React from 'react';
 import RecurringPurchase from './RecurringPurchase';
+import TurnOffRefill from './TurnOffRefill';
 import _ from 'lodash';
 import gql from 'graphql-tag';
 import { Button, Form } from 'semantic-ui-react';
@@ -89,7 +91,10 @@ class Account extends React.Component {
                                   {' '}
                                   <strong>{commas(user.refillTrigger)}</strong>
                                   {' '}
-                                  remaining credits using a card ending in <strong>{user.stripeToken.last4}</strong>.
+                                  remaining credits using a card ending in
+                                  {' '}
+                                  <strong>{user.stripeToken.card.last4}</strong>
+                                  .
                                   {' '}
                               </span>
                             : <span>
@@ -117,33 +122,20 @@ class Account extends React.Component {
                             <OneTimePurchaseModal user={user} />
                         </div>
 
-                        <div
-                            className="sixteen wide column section"
-                            style={{ marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
-                        >
-                            <Button
-                                primary
-                                fluid
-                                icon="repeat"
-                                size="big"
-                                content="Configure automatic refills"
-                                labelPosition="right"
-                            />
-                        </div>
+                        {user.refill
+                            ? <div
+                                  className="sixteen wide column section"
+                                  style={{ marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
+                              >
+                                  <TurnOffRefill user={user} />
+                              </div>
+                            : <div
+                                  className="sixteen wide column section"
+                                  style={{ marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
+                              >
+                                  <ConfigureAutomaticRefillsModal user={user} />
+                              </div>}
 
-                        <div
-                            className="sixteen wide column section"
-                            style={{ marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
-                        >
-                            <Button
-                                className="brand"
-                                fluid
-                                icon="remove"
-                                size="big"
-                                content="Turn off automatic refills"
-                                labelPosition="right"
-                            />
-                        </div>
                     </div>
                 </div>
 
