@@ -16,25 +16,6 @@ class Account extends React.Component {
         oneTimePurchase: true
     };
 
-    style = {
-        base: {
-            fontFamily: "Lato,'Helvetica Neue',Arial,Helvetica,sans-serif",
-            '::placeholder': {
-                color: '#ccc'
-            }
-        }
-    };
-
-    initStripeElements() {
-        const stripe = window.Stripe(_.get(process.env, 'REACT_APP_STRIPE_SECRET'));
-        const elements = stripe.elements();
-        const card = elements.create('card', { style: this.style });
-        card.mount('#card-element');
-        this.stripe = stripe;
-        this.elements = elements;
-        this.card = card;
-    }
-
     initProgress() {
         window.$('.ui.progress').progress();
     }
@@ -45,12 +26,6 @@ class Account extends React.Component {
 
     componentDidUpdate() {
         this.initProgress();
-    }
-
-    componentWillUpdate() {
-        if (!this.props.data.loading) {
-            this.initStripeElements();
-        }
     }
 
     setOneTimePurchase = oneTimePurchase => {
