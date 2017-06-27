@@ -6,6 +6,7 @@ defmodule InjectDetect.Listener.RefillCredits do
   alias InjectDetect.State.User
 
   def handle_for_user(%{id: user_id,
+                        refill: true,
                         credits: credits,
                         refill_trigger: refill_trigger}) when credits <= refill_trigger do
     %RefillCredits{user_id: user_id}
