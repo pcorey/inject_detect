@@ -26,7 +26,7 @@ class Dashboard extends React.Component {
             return <div className="ui active loader" />;
         }
 
-        let expectedQueries = _.get(user, 'applications.expectedQueries');
+        let expectedQueries = _.chain(user.applications).map('expectedQueries').flatten().value();
 
         let unexpectedQueries = _.chain(user.applications)
             .map('unexpectedQueries')
