@@ -15,7 +15,9 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.RefillCredits do
     {:ok, [%ChargedCustomer{user_id: user.id, charge_id: charge["id"]},
            %AddedCredits{user_id: user.id, credits: credits}]}
   end
-  def handle_charge_customer(_, _, _), do: InjectDetect.error("Unable to charge customer.")
+  def handle_charge_customer(_, _, _) do
+    InjectDetect.error("Unable to charge customer.")
+  end
 
 
   def handle_for_user(nil), do: InjectDetect.error("User not found.")
@@ -25,7 +27,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.RefillCredits do
   end
 
 
-  def handle(command = %{user_id: user_id}, %{user_id: user_id}) do
+  def handle(command = %{user_id: user_id}, _) do
     User.find(user_id)
     |> handle_for_user
   end

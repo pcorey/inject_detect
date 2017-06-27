@@ -40,7 +40,7 @@ defmodule InjectDetect do
 
 
   def verify_token(value) do
-    Phoenix.Token.verify(InjectDetect.Endpoint, "user", value, max_age: 60 * 60 * 24 * 14)
+    Phoenix.Token.verify(InjectDetect.Endpoint, "user", value, max_age: 60)
   end
 
 
