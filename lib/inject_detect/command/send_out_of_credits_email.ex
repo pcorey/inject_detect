@@ -27,7 +27,7 @@ defimpl InjectDetect.Command,
          user <- User.find(state, command.user_id),
          true <- can_send_email(user)
     do
-      Email.out_of_credits_html_email(user.email)
+      Email.out_of_credits_html_email(user)
       |> InjectDetect.Mailer.deliver_later
       {:ok, [%SentOutOfCreditsEmail{user_id: command.user_id,
                                     sent_at:  DateTime.utc_now |> DateTime.to_iso8601}]}

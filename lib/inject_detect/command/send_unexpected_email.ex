@@ -33,7 +33,7 @@ defimpl InjectDetect.Command,
          application <- Application.find(state, command.application_id),
          unexpected_query <- UnexpectedQuery.find(state, command.application_id, command.query_id)
     do
-      Email.unexpected_html_email(user.email, application, unexpected_query)
+      Email.unexpected_html_email(user, application, unexpected_query)
       |> InjectDetect.Mailer.deliver_later
       {:ok, [%SentUnexpectedEmail{user_id: command.user_id,
                                   application_id: command.application_id,

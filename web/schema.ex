@@ -147,7 +147,7 @@ defmodule InjectDetect.Schema do
     end
 
     field :unsubscribe, type: :user do
-      arg :user_id, non_null(:string)
+      arg :unsubscribe_token, non_null(:string)
       middleware Auth
       resolve handle(Unsubscribe, &user/1)
     end

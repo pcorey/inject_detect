@@ -11,6 +11,7 @@ import ScrollToTop from './components/ScrollToTop';
 import SignIn from './components/SignIn';
 import UnexpectedQuery from './components/UnexpectedQuery';
 import VerifyRequestedToken from './components/VerifyRequestedToken';
+import Unsubscribe from './components/Unsubscribe';
 import _ from 'lodash';
 import { ApolloProvider } from 'react-apollo';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -26,6 +27,7 @@ ReactDOM.render(
                         <Route path="/sign-in" component={SignIn} />
                         <Route path="/get-started" component={GetStarted} />
                         <Route path="/verify/:token" component={VerifyRequestedToken} />
+                        <Route path="/unsubscribe/:token" component={Unsubscribe} />
                         <PrivateRoute exact path="/" component={Dashboard} />
                         <PrivateRoute path="/account" component={Account} />
                         <PrivateRoute path="/application/:id" component={Application} />

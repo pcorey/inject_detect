@@ -1,5 +1,5 @@
 defmodule InjectDetect.Command.Unsubscribe do
-  defstruct user_id: nil
+  defstruct unsubscribe_token: nil
 end
 
 defimpl InjectDetect.Command, for: InjectDetect.Command.Unsubscribe do
@@ -8,7 +8,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.Unsubscribe do
   alias InjectDetect.State.User
 
   def unsubscribe(user = %{id: user_id}, command, %{user_id: user_id}) do
-    {:ok, [%Unsubscribed{user_id: user_id}]}
+    {:ok, [%Unsubscribed{user_id: user_id}], %{user_id: user_id}}
   end
 
   def unsubscribe(_, _, _) do
@@ -18,7 +18,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.Unsubscribe do
   end
 
   def handle(command, context) do
-    User.find(command.user_id)
+    User.find(unsubscribe_token: command.unsubscribe_token)
     |> unsubscribe(command, context)
   end
 

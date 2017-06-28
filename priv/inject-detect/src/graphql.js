@@ -91,3 +91,12 @@ export const VerifyRequestedTokenMutation = gql`
         }
     }
 `;
+
+export const UnsubscribeMutation = gql`
+    mutation unsubscribe ($token: String!) {
+        unsubscribe(token: $token) {
+            subscribed
+            ${UserProps}
+        }
+    }
+`;
