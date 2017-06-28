@@ -1,0 +1,9 @@
+Your Inject Detect account has run out of credits!
+
+We're no longer checking for unexpected queries made against any of your applications.
+
+Add more credits to your account by setting up an automatic refill plan, or with a one time purchase of credits in your account's settings:
+
+<%= InjectDetect.Endpoint.url %>/account
+
+For more information on credits and our pricing model, take a look at our FAQ and guides.

@@ -6,6 +6,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.RefillCredits do
 
 
   alias InjectDetect.Event.AddedCredits
+  alias InjectDetect.Event.ChargeFailed
   alias InjectDetect.Event.ChargedCustomer
   alias InjectDetect.Pricing
   alias InjectDetect.State.User
@@ -15,7 +16,10 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.RefillCredits do
     {:ok, [%ChargedCustomer{user_id: user.id, charge_id: charge["id"]},
            %AddedCredits{user_id: user.id, credits: credits}]}
   end
-  def handle_charge_customer(_, _, _) do
+  def handle_charge_customer(response, user, _, _) do
+    {:ok, [%ChargeFailed{user_id: user.id, response: response}]}
+  end
+  def handle_charge_customer(_, _, _, _) do
     InjectDetect.error("Unable to charge customer.")
   end
 
