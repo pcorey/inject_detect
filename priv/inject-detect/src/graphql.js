@@ -93,9 +93,8 @@ export const VerifyRequestedTokenMutation = gql`
 `;
 
 export const UnsubscribeMutation = gql`
-    mutation unsubscribe ($token: String!) {
-        unsubscribe(token: $token) {
-            subscribed
+    mutation unsubscribe ($unsubscribeToken: String!) {
+        unsubscribe(unsubscribeToken: $unsubscribeToken) {
             ${UserProps}
         }
     }
