@@ -2,3 +2,6 @@
 
 Let me know if you have any questions or concerns, 
 Pete from Inject Detect.
+
+Don't want these emails? Unsubscribe:
+<%= InjectDetect.Endpoint.url %>/unsubscribe/<%= @user.unsubscribe_token %>

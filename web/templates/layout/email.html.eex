@@ -13,7 +13,7 @@
         <br/>
         Pete from <a href="http://www.injectdetect.com/" style="color: #ea5e5e;">Inject Detect</a>.
     </p>
-    <!-- <div style="border-bottom: 1px solid #ddd;"></div> -->
-    <!-- <p>Don't want these emails? <a href="#" style="color: #ea5e5e;">Unsubscribe</a>.</p> -->
+    <div style="border-bottom: 1px solid #ddd;"></div>
+    <p>Don't want these emails? <a href="<%= InjectDetect.Endpoint.url %>/unsubscribe/<%= @user.unsubscribe_token %>" style="color: #ea5e5e;">Unsubscribe</a>.</p>
   </body>
 </html>
