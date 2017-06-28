@@ -17,6 +17,8 @@ defmodule InjectDetect.Schema do
     TurnOnRefill,
     TurnOffRefill,
     SignOut,
+    Subscribe,
+    Unsubscribe,
     ToggleAlerting,
     ToggleTrainingMode,
     VerifyRequestedToken,
@@ -136,6 +138,18 @@ defmodule InjectDetect.Schema do
       arg :user_id, non_null(:string)
       middleware Auth
       resolve handle(TurnOffRefill, &user/1)
+    end
+
+    field :subscribe, type: :user do
+      arg :user_id, non_null(:string)
+      middleware Auth
+      resolve handle(Subscribe, &user/1)
+    end
+
+    field :unsubscribe, type: :user do
+      arg :user_id, non_null(:string)
+      middleware Auth
+      resolve handle(Unsubscribe, &user/1)
     end
 
     field :toggle_training_mode, type: :application do
