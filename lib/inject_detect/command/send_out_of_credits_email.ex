@@ -9,7 +9,7 @@ defimpl InjectDetect.Command,
   alias InjectDetect.State
   alias InjectDetect.State.User
 
-  def can_send_email(%{alerting: false}), do: false
+  def can_send_email(%{subscribed: false}), do: false
   def can_send_email(%{sent_out_of_credits_at: sent_out_of_credits_at}) do
     with {:ok, date, _} <- DateTime.from_iso8601(sent_out_of_credits_at),
          shifted <- Timex.shift(date, hours: 24),

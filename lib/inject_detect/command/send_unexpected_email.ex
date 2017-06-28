@@ -13,7 +13,7 @@ defimpl InjectDetect.Command,
   alias InjectDetect.State.UnexpectedQuery
   alias InjectDetect.State.User
 
-  def can_send_email(%{alerting: false}), do: false
+  def can_send_email(%{subscribed: false}), do: false
   def can_send_email(%{sent_unexpected_at: sent_unexpected_at}) do
     with {:ok, date, _} <- DateTime.from_iso8601(sent_unexpected_at),
          shifted <- Timex.shift(date, minutes: 10),
