@@ -67,7 +67,7 @@ defmodule InjectDetect.Schema do
       resolve &resolve_application/2
     end
 
-    field :unexpected_query, :unexpected_query do
+    field :unexpected_query, :query do
       arg :id, non_null(:string)
       resolve &resolve_unexpected_query/2
     end

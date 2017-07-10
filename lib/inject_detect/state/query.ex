@@ -14,6 +14,7 @@ defmodule InjectDetect.State.Query do
     |> :erlang.term_to_binary
     :crypto.hash(:sha256, binary)
     |> Base.encode16
+    |> String.downcase
   end
 
 

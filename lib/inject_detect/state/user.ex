@@ -11,6 +11,7 @@ defmodule InjectDetect.State.User do
     |> Map.put_new(:refill, false)
     |> Map.put_new(:refill_trigger, 1_000)
     |> Map.put_new(:refill_amount, 10_000)
+    |> Map.put_new(:ingests_pending_invoice, 0)
   end
 
   def find(attrs) do
