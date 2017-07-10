@@ -87,8 +87,16 @@ defmodule InjectDetect.Schema.Types do
     field :token, :string
     field :alerting, :boolean
     field :training_mode, :boolean
-    field :unexpected_queries, list_of(:unexpected_query)
-    field :expected_queries, list_of(:expected_query)
+    field :unexpected_queries, list_of(:unexpected_query) do
+      resolve fn
+        (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == false))}
+      end
+    end
+    field :expected_queries, list_of(:expected_query) do
+      resolve fn
+        (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == true))}
+      end
+    end
   end
 
   object :user do
