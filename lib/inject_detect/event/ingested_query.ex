@@ -11,10 +11,8 @@ defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.IngestedQuery do
 
   def apply(event, state) do
-    Lens.key(:users)
-    |> Lens.filter(&(&1.id == event.user_id))
-    |> Lens.key(:credits)
-    |> Lens.map(state, &(&1 - 1))
+    # TODO: Track ingested queries since last invoice
+    state
   end
 
 end

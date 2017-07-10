@@ -47,16 +47,17 @@ defmodule InjectDetect.MarkQueryAsExpectedTest do
                                query: %{"_id" => "string"}}]}
     |> handle(%{})
 
-    query = UnexpectedQuery.find(application.id, type: "find")
+    query = UnexpectedQuery.find(user.id, application.id, type: "find")
 
     %MarkQueryAsExpected{application_id: application.id,
                          query_id: query.id}
     |> handle(%{user_id: user.id})
 
     application = Application.find(name: "Foo Application")
-    assert length(application.expected_queries) == 1
-    assert length(application.unexpected_queries) == 0
-    assert ExpectedQuery.find(application.id, collection: "users",
+    assert length(application.queries) == 1
+    assert ExpectedQuery.find(user.id,
+                              application.id,
+                              collection: "users",
                               type: "find",
                               query: %{"_id" => "string"})
   end

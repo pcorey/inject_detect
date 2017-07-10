@@ -7,19 +7,10 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.MarkedQueryAsExpected do
 
-  alias InjectDetect.State.Application
-  alias InjectDetect.State.UnexpectedQuery
-
-  def apply_to_application(application, event, state) do
-    query = UnexpectedQuery.find(state, event.application_id, event.query_id)
-    state
-    |> UnexpectedQuery.remove(event.application_id, event.query_id)
-    |> Application.add_expected_query(application.user_id, application.id, query)
-  end
+  alias InjectDetect.State.Query
 
   def apply(event, state) do
-    Application.find(state, event.application_id)
-    |> apply_to_application(event, state)
+    Query.mark_as_expected(state, event.user_id, event.application_id, event.query_id)
   end
 
 end

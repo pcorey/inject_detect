@@ -53,14 +53,17 @@ defmodule InjectDetect.IngestQueriesTest do
     |> handle(%{})
 
     application = Application.find(name: "Foo Application")
-    assert length(application.expected_queries) == 2
-    assert length(application.unexpected_queries) == 0
-    assert ExpectedQuery.find(application.id, collection: "users",
-                              type: "find",
-                              query: %{"_id" => "string"})
-    assert ExpectedQuery.find(application.id, collection: "orders",
-                              type: "remove",
-                              query: %{"_id" => %{"$gte" => "string"}})
+    assert length(application.queries) == 2
+    assert ExpectedQuery.find(user.id,
+      application.id,
+      collection: "users",
+      type: "find",
+      query: %{"_id" => "string"})
+    assert ExpectedQuery.find(user.id,
+      application.id,
+      collection: "orders",
+      type: "remove",
+      query: %{"_id" => %{"$gte" => "string"}})
   end
 
   test "ingests an unexpected query out of training mode" do
@@ -97,17 +100,19 @@ defmodule InjectDetect.IngestQueriesTest do
     |> handle(%{})
 
     application = Application.find(name: "Foo Application")
-    assert length(application.unexpected_queries) == 2
-    assert length(application.expected_queries) == 0
-    assert UnexpectedQuery.find(application.id, collection: "users",
-                                type: "find",
-                                query: %{"_id" => "string"})
-    assert UnexpectedQuery.find(application.id, collection: "orders",
-                                type: "remove",
-                                query: %{"_id" => %{"$gte" => "string"}})
+    assert length(application.queries) == 2
+    assert UnexpectedQuery.find(user.id,
+                              application.id,
+                              collection: "users",
+                              type: "find",
+                              query: %{"_id" => "string"})
+    assert UnexpectedQuery.find(user.id,
+                              application.id,
+                              collection: "orders",
+                              type: "remove",
+                              query: %{"_id" => %{"$gte" => "string"}})
 
     user = User.find(email: "email@example.com")
-    assert user.credits == 10097
   end
 
   test "ingests an expected and unexpected queries" do
@@ -145,12 +150,11 @@ defmodule InjectDetect.IngestQueriesTest do
     |> handle(%{})
 
     application = Application.find(name: "Foo Application")
-    assert length(application.unexpected_queries) == 1
-    assert length(application.expected_queries) == 1
-    assert ExpectedQuery.find(application.id, collection: "users",
+    assert length(application.queries) == 2
+    assert ExpectedQuery.find(user.id, application.id, collection: "users",
                               type: "find",
                               query: %{"_id" => "string"})
-    assert UnexpectedQuery.find(application.id, collection: "orders",
+    assert UnexpectedQuery.find(user.id, application.id, collection: "orders",
                                 type: "remove",
                                 query: %{"_id" => %{"$gte" => "string"}})
   end

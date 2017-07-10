@@ -3,112 +3,78 @@ defmodule InjectDetect.Command.IngestQueries do
             queries: nil
 end
 
+
 defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
+
 
   alias InjectDetect.Event.AddedExpectedQuery
   alias InjectDetect.Event.AddedUnexpectedQuery
-  alias InjectDetect.Event.IngestedQuery
   alias InjectDetect.Event.IngestedExpectedQuery
+  alias InjectDetect.Event.IngestedQuery
   alias InjectDetect.Event.IngestedUnexpectedQuery
   alias InjectDetect.State
   alias InjectDetect.State.Application
-  alias InjectDetect.State.ExpectedQuery
-  alias InjectDetect.State.UnexpectedQuery
-  alias InjectDetect.State.User
-  alias InjectDetect.State.QueryComparator
+  alias InjectDetect.State.Query
 
-  import InjectDetect, only: [generate_id: 0]
 
-  def find_query(query, added, find) do
-    find.(query) || Enum.find(added, fn
-      added -> query.collection == added.collection &&
-               query.query == added.query &&
-               query.type == added.type
-    end)
+  def ingest_query(nil, query, %{training_mode: false}, {state, events}) do
+    new_events = [struct(IngestedQuery, query),
+                  struct(AddedUnexpectedQuery, query),
+                  struct(IngestedUnexpectedQuery, query)]
+    {State.apply_events(state, new_events), events ++ new_events}
   end
 
-  def find_expected_query(application_id, query, added, state) do
-    find_query(query, added, &ExpectedQuery.find(state, application_id, &1))
+  def ingest_query(nil, query, %{training_mode: true}, {state, events}) do
+    new_events = [struct(IngestedQuery, query),
+                  struct(AddedExpectedQuery, query),
+                  struct(IngestedExpectedQuery, query)]
+    {State.apply_events(state, new_events), events ++ new_events}
   end
 
-  def find_unexpected_query(application_id, query, added, state) do
-    find_query(query, added, &UnexpectedQuery.find(state, application_id, &1))
+  def ingest_query(%{expected: true}, query, _application, {state, events}) do
+    new_events = [struct(IngestedQuery, query),
+                  struct(IngestedExpectedQuery, query)]
+    {State.apply_events(state, new_events), events ++ new_events}
   end
 
-  def ingest_query(application = %{training_mode: true}, query, {added, events}, state) do
-    case find_expected_query(application.id, query, added, state) do
-      nil       -> query = Map.put_new(query, :id, generate_id)
-                   {[query | added],
-                    events ++ [struct(IngestedQuery, query),
-                               struct(AddedExpectedQuery, query),
-                               struct(IngestedExpectedQuery, query)]}
-      %{id: id} -> query = Map.put_new(query, :id, id)
-                   {added,
-                    events ++ [struct(IngestedQuery, query),
-                               struct(IngestedExpectedQuery, query)]}
-    end
+  def ingest_query(%{expected: false}, query, _application, {state, events}) do
+    new_events = [struct(IngestedQuery, query),
+                  struct(IngestedExpectedQuery, query)]
+    {State.apply_events(state, new_events), events ++ new_events}
   end
 
-  def find_similar_query(query, expected_queries) do
-    expected_queries
-    |> Enum.filter(fn
-                     %{collection: collection, type: type} ->
-                       collection == query.collection && type == query.type
-                   end)
-    |> QueryComparator.find_similar_query(query)
-    |> case do
-         nil -> nil
-         %{query: query} -> query
-       end
+
+  def find_and_ingest_query(query, application, {state, events}) do
+    Query.find(state, query.user_id, query.application_id, query)
+    |> ingest_query(query, application, {state, events})
   end
 
-  def ingest_query(application = %{training_mode: false}, query, {added, events}, state) do
-    case {ExpectedQuery.find(state, application.id, query), find_unexpected_query(application.id, query, added, state)} do
-      {nil, nil}       -> query = Map.put_new(query, :id, generate_id)
-                          similar_query = find_similar_query(query, application.expected_queries)
-                          {[query | added],
-                           events ++ [struct(IngestedQuery, query),
-                                      struct(AddedUnexpectedQuery,
-                                             Map.put_new(query, :similar_query, similar_query)),
-                                      struct(IngestedUnexpectedQuery, query)]}
-      {nil, %{id: id}} -> query = Map.put_new(query, :id, id)
-                          {added,
-                           events ++ [struct(IngestedQuery, query),
-                                      struct(IngestedUnexpectedQuery, query)]}
-      {%{id: id}, _}   -> query = Map.put_new(query, :id, id)
-                          {added,
-                           events ++ [struct(IngestedQuery, query),
-                                      struct(IngestedExpectedQuery, query)]}
-    end
-  end
 
-  def ingest_for_application(nil, _command, _state) do
-    {:error, %{code: :invalid_token,
-               error: "Invalid application token",
-               message: "Invalid token"}}
-  end
+  def ingest_queries(%{ingesting_queries: false}, _, _), do: InjectDetect.error "Not ingesting queries"
 
-  def ingest_for_application(application, command, state) do
+  def ingest_queries(nil, _, _), do: InjectDetect.error "Problem ingesting queries"
+
+  def ingest_queries(application, command, state) do
     events = command.queries
-    |> Enum.map(&(Map.put_new(&1, :application_id, application.id)))
-    |> Enum.map(&(Map.put_new(&1, :user_id, application.user_id)))
-    |> Enum.reduce({[], []}, &ingest_query(application, &1, &2, state))
+    |> Enum.map(&update_query(&1, application))
+    |> Enum.reduce({state, []}, &find_and_ingest_query(&1, application, &2))
     |> elem(1)
     |> List.flatten
     {:ok, events}
   end
 
+
+  def update_query(query, application) do
+    query
+    |> Map.put_new(:application_id, application.id)
+    |> Map.put_new(:user_id, application.user_id)
+    |> Map.put_new(:id, Query.hash(query))
+  end
+
+
   def handle(command, _context, state) do
-    with application <- Application.find(state, command.application_id),
-         user        <- User.find(state, application.user_id),
-         true        <- user.credits > 0
-    do
-      ingest_for_application(application, command, state)
-    else
-        false -> {:error, %{code: :not_enough_credits,
-                            error: "Not enough credits",
-                            message: "Not enough credits"}}
-    end
+    Application.find(state, command.application_id)
+    |> ingest_queries(command, state)
   end
 
 end
