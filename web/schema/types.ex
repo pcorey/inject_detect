@@ -32,27 +32,7 @@ defmodule InjectDetect.Schema.Types do
     field :created, :integer
   end
 
-  object :expected_query do
-    field :id, :string
-    field :collection, :string
-    field :queried_at, :string
-    field :seen, :integer
-    field :query, :string do
-      resolve fn
-        (expected_query, _, _) ->
-          {:ok, Poison.encode!(expected_query[:query])}
-      end
-    end
-    field :type, :string
-    field :application, :application do
-      resolve fn
-        (expected_query, _, _) ->
-          {:ok, InjectDetect.State.Application.find(expected_query.application_id)}
-      end
-    end
-  end
-
-  object :unexpected_query do
+  object :query do
     field :id, :string
     field :collection, :string
     field :queried_at, :string
@@ -87,12 +67,13 @@ defmodule InjectDetect.Schema.Types do
     field :token, :string
     field :alerting, :boolean
     field :training_mode, :boolean
-    field :unexpected_queries, list_of(:unexpected_query) do
+    field :queries, list_of(:query)
+    field :unexpected_queries, list_of(:query) do
       resolve fn
         (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == false))}
       end
     end
-    field :expected_queries, list_of(:expected_query) do
+    field :expected_queries, list_of(:query) do
       resolve fn
         (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == true))}
       end
