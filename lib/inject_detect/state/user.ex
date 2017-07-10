@@ -6,11 +6,7 @@ defmodule InjectDetect.State.User do
   def new(attrs) do
     attrs
     |> Map.put_new(:applications, [])
-    |> Map.put_new(:credits, 0)
     |> Map.put_new(:subscribed, true)
-    |> Map.put_new(:refill, false)
-    |> Map.put_new(:refill_trigger, 1_000)
-    |> Map.put_new(:refill_amount, 10_000)
     |> Map.put_new(:ingests_pending_invoice, 0)
   end
 
@@ -46,13 +42,6 @@ defmodule InjectDetect.State.User do
     |> Lens.filter(&(&1.id == user_id))
     |> Lens.key(:applications)
     |> Lens.map(state, &Enum.filter(&1, fn %{id: id} -> id != application_id end))
-  end
-
-  def add_credits(state, user_id, credits) do
-    Lens.key(:users)
-    |> Lens.filter(&(&1.id == user_id))
-    |> Lens.key(:credits)
-    |> Lens.map(state, &(&1 + credits))
   end
 
 end

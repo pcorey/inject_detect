@@ -1,7 +1,7 @@
 defmodule InjectDetect.SignOutTest do
   use ExUnit.Case
 
-  alias InjectDetect.Command.GetStarted
+  alias InjectDetect.Command.CreateUser
   alias InjectDetect.Command.SignOut
   alias InjectDetect.State.User
 
@@ -18,7 +18,7 @@ defmodule InjectDetect.SignOutTest do
   end
 
   test "signs a user out" do
-    handle(%GetStarted{email: "email@example.com",
+    handle(%CreateUser{email: "email@example.com",
                        application_name: "Foo Application",
                        application_size: "Medium",
                        agreed_to_tos: true}, %{})
@@ -31,7 +31,7 @@ defmodule InjectDetect.SignOutTest do
   end
 
   test "can't sign out other user" do
-    handle(%GetStarted{email: "email@example.com",
+    handle(%CreateUser{email: "email@example.com",
                        application_name: "Foo Application",
                        application_size: "Medium",
                        agreed_to_tos: true}, %{})

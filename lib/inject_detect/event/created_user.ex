@@ -1,4 +1,4 @@
-defmodule InjectDetect.Event.GotStarted do
+defmodule InjectDetect.Event.CreatedUser do
   defstruct agreed_to_tos: nil,
             email: nil,
             referral_code: nil,
@@ -6,7 +6,7 @@ defmodule InjectDetect.Event.GotStarted do
 end
 
 defimpl InjectDetect.State.Reducer,
-   for: InjectDetect.Event.GotStarted do
+   for: InjectDetect.Event.CreatedUser do
 
   alias InjectDetect.State.Base
 

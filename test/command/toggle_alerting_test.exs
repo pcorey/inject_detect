@@ -1,7 +1,7 @@
 defmodule InjectDetect.ToggleAlertingTest do
   use ExUnit.Case
 
-  alias InjectDetect.Command.GetStarted
+  alias InjectDetect.Command.CreateUser
   alias InjectDetect.Command.ToggleAlerting
   alias InjectDetect.State.User
   alias InjectDetect.State.Application
@@ -19,7 +19,7 @@ defmodule InjectDetect.ToggleAlertingTest do
   end
 
   test "toggles training mode" do
-    %GetStarted{email: "email@example.com",
+    %CreateUser{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}

@@ -1,8 +1,7 @@
 defmodule InjectDetect.IngestQueriesTest do
   use ExUnit.Case
 
-  alias InjectDetect.Command.AddCredits
-  alias InjectDetect.Command.GetStarted
+  alias InjectDetect.Command.CreateUser
   alias InjectDetect.Command.IngestQueries
   alias InjectDetect.Command.ToggleTrainingMode
   alias InjectDetect.State.User
@@ -24,7 +23,7 @@ defmodule InjectDetect.IngestQueriesTest do
 
 
   test "ingests an unexpected query in training mode" do
-    %GetStarted{email: "email@example.com",
+    %CreateUser{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}
@@ -32,9 +31,6 @@ defmodule InjectDetect.IngestQueriesTest do
 
     user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
-
-    %AddCredits{user_id: user.id, credits: 100}
-    |> handle(%{user_id: user.id})
 
     %IngestQueries{application_id: application.id,
                    queries: [%{collection: "users",
@@ -67,16 +63,13 @@ defmodule InjectDetect.IngestQueriesTest do
   end
 
   test "ingests an unexpected query out of training mode" do
-    %GetStarted{email: "email@example.com",
+    %CreateUser{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}
     |> handle(%{})
 
     user = User.find(email: "email@example.com")
-
-    %AddCredits{user_id: user.id, credits: 100}
-    |> handle(%{user_id: user.id})
 
     application = Application.find(name: "Foo Application")
 
@@ -116,7 +109,7 @@ defmodule InjectDetect.IngestQueriesTest do
   end
 
   test "ingests an expected and unexpected queries" do
-    %GetStarted{email: "email@example.com",
+    %CreateUser{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}
@@ -124,9 +117,6 @@ defmodule InjectDetect.IngestQueriesTest do
 
     user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
-
-    %AddCredits{user_id: user.id, credits: 100}
-    |> handle(%{user_id: user.id})
 
     %IngestQueries{application_id: application.id,
                    queries: [%{collection: "users",

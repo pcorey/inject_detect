@@ -1,8 +1,7 @@
 defmodule InjectDetect.MarkQueryAsExpectedTest do
   use ExUnit.Case
 
-  alias InjectDetect.Command.AddCredits
-  alias InjectDetect.Command.GetStarted
+  alias InjectDetect.Command.CreateUser
   alias InjectDetect.Command.IngestQueries
   alias InjectDetect.Command.MarkQueryAsExpected
   alias InjectDetect.Command.ToggleTrainingMode
@@ -25,7 +24,7 @@ defmodule InjectDetect.MarkQueryAsExpectedTest do
 
 
   test "marks an unexpected query as expected" do
-    %GetStarted{email: "email@example.com",
+    %CreateUser{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}
@@ -33,9 +32,6 @@ defmodule InjectDetect.MarkQueryAsExpectedTest do
 
     user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
-
-    %AddCredits{user_id: user.id, credits: 100}
-    |> handle(%{user_id: user.id})
 
     %ToggleTrainingMode{application_id: application.id}
     |> handle(%{user_id: user.id})

@@ -48,19 +48,4 @@ defmodule Email do
     |> render("unexpected.html", user: user, application: application, unexpected_query: unexpected_query)
   end
 
-  def out_of_credits_text_email(user) do
-    new_email()
-    |> to(user.email)
-    |> from(@from)
-    |> subject("Out of credits!")
-    |> put_text_layout({InjectDetect.LayoutView, "email.text"})
-    |> render("out_of_credits.text", user: user)
-  end
-
-  def out_of_credits_html_email(user) do
-    out_of_credits_text_email(user)
-    |> put_html_layout({InjectDetect.LayoutView, "email.html"})
-    |> render("out_of_credits.html", user: user)
-  end
-
 end
