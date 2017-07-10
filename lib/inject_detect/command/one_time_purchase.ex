@@ -30,8 +30,8 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.OneTimePurchase do
   end
 
 
-  def handle(command = %{user_id: user_id}, %{user_id: user_id}) do
-    User.find(user_id)
+  def handle(command = %{user_id: user_id}, %{user_id: user_id}, state) do
+    User.find(state, user_id)
     |> handle_for_user(command.credits)
   end
   def handle(_, _), do: InjectDetect.error("Not authorized.")

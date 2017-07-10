@@ -6,13 +6,11 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.SignOut do
 
   alias InjectDetect.Event.SignedOut
 
-  def handle(%{user_id: user_id}, %{user_id: user_id}) do
-    {:ok,
-     [%SignedOut{user_id: user_id}],
-     %{user_id: user_id}}
+  def handle(%{user_id: user_id}, %{user_id: user_id}, state) do
+    {:ok, [%SignedOut{user_id: user_id}], %{user_id: user_id}}
   end
 
-  def handle(_, _) do
+  def handle(_, _, _) do
     {:error, %{code: :not_authorized,
                error: "Not authorized",
                message: "Not authorized"}}

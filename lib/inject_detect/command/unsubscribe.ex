@@ -17,8 +17,8 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.Unsubscribe do
                message: "Not authorized"}}
   end
 
-  def handle(command, context) do
-    User.find(unsubscribe_token: command.unsubscribe_token)
+  def handle(command, context, state) do
+    User.find(state, unsubscribe_token: command.unsubscribe_token)
     |> unsubscribe(command, context)
   end
 

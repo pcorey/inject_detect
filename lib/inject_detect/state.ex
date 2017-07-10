@@ -13,6 +13,10 @@ defmodule InjectDetect.State do
     GenServer.call(__MODULE__, :get)
   end
 
+  def all do
+    GenServer.call(__MODULE__, :all)
+  end
+
   def reset do
     GenServer.call(__MODULE__, :reset)
   end
@@ -40,6 +44,12 @@ defmodule InjectDetect.State do
     {events, id} = get_events_since(id)
     state = Enum.reduce(events, state, &InjectDetect.State.Reducer.apply/2)
     {:reply, {:ok, state}, {id, state}}
+  end
+
+  def handle_call(:all, _, {id, state}) do
+    {events, id} = get_events_since(id)
+    state = Enum.reduce(events, state, &InjectDetect.State.Reducer.apply/2)
+    {:reply, {:ok, id, state}, {id, state}}
   end
 
   def handle_call(:reset, _, _), do: {:reply, :ok, {0, @initial}}

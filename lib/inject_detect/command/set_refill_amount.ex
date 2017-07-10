@@ -19,8 +19,8 @@ defimpl InjectDetect.Command,
                message: "Not authorized"}}
   end
 
-  def handle(command, context) do
-    User.find(command.user_id)
+  def handle(command, context, state) do
+    User.find(state, command.user_id)
     |> set_refill_amount(command, context)
   end
 

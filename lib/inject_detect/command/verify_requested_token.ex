@@ -8,13 +8,11 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.VerifyRequestedToken do
   alias InjectDetect.Event.VerifiedRequestedToken
   alias InjectDetect.State.User
 
-  def handle(%{token: token}, _context) do
-    if user = User.find(requested_token: token) do
+  def handle(%{token: token}, _context, state) do
+    if user = User.find(state, requested_token: token) do
       auth_token = InjectDetect.generate_token(user.id)
-      {:ok,
-       [%VerifiedRequestedToken{token: token, user_id: user.id},
-        %GivenAuthToken{auth_token: auth_token, user_id: user.id}],
-       %{user_id: user.id}}
+      {:ok, [%VerifiedRequestedToken{token: token, user_id: user.id},
+             %GivenAuthToken{auth_token: auth_token, user_id: user.id}], %{user_id: user.id}}
     else
       {:error, %{code: :invalid_token,
                  error: "Invalid token",

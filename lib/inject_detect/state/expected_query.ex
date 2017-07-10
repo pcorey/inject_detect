@@ -7,6 +7,10 @@ defmodule InjectDetect.State.ExpectedQuery do
     |> Map.put_new(:seen, 0)
   end
 
+  def find(state, application_id, %{collection: collection, query: query, type: type}) do
+    find(state, application_id, collection: collection, query: query, type: type)
+  end
+
   def find(application_id, %{collection: collection, query: query, type: type}) do
     find(application_id, collection: collection, query: query, type: type)
   end

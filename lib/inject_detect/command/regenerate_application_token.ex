@@ -21,8 +21,8 @@ defimpl InjectDetect.Command,
                message: "Not authorized"}}
   end
 
-  def handle(command, context) do
-    Application.find(command.application_id)
+  def handle(command, context, state) do
+    Application.find(state, command.application_id)
     |> regenerate_application_token(command, context)
   end
 

@@ -17,8 +17,8 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.TurnOffRefill do
                message: "Not authorized"}}
   end
 
-  def handle(command, context) do
-    User.find(command.user_id)
+  def handle(command, context, state) do
+    User.find(state, command.user_id)
     |> toggle_refill(command, context)
   end
 

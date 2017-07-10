@@ -23,26 +23,26 @@ defimpl InjectDetect.Command,
                                  user_id: query.user_id}], context}
   end
 
-  def handle_for_application(nil, _command) do
+  def handle_for_application(nil, _command, _state) do
     {:error, %{code: :application_not_found,
                error: "Application not found",
                message: "Application not found"}}
   end
 
-  def handle_for_application(%{user_id: user_id}, command, %{user_id: user_id}) do
-    UnexpectedQuery.find(command.application_id, command.query_id)
+  def handle_for_application(%{user_id: user_id}, command, %{user_id: user_id}, state) do
+    UnexpectedQuery.find(state, command.application_id, command.query_id)
     |> handle_for_query(command.application_id)
   end
 
-  def handle_for_application(nil, _command) do
+  def handle_for_application(nil, _command, _state) do
     {:error, %{code: :not_authorized,
                error: "Not authorized",
                message: "Not authorized"}}
   end
 
-  def handle(command, context) do
-    Application.find(command.application_id)
-    |> handle_for_application(command, context)
+  def handle(command, context, state) do
+    Application.find(state, command.application_id)
+    |> handle_for_application(command, context, state)
   end
 
 end

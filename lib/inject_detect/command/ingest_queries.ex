@@ -27,17 +27,16 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
     end)
   end
 
-  def find_expected_query(application_id, query, added) do
-    find_query(query, added, &ExpectedQuery.find(application_id, &1))
+  def find_expected_query(application_id, query, added, state) do
+    find_query(query, added, &ExpectedQuery.find(state, application_id, &1))
   end
 
-  def find_unexpected_query(application_id, query, added) do
-    find_query(query, added, &UnexpectedQuery.find(application_id, &1))
+  def find_unexpected_query(application_id, query, added, state) do
+    find_query(query, added, &UnexpectedQuery.find(state, application_id, &1))
   end
 
-  def ingest_query(application = %{training_mode: true}, query, {added, events}) do
-    query = Map.put_new(query, :user_id, application.user_id)
-    case find_expected_query(application.id, query, added) do
+  def ingest_query(application = %{training_mode: true}, query, {added, events}, state) do
+    case find_expected_query(application.id, query, added, state) do
       nil       -> query = Map.put_new(query, :id, generate_id)
                    {[query | added],
                     events ++ [struct(IngestedQuery, query),
@@ -63,9 +62,8 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
        end
   end
 
-  def ingest_query(application = %{training_mode: false}, query, {added, events}) do
-    query = Map.put_new(query, :user_id, application.user_id)
-    case {ExpectedQuery.find(application.id, query), find_unexpected_query(application.id, query, added)} do
+  def ingest_query(application = %{training_mode: false}, query, {added, events}, state) do
+    case {ExpectedQuery.find(state, application.id, query), find_unexpected_query(application.id, query, added, state)} do
       {nil, nil}       -> query = Map.put_new(query, :id, generate_id)
                           similar_query = find_similar_query(query, application.expected_queries)
                           {[query | added],
@@ -84,27 +82,28 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
     end
   end
 
-  def ingest_for_application(nil, _command) do
+  def ingest_for_application(nil, _command, _state) do
     {:error, %{code: :invalid_token,
                error: "Invalid application token",
                message: "Invalid token"}}
   end
 
-  def ingest_for_application(application, command) do
+  def ingest_for_application(application, command, state) do
     events = command.queries
     |> Enum.map(&(Map.put_new(&1, :application_id, application.id)))
-    |> Enum.reduce({[], []}, &ingest_query(application, &1, &2))
+    |> Enum.map(&(Map.put_new(&1, :user_id, application.user_id)))
+    |> Enum.reduce({[], []}, &ingest_query(application, &1, &2, state))
     |> elem(1)
     |> List.flatten
     {:ok, events}
   end
 
-  def handle(command, _context) do
-    with application <- Application.find(command.application_id),
-         user <- User.find(application.user_id),
-         true <- user.credits > 0
+  def handle(command, _context, state) do
+    with application <- Application.find(state, command.application_id),
+         user        <- User.find(state, application.user_id),
+         true        <- user.credits > 0
     do
-      ingest_for_application(application, command)
+      ingest_for_application(application, command, state)
     else
         false -> {:error, %{code: :not_enough_credits,
                             error: "Not enough credits",

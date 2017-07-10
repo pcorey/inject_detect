@@ -11,7 +11,6 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.UpdateStripeToken do
 
 
   def handle_update_customer({:ok, update}, user) do
-    IO.puts("update #{inspect update}")
     {:ok, [%UpdatedCustomer{user_id: user.id}]}
   end
   def handle_charge_customer(_, _, _), do: InjectDetect.error("Unable to update customer.")
@@ -24,11 +23,11 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.UpdateStripeToken do
   end
 
 
-  def handle(command = %{user_id: user_id}, %{user_id: user_id}) do
-    User.find(user_id)
+  def handle(command = %{user_id: user_id}, %{user_id: user_id}, state) do
+    User.find(state, user_id)
     |> handle_for_user(command.stripe_token)
   end
-  def handle(_, _), do: InjectDetect.error("Not authorized.")
+  def handle(_, _, _), do: InjectDetect.error("Not authorized.")
 
 
 end

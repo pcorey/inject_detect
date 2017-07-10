@@ -43,8 +43,8 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.GetStarted do
     end
   end
 
-  def handle(command, _context) do
-    unless user = User.find(email: command.email) do
+  def handle(command, _context, state) do
+    unless user = User.find(state, email: command.email) do
       user_id = InjectDetect.generate_id()
       application_id = InjectDetect.generate_id()
       application_token = InjectDetect.generate_token(application_id)

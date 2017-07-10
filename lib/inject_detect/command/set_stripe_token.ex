@@ -9,10 +9,10 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.SetStripeToken do
   alias InjectDetect.Event.SetStripeToken
 
 
-  def handle(command = %{user_id: user_id}, %{user_id: user_id}) do
+  def handle(command = %{user_id: user_id}, %{user_id: user_id}, state) do
     {:ok, [%SetStripeToken{user_id: user_id, stripe_token: command.stripe_token}]}
   end
-  def handle(_, _), do: InjectDetect.error("Not authorized.")
+  def handle(_, _, _), do: InjectDetect.error("Not authorized.")
 
 
 end

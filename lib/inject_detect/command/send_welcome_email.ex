@@ -10,8 +10,9 @@ defimpl InjectDetect.Command,
   alias InjectDetect.Event.SentWelcomeEmail
   alias InjectDetect.State.User
 
-  def handle(command, _context) do
-    Email.welcome_html_email(User.find(command.user_id))
+  def handle(command, _context, state) do
+    User.find(state, command.user_id)
+    |> Email.welcome_html_email
     |> InjectDetect.Mailer.deliver_later
     {:ok, [%SentWelcomeEmail{user_id: command.user_id, email: command.email}]}
   end

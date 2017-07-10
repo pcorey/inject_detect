@@ -26,9 +26,8 @@ defimpl InjectDetect.Command,
   end
   def can_send_email(_), do: true
 
-  def handle(command, _context) do
-    with {:ok, state} <- State.get(),
-         user <- User.find(state, command.user_id),
+  def handle(command, _context, state) do
+    with user <- User.find(state, command.user_id),
          true <- can_send_email(user),
          application <- Application.find(state, command.application_id),
          unexpected_query <- UnexpectedQuery.find(state, command.application_id, command.query_id)

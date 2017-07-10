@@ -22,9 +22,8 @@ defimpl InjectDetect.Command,
   end
   def can_send_email(_), do: true
 
-  def handle(command, _context) do
-    with {:ok, state} <- State.get(),
-         user <- User.find(state, command.user_id),
+  def handle(command, _context, state) do
+    with user <- User.find(state, command.user_id),
          true <- can_send_email(user)
     do
       Email.out_of_credits_html_email(user)

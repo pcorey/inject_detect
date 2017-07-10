@@ -31,8 +31,8 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.RefillCredits do
   end
 
 
-  def handle(command = %{user_id: user_id}, _) do
-    User.find(user_id)
+  def handle(command = %{user_id: user_id}, _, state) do
+    User.find(state, user_id)
     |> handle_for_user
   end
   def handle(_, _), do: InjectDetect.error("Not authorized.")
