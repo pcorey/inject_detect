@@ -1,9 +1,9 @@
 defmodule Stripe do
 
 
-  def create_customer(user_id) do
+  def create_customer(user_id, email) do
     stripe_module = Application.fetch_env!(:inject_detect, :stripe_module)
-    apply(stripe_module, :create_customer, [user_id])
+    apply(stripe_module, :create_customer, [user_id, email])
   end
 
 

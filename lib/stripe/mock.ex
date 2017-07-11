@@ -1,7 +1,7 @@
 defmodule Stripe.Mock do
 
 
-  def create_customer(user_id) do
+  def create_customer(user_id, email) do
     {:ok, %{"id" => "customer_12345"}}
   end
 

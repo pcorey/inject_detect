@@ -16,7 +16,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.CreateUser do
   alias InjectDetect.State.User
 
   def create_customer(command, user_id, application_id, application_token, auth_token, unsubscribe_token) do
-    with {:ok, customer} <- Stripe.create_customer(user_id) do
+    with {:ok, customer} <- Stripe.create_customer(user_id, command.email) do
       {:ok, [%CreatedUser{agreed_to_tos: command.agreed_to_tos,
                           email: command.email,
                           referral_code: command.referral_code,

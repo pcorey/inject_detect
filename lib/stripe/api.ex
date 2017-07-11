@@ -21,8 +21,8 @@ defmodule Stripe.API do
   end
 
 
-  def create_customer(user_id) do
-    post("customers", [description: user_id])
+  def create_customer(user_id, email) do
+    post("customers", [email: email, metadata: %{user_id: user_id}])
   end
 
 
