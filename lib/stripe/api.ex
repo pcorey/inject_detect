@@ -26,6 +26,11 @@ defmodule Stripe.API do
   end
 
 
+  def create_subscription(customer_id) do
+    post("customers", [customer: customer_id])
+  end
+
+
   def add_token(customer_id, stripe_token) do
     post("customers/#{customer_id}", [source: stripe_token])
   end

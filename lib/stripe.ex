@@ -7,6 +7,12 @@ defmodule Stripe do
   end
 
 
+  def create_subscription(customer_id) do
+    stripe_module = Application.fetch_env!(:inject_detect, :stripe_module)
+    apply(stripe_module, :create_subscription, [customer_id])
+  end
+
+
   def add_default_token(user_id, stripe_token_id) do
     stripe_module = Application.fetch_env!(:inject_detect, :stripe_module)
     apply(stripe_module, :add_default_token, [user_id, stripe_token_id])
