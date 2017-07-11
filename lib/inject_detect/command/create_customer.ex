@@ -13,7 +13,10 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.CreateCustomer do
     {:ok, [%CreatedCustomer{user_id: user_id, customer_id: customer["id"]}]}
   end
 
-  def handle_create_customer(_, _), do: InjectDetect.error("Unable to create customer")
+  def handle_create_customer(error, _) do
+    IO.puts("Unable to create customer: #{inspect error}")
+    InjectDetect.error("Unable to create customer")
+  end
 
 
   def create_customer(nil), do: InjectDetect.error("Can't find user")

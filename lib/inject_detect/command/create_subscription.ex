@@ -13,7 +13,10 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.CreateSubscription do
     {:ok, [%CreatedSubscription{user_id: user_id, subscription_id: subscription["id"]}]}
   end
 
-  def handle_create_subscription(_, _), do: InjectDetect.error("Unable to create subscription")
+  def handle_create_subscription(error, _) do
+    IO.puts("Unable to create subscription: #{inspect error}")
+    InjectDetect.error("Unable to create subscription")
+  end
 
 
   def create_subscription(nil), do: InjectDetect.error("Can't find user")
