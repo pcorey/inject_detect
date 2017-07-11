@@ -13,7 +13,10 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.UpdateStripeToken do
   def handle_update_customer({:ok, update}, user) do
     {:ok, [%UpdatedCustomer{user_id: user.id}]}
   end
-  def handle_charge_customer(_, _, _), do: InjectDetect.error("Unable to update customer.")
+  def handle_update_customer(error, _) do
+    IO.puts("Unable to update customer: #{inspect error}")
+    InjectDetect.error("Unable to update customer.")
+  end
 
 
   def handle_for_user(nil, _), do: InjectDetect.error("User not found.")
