@@ -7,6 +7,8 @@ defmodule InjectDetect.State.User do
     attrs
     |> Map.put_new(:applications, [])
     |> Map.put_new(:subscribed, true)
+    |> Map.put_new(:active, true)  # TODO: Add active controls and checks
+    |> Map.put_new(:locked, false) # TODO: Add server-side locked controls and checks
     |> Map.put_new(:ingests_pending_invoice, 0)
   end
 
