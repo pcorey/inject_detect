@@ -8,10 +8,14 @@ defmodule InjectDetect.State.UserTest do
   test "base user" do
     assert User.new(%{}) == %{applications: [],
                               subscribed: true,
+                              active: true,
+                              locked: false,
                               ingests_pending_invoice: 0}
     assert User.new(%{id: 123}) == %{id: 123,
                                      applications: [],
                                      subscribed: true,
+                                     active: true,
+                                     locked: false,
                                      ingests_pending_invoice: 0}
   end
 
