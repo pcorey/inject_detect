@@ -3,17 +3,15 @@ import SuccessModal from './SuccessModal';
 import React from 'react';
 import _ from 'lodash';
 import gql from 'graphql-tag';
-import { Button, Form, Modal } from 'semantic-ui-react';
+import { Button, Modal } from 'semantic-ui-react';
 import { Redirect } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 
-class OneTimePurchaseModal extends React.Component {
+class UpdatePaymentMethodModal extends React.Component {
     state = {
         open: false,
         loading: false,
-        success: false,
-        credits: undefined,
-        creditPrice: undefined
+        success: false
     };
 
     style = {
@@ -41,14 +39,13 @@ class OneTimePurchaseModal extends React.Component {
         }
     }
 
-    open = () => this.setState({ open: true, credits: undefined });
+    open = () => this.setState({ open: true });
     close = () => this.setState({ open: false });
 
-    oneTimePurchase = () => {
+    updatePaymentMethod = () => {
         this.setState({ errors: false, success: false, loading: true });
 
         let userId = this.props.user.id;
-        let credits = this.state.credits;
 
         this.stripe
             .createToken(this.card)
@@ -68,7 +65,7 @@ class OneTimePurchaseModal extends React.Component {
                     last4: _.get(stripeToken, 'card.last4')
                 }
             }))
-            .then(stripeToken => this.props.oneTimePurchase(userId, credits, stripeToken))
+            .then(stripeToken => this.props.updatePaymentMethod(userId, stripeToken))
             .then(res => {
                 this.setState({
                     success: true,
@@ -84,16 +81,8 @@ class OneTimePurchaseModal extends React.Component {
             });
     };
 
-    changeCredits = (e, select) => {
-        this.setState({
-            credits: select.value,
-            creditPrice: _.find(select.options, o => o.value == select.value).text
-        });
-    };
-
     render() {
-        const { user } = this.props;
-        const { credits, creditPrice, errors, loading, open, success, applicationId } = this.state;
+        const { errors, loading, open, success, applicationId } = this.state;
 
         if (applicationId) {
             return <Redirect to={`/application/${applicationId}`} />;
@@ -102,8 +91,8 @@ class OneTimePurchaseModal extends React.Component {
         if (success) {
             return (
                 <SuccessModal
-                    header="Credits Purchased!"
-                    text={`Your purchase was successful! We've gone ahead and added those ${Number(credits).toLocaleString()} to your account.`}
+                    header="Payment Method Updated!"
+                    text={`We've successfully updated your payment method.`}
                     positive="Return to account"
                     callback={() => this.setState({ success: false })}
                 />
@@ -113,7 +102,7 @@ class OneTimePurchaseModal extends React.Component {
         return (
             <Modal
                 size="small"
-                className="one-time-purchase-modal"
+                className="update-paymnet-method-modal"
                 closeIcon="close"
                 trigger={
                     <Button
@@ -121,7 +110,7 @@ class OneTimePurchaseModal extends React.Component {
                         fluid
                         icon="dollar"
                         size="big"
-                        content="One time credit purchase"
+                        content="Update payment method"
                         labelPosition="right"
                     />
                 }
@@ -129,26 +118,13 @@ class OneTimePurchaseModal extends React.Component {
                 onOpen={this.open}
                 onClose={this.close}
             >
-                <Modal.Header>One time credit purchase</Modal.Header>
+                <Modal.Header>Update payment method</Modal.Header>
                 <div className="content">
                     <form className="ui large form">
                         <div>
                             <p className="instructions">
-                                Select the number of credits you want to buy along with your payment information. Your purchased credits will immediately be available to your account.
+                                Enter a new payment method. This payment method will be used to automatically pay upcoming monthly invoices, along with any past due invoices.
                             </p>
-                            <Form.Select
-                                label="Credits to purchase:"
-                                value={credits}
-                                onChange={this.changeCredits}
-                                options={[
-                                    { key: 100000, text: '100,000 credits for $10.00', value: 100000 },
-                                    { key: 200000, text: '200,000 credits for $20.00', value: 200000 },
-                                    { key: 500000, text: '500,000 credits for $50.00', value: 500000 },
-                                    { key: 1000000, text: '1,000,000 credits for $100.00', value: 1000000 },
-                                    { key: 10000000, text: '10,000,000 credits for $1000.00', value: 10000000 }
-                                ]}
-                                placeholder="Credits to purchase"
-                            />
                             <div className="field">
                                 <label>Payment information:</label>
                                 <div
@@ -173,17 +149,17 @@ class OneTimePurchaseModal extends React.Component {
                         Cancel
                     </Button>
                     <ConfirmModal
-                        header="Purchase credits?"
-                        text={`Are you sure you want to make a one time purchase of ${creditPrice}`}
-                        positive="Purchase credits"
-                        callback={this.oneTimePurchase}
+                        header="Update payment method?"
+                        text={`Are you sure you want to update your payment method?`}
+                        positive="Update"
+                        callback={this.updatePaymentMethod}
                         trigger={
                             <Button
                                 positive
                                 loading={loading}
                                 icon="dollar"
                                 labelPosition="right"
-                                content="Purchase credits"
+                                content="Update payment method"
                             />
                         }
                     />
@@ -195,23 +171,23 @@ class OneTimePurchaseModal extends React.Component {
 
 export default graphql(
     gql`
-    mutation oneTimePurchase ($userId: String!,
-                              $credits: String!,
-                              $stripeToken: StripeTokenInput!) {
-        oneTimePurchase(userId: $userId,
-                        credits: $credits,
-                        stripeToken: $stripeToken) {
+    mutation updatePaymentMethod ($userId: String!, $stripeToken: StripeTokenInput!) {
+        updatePaymentMethod (userId: $userId, stripeToken: $stripeToken) {
             id
-            credits
+            stripeToken {
+                card {
+                    last4
+                }
+            }
         }
     }
 `,
     {
         props: ({ mutate }) => ({
-            oneTimePurchase: (userId, credits, stripeToken) =>
+            updatePaymentMethod: (userId, stripeToken) =>
                 mutate({
-                    variables: { userId, credits, stripeToken }
+                    variables: { userId, stripeToken }
                 })
         })
     }
-)(OneTimePurchaseModal);
+)(UpdatePaymentMethodModal);

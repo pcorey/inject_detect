@@ -10,7 +10,7 @@ class GetStarted extends React.Component {
         success: false
     };
 
-    getStarted(e) {
+    createUser(e) {
         e.preventDefault();
 
         this.setState({ errors: false, loading: true });
@@ -21,10 +21,10 @@ class GetStarted extends React.Component {
         let referralCode = this.refs.referralCode.value;
 
         return this.props
-            .getStarted(email, applicationName, referralCode, agreedToTos)
+            .createUser(email, applicationName, referralCode, agreedToTos)
             .then(res => {
                 this.setState({ success: true });
-                let authToken = _.get(res, 'data.getStarted.authToken');
+                let authToken = _.get(res, 'data.createUser.authToken');
                 localStorage.setItem('authToken', authToken);
                 setTimeout(() => this.setState({ redirect: true }), 1000);
             })
@@ -85,7 +85,7 @@ class GetStarted extends React.Component {
                     </p>
                 </div>
                 <div className="eight wide center aligned column">
-                    <form className="ui large form" onSubmit={this.getStarted.bind(this)}>
+                    <form className="ui large form" onSubmit={this.createUser.bind(this)}>
                         <div className="ui left aligned stacked segment">
                             <div className="field">
                                 <div className="ui left icon input">
@@ -173,7 +173,7 @@ GetStarted.propTypes = {
 
 export default graphql(GetStartedMutation, {
     props: ({ mutate }) => ({
-        getStarted: (email, applicationName, referralCode, agreedToTos) =>
+        createUser: (email, applicationName, referralCode, agreedToTos) =>
             mutate({
                 variables: {
                     email,

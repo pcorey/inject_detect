@@ -1,10 +1,7 @@
 import Charges from './Charges';
-import ConfigureAutomaticRefillsModal from './ConfigureAutomaticRefillsModal';
-import OneTimePurchase from './OneTimePurchase';
-import OneTimePurchaseModal from './OneTimePurchaseModal';
+import UpdatePaymentMethodModal from './UpdatePaymentMethodModal';
+import RemovePaymentMethodModal from './RemovePaymentMethodModal';
 import React from 'react';
-import RecurringPurchase from './RecurringPurchase';
-import TurnOffRefill from './TurnOffRefill';
 import _ from 'lodash';
 import gql from 'graphql-tag';
 import { Button, Form } from 'semantic-ui-react';
@@ -12,10 +9,6 @@ import { commas } from './pretty';
 import { graphql } from 'react-apollo';
 
 class Account extends React.Component {
-    state = {
-        oneTimePurchase: true
-    };
-
     initProgress() {
         window.$('.ui.progress').progress();
     }
@@ -28,15 +21,8 @@ class Account extends React.Component {
         this.initProgress();
     }
 
-    setOneTimePurchase = oneTimePurchase => {
-        return e => {
-            this.setState({ oneTimePurchase });
-        };
-    };
-
     render() {
         let { loading, user } = this.props.data;
-        let { oneTimePurchase } = this.state;
 
         if (loading) {
             return <div className="ui active loader" />;
@@ -94,23 +80,17 @@ class Account extends React.Component {
                             className="sixteen wide column section"
                             style={{ marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
                         >
-                            <OneTimePurchaseModal user={user} />
+                            <UpdatePaymentMethodModal user={user} />
                         </div>
 
-                        {user.refill
+                        {user.stripeToken
                             ? <div
                                   className="sixteen wide column section"
                                   style={{ marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
                               >
-                                  <TurnOffRefill user={user} />
+                                  <RemovePaymentMethodModal user={user} />
                               </div>
-                            : <div
-                                  className="sixteen wide column section"
-                                  style={{ marginTop: 0, marginLeft: 'auto', marginRight: 'auto' }}
-                              >
-                                  <ConfigureAutomaticRefillsModal user={user} />
-                              </div>}
-
+                            : null}
                     </div>
                 </div>
 
@@ -123,11 +103,10 @@ export default graphql(gql`
     query {
         user {
             id
-            credits
-            refill
-            refillTrigger
-            refillAmount
             email
+            active
+            locked
+            subscribed
             stripeToken {
                 card {
                     last4

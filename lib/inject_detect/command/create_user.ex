@@ -15,8 +15,13 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.CreateUser do
   alias InjectDetect.Event.CreatedUser
   alias InjectDetect.State.User
 
-  def create_customer(command, user_id, application_id, application_token, auth_token, unsubscribe_token) do
-    with {:ok, customer} <- Stripe.create_customer(user_id, command.email) do
+  def handle(command, _context, state) do
+    unless user = User.find(state, email: command.email) do
+      user_id = InjectDetect.generate_id()
+      application_id = InjectDetect.generate_id()
+      application_token = InjectDetect.generate_token(application_id)
+      auth_token = InjectDetect.generate_token(user_id)
+      unsubscribe_token = InjectDetect.generate_token(user_id)
       {:ok, [%CreatedUser{agreed_to_tos: command.agreed_to_tos,
                           email: command.email,
                           referral_code: command.referral_code,
@@ -27,24 +32,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.CreateUser do
                                token: application_token,
                                user_id: user_id},
              %GivenAuthToken{auth_token: auth_token, user_id: user_id},
-             %GivenUnsubscribeToken{unsubscribe_token: unsubscribe_token, user_id: user_id},
-             %CreatedCustomer{user_id: user_id, customer_id: customer["id"]}
-            ], %{user_id: user_id}}
-    else
-      _ -> {:error, %{code: :cannot_create_customer,
-                      error: "Can't create customer.",
-                      message: "Can't create customer."}}
-    end
-  end
-
-  def handle(command, _context, state) do
-    unless user = User.find(state, email: command.email) do
-      user_id = InjectDetect.generate_id()
-      application_id = InjectDetect.generate_id()
-      application_token = InjectDetect.generate_token(application_id)
-      auth_token = InjectDetect.generate_token(user_id)
-      unsubscribe_token = InjectDetect.generate_token(user_id)
-      create_customer(command, user_id, application_id, application_token, auth_token, unsubscribe_token)
+             %GivenUnsubscribeToken{unsubscribe_token: unsubscribe_token, user_id: user_id}], %{user_id: user_id}}
     else
       {:error, %{code: :email_taken,
                  error: "That email is already being used.",

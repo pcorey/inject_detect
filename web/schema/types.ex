@@ -32,7 +32,7 @@ defmodule InjectDetect.Schema.Types do
     field :created, :integer
   end
 
-  object :query do
+  object :detected_query do
     field :id, :string
     field :collection, :string
     field :queried_at, :string
@@ -67,13 +67,19 @@ defmodule InjectDetect.Schema.Types do
     field :token, :string
     field :alerting, :boolean
     field :training_mode, :boolean
-    field :queries, list_of(:query)
-    field :unexpected_queries, list_of(:query) do
+    field :queries, list_of(:detected_query) do
+      resolve fn
+        (application, _, _) ->
+          IO.puts("resolving")
+          {:ok, [%{id: "123"}]}
+      end
+    end
+    field :unexpected_queries, list_of(:detected_query) do
       resolve fn
         (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == false))}
       end
     end
-    field :expected_queries, list_of(:query) do
+    field :expected_queries, list_of(:detected_query) do
       resolve fn
         (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == true))}
       end
@@ -84,21 +90,20 @@ defmodule InjectDetect.Schema.Types do
     field :id, :id
     field :email, :string
     field :auth_token, :string
-    field :credits, :integer
-    field :refill, :boolean
-    field :refill_trigger, :integer
-    field :refill_amount, :integer
+    field :active, :boolean
+    field :locked, :boolean
+    field :subscribed, :boolean
     field :stripe_token, :stripe_token
     field :applications, list_of(:application)
-    field :charges, list_of(:stripe_charge) do
-      resolve fn
-        (user, _, _) ->
-          case Stripe.get_charges(user.customer_id) do
-            {:ok, charges} -> {:ok, charges}
-            _ -> InjectDetect.error("Unable to resolve charges.")
-          end
-      end
-    end
+    # field :charges, list_of(:stripe_charge) do
+    #   resolve fn
+    #     (user, _, _) ->
+    #       case Stripe.get_charges(user.customer_id) do
+    #         {:ok, charges} -> {:ok, charges}
+    #         _ -> InjectDetect.error("Unable to resolve charges.")
+    #       end
+    #   end
+    # end
   end
 
 end

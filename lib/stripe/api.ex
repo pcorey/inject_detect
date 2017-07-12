@@ -24,12 +24,12 @@ defmodule Stripe.API do
   def create_customer(user_id, email) do
     post("customers", [email: email,
                        account_balance: -1000, # Give the user a $10.00 credit
-                       metadata: %{user_id: user_id}])
+                       "metadata[user_id]": user_id])
   end
 
 
   def create_subscription(customer_id) do
-    post("customers", [customer: customer_id])
+    post("subscriptions", [customer: customer_id, plan: "inject_detect"])
   end
 
 

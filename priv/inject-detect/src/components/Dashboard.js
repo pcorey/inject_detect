@@ -67,20 +67,6 @@ class Dashboard extends React.Component {
                             {' '}
                             that may be the result of a NoSQL Injection attack.
                         </p>
-                        <p className="instructions">
-                            We've loaded your account with an initial
-                            {' '}
-                            {Number(user.credits).toLocaleString()}
-                            {' '}
-                            credits, which means we'll process
-                            {' '}
-                            {Number(user.credits).toLocaleString()}
-                            {' '}
-                            queries from your Meteor application before needing a refill. You can buy more credits or set up an automatic refill on your
-                            {' '}
-                            <Link to="/account">account settings page</Link>
-                            .
-                        </p>
                     </div>
 
                 </div>
@@ -203,13 +189,12 @@ export default graphql(
     query {
         user {
             id
-            credits
-            refill
-            refillTrigger
-            refillAmount
             applications {
                 id
                 name
+                queries {
+                    id
+                }
                 unexpectedQueries {
                     id
                     queriedAt

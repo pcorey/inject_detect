@@ -15,7 +15,7 @@ defmodule InjectDetect.Invoicer do
 
   def get_users(state) do
     Lens.key(:users)
-    |> Lens.filter(&(&1.active && !&1.locked && &1.subscription_id))
+    |> Lens.filter(&(&1[:active] && !&1[:locked] && &1[:subscription_id]))
     |> Lens.to_list(state)
   end
 
