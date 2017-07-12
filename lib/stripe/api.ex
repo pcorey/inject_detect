@@ -47,6 +47,12 @@ defmodule Stripe.API do
     post("charges", [amount: amount, currency: "usd", customer: customer_id])
   end
 
+
+  def remove_card(customer_id, card_id) do
+    post("customers/#{customer_id}/sources/#{card_id}", [])
+  end
+
+
   def get_charges(customer_id) do
     with {:ok, %{"data" => charges}} <- get("charges?customer=#{customer_id}"), do: {:ok, charges}
   end

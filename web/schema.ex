@@ -10,7 +10,8 @@ defmodule InjectDetect.Schema do
     RemoveApplication,
     RemoveExpectedQuery,
     RequestSignInToken,
-    SetStripeToken,
+    UpdatePaymentMethod,
+    RemovePaymentMethod,
     SignOut,
     Subscribe,
     Unsubscribe,
@@ -185,10 +186,15 @@ defmodule InjectDetect.Schema do
       resolve handle(RemoveApplication, &user/1)
     end
 
-    field :set_stripe_token, type: :user do
+    field :update_payment_method, type: :user do
       arg :user_id, non_null(:string)
       arg :stripe_token, non_null(:stripe_token_input)
-      resolve handle(SetStripeToken, &user/1)
+      resolve handle(UpdatePaymentMethod, &user/1)
+    end
+
+    field :remove_payment_method, type: :user do
+      arg :user_id, non_null(:string)
+      resolve handle(RemovePaymentMethod, &user/1)
     end
 
   end
