@@ -25,11 +25,18 @@ defmodule InjectDetect.Schema.Types do
     field :card, :stripe_card
   end
 
-  object :stripe_charge do
+  object :stripe_subscription do
     field :id, :string
-    field :amount, :integer
-    field :description, :string
-    field :created, :integer
+    field :current_period_end, :integer do
+      resolve fn (subscription, _, _) -> {:ok, subscription["current_period_end"]} end
+    end
+    field :amount, :integer do
+      resolve fn (subscription, _, _) ->
+        amount = subscription["items"]["data"]
+        |> Enum.reduce(0, fn (item, amount) -> amount + (item["amount"] || 0) end)
+        {:ok, amount}
+      end
+    end
   end
 
   object :detected_query do
@@ -70,8 +77,7 @@ defmodule InjectDetect.Schema.Types do
     field :queries, list_of(:detected_query) do
       resolve fn
         (application, _, _) ->
-          IO.puts("resolving")
-          {:ok, [%{id: "123"}]}
+          {:ok, application.queries}
       end
     end
     field :unexpected_queries, list_of(:detected_query) do
@@ -95,6 +101,17 @@ defmodule InjectDetect.Schema.Types do
     field :subscribed, :boolean
     field :stripe_token, :stripe_token
     field :applications, list_of(:application)
+    field :subscription, :stripe_subscription do
+      resolve fn
+        (user, _, _) ->
+          case Stripe.get_subscription(user.subscription_id) do
+            {:ok, subscription} ->
+              IO.puts("subscription #{inspect subscription}")
+              {:ok, subscription}
+            _ -> InjectDetect.error("Unable to resolve subscription.")
+          end
+      end
+    end
     # field :charges, list_of(:stripe_charge) do
     #   resolve fn
     #     (user, _, _) ->

@@ -11,7 +11,7 @@ defmodule InjectDetect.Schema do
     RemoveExpectedQuery,
     RequestSignInToken,
     UpdatePaymentMethod,
-    RemovePaymentMethod,
+    DeactivateAccount,
     SignOut,
     Subscribe,
     Unsubscribe,
@@ -192,9 +192,9 @@ defmodule InjectDetect.Schema do
       resolve handle(UpdatePaymentMethod, &user/1)
     end
 
-    field :remove_payment_method, type: :user do
+    field :deactivate_account, type: :user do
       arg :user_id, non_null(:string)
-      resolve handle(RemovePaymentMethod, &user/1)
+      resolve handle(DeactivateAccount, &user/1)
     end
 
   end

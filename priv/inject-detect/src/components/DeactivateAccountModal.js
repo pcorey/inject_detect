@@ -7,7 +7,7 @@ import { Button, Modal } from 'semantic-ui-react';
 import { Redirect } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 
-class RemovePaymentMethodModal extends React.Component {
+class DeactivateAccountModal extends React.Component {
     state = {
         open: false,
         loading: false,
@@ -17,30 +17,11 @@ class RemovePaymentMethodModal extends React.Component {
     open = () => this.setState({ open: true });
     close = () => this.setState({ open: false });
 
-    removePaymentMethod = () => {
+    deactivateAccount = () => {
         this.setState({ errors: false, success: false, loading: true });
 
-        let userId = this.props.user.id;
-
-        this.stripe
-            .createToken(this.card)
-            .then(result => {
-                if (result.error) {
-                    throw { graphQLErrors: [{ error: result.error.message }] };
-                } else {
-                    return result.token;
-                }
-            })
-            .then(stripeToken => ({
-                id: stripeToken.id,
-                card: {
-                    id: _.get(stripeToken, 'card.id'),
-                    expMonth: _.get(stripeToken, 'card.exp_month'),
-                    expYear: _.get(stripeToken, 'card.exp_year'),
-                    last4: _.get(stripeToken, 'card.last4')
-                }
-            }))
-            .then(stripeToken => this.props.removePaymentMethod(userId, stripeToken))
+        this.props
+            .deactivateAccount(this.propd.user.id)
             .then(res => {
                 this.setState({
                     success: true,
@@ -66,8 +47,8 @@ class RemovePaymentMethodModal extends React.Component {
         if (success) {
             return (
                 <SuccessModal
-                    header="Automatic payment cancelled!"
-                    text={`We've successfully cancelled your automatic payment.`}
+                    header="Deactivate Account"
+                    text={`We've successfully deactivated your account.`}
                     positive="Return to account"
                     callback={() => this.setState({ success: false })}
                 />
@@ -77,7 +58,7 @@ class RemovePaymentMethodModal extends React.Component {
         return (
             <Modal
                 size="small"
-                className="remove-payment-method-modal"
+                className="deactivate-account-modal"
                 closeIcon="close"
                 trigger={
                     <Button
@@ -85,7 +66,7 @@ class RemovePaymentMethodModal extends React.Component {
                         icon="exclamation"
                         size="big"
                         className="brand"
-                        content="Cancel automatic payment"
+                        content="Deactivate account"
                         labelPosition="right"
                     />
                 }
@@ -93,12 +74,12 @@ class RemovePaymentMethodModal extends React.Component {
                 onOpen={this.open}
                 onClose={this.close}
             >
-                <Modal.Header>Cancel automatic payment</Modal.Header>
+                <Modal.Header>Deactivate account</Modal.Header>
                 <div className="content">
                     <form className="ui large form">
                         <div>
                             <p className="instructions">
-                                Are you sure you want to cancel your current automatic payment? Without adding a new payment method before your next monthly invoice, your account may be locked.
+                                Are you sure you want to deactivate your account? Once deactivated, we'll immediately stop monitoring the applications in your account for unexpected queries.
                             </p>
                         </div>
 
@@ -113,17 +94,17 @@ class RemovePaymentMethodModal extends React.Component {
                         Cancel
                     </Button>
                     <ConfirmModal
-                        header="Cancel automatic payment?"
-                        text={`Are you sure you want to cancel your automatic payment?`}
-                        positive="Cancel automatic payment"
-                        callback={this.removePaymentMethod}
+                        header="Deactivate account?"
+                        text={'Are you sure you want to deactivate your account?'}
+                        positive="Deactivate account"
+                        callback={this.deactivateAccount}
                         trigger={
                             <Button
-                                positive
+                                className="brand"
                                 loading={loading}
                                 icon="exclamation"
                                 labelPosition="right"
-                                content="Cancel automatic payment"
+                                content="Deactivate account"
                             />
                         }
                     />
@@ -135,23 +116,19 @@ class RemovePaymentMethodModal extends React.Component {
 
 export default graphql(
     gql`
-    mutation removePaymentMethod ($userId: String!) {
-        removePaymentMethod (userId: $userId) {
+    mutation deactivateAccount ($userId: String!) {
+        deactivateAccount (userId: $userId) {
             id
-            stripeToken {
-                card {
-                    last4
-                }
-            }
+            active
         }
     }
 `,
     {
         props: ({ mutate }) => ({
-            removePaymentMethod: (userId, stripeToken) =>
+            deactivateAccount: (userId, stripeToken) =>
                 mutate({
                     variables: { userId, stripeToken }
                 })
         })
     }
-)(RemovePaymentMethodModal);
+)(DeactivateAccountModal);

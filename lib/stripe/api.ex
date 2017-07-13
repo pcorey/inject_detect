@@ -53,8 +53,8 @@ defmodule Stripe.API do
   end
 
 
-  def get_charges(customer_id) do
-    with {:ok, %{"data" => charges}} <- get("charges?customer=#{customer_id}"), do: {:ok, charges}
+  def get_subscription(subscription_id) do
+    with {:ok, %{"data" => subscription}} <- get("subscriptions/#{subscription_id}"), do: {:ok, subscription}
   end
 
 

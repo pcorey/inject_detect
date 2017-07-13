@@ -31,9 +31,9 @@ defmodule Stripe do
   end
 
 
-  def get_charges(customer_id) do
+  def get_subscription(subscription_id) do
     stripe_module = Application.fetch_env!(:inject_detect, :stripe_module)
-    apply(stripe_module, :get_charges, [customer_id])
+    apply(stripe_module, :get_subscription, [subscription_id])
   end
 
 

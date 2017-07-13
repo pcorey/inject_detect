@@ -7,12 +7,18 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.UpdatePaymentMethod do
 
 
   alias InjectDetect.Event.SetStripeToken
-  alias InjectDetect.Event.UpdatedCustomer
+  alias InjectDetect.Event.ActivatedAccount
   alias InjectDetect.State.User
 
 
-  def handle_update_customer({:ok, update}, user, stripe_token) do
-    {:ok, [%UpdatedCustomer{user_id: user.id}, %SetStripeToken{user_id: user.id, stripe_token: stripe_token}]}
+
+  def handle_update_customer({:ok, update}, user = %{active: true}, stripe_token) do
+    {:ok, [%SetStripeToken{user_id: user.id, stripe_token: stripe_token}]}
+  end
+
+  def handle_update_customer({:ok, update}, user = %{active: false}, stripe_token) do
+    {:ok, [%ActivatedAccount{user_id: user.id},
+           %SetStripeToken{user_id: user.id, stripe_token: stripe_token}]}
   end
 
   def handle_update_customer(error, _, _) do

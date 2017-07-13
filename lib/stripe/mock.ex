@@ -25,8 +25,8 @@ defmodule Stripe.Mock do
   end
 
 
-  def get_charges(customer_id) do
-    {:ok, [%{"id" => "charge_12345"}]}
+  def get_subscription(subscription_id) do
+    {:ok, [%{"id" => "subscription_12345"}]}
   end
 
 
