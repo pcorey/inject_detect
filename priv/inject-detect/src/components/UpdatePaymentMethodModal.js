@@ -177,6 +177,8 @@ export default graphql(
             stripeToken {
                 card {
                     last4
+                    expMonth
+                    expYear
                 }
             }
         }

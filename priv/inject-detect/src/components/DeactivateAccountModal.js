@@ -21,7 +21,7 @@ class DeactivateAccountModal extends React.Component {
         this.setState({ errors: false, success: false, loading: true });
 
         this.props
-            .deactivateAccount(this.propd.user.id)
+            .deactivateAccount(this.props.user.id)
             .then(res => {
                 this.setState({
                     success: true,
