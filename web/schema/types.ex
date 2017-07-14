@@ -30,6 +30,7 @@ defmodule InjectDetect.Schema.Types do
     field :current_period_end, :integer do
       resolve fn (subscription, _, _) -> {:ok, subscription["current_period_end"]} end
     end
+    # TODO: Replace with :stripe_invoice relation. Invoice holds amount, not subscription.
     field :amount, :integer do
       resolve fn (subscription, _, _) ->
         amount = subscription["items"]["data"]

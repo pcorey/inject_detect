@@ -6,7 +6,7 @@ defmodule InjectDetect.CommandHandler do
     |> Map.put(:type, Atom.to_string(type))
     |> Map.put(:data, Map.from_struct(data))
     |> Map.put(:id, id)
-    |> (&Ecto.Multi.insert(multi, data, &1)).()
+    |> (&Ecto.Multi.insert(multi, &1, &1)).()
     |> (&store_events(events, &1, id + 1)).()
   end
   def store_events(events, id), do: store_events(events, Ecto.Multi.new(), id + 1)

@@ -15,6 +15,7 @@ defmodule InjectDetect.IngestController do
       query -> for {k, v} <- query, into: %{}, do: {String.to_atom(k), v}
     end)
 
+    # TODO: Timing out on lots of requests (half way through 5000)
     command = %IngestQueries{application_id: application.id, queries: queries}
     case handle(command, %{}) do
       {:ok, _} ->
