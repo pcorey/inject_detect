@@ -24,8 +24,9 @@ defmodule InjectDetect.Invoicer do
 
 
   def invoice_user(user = %{ingests_pending_invoice: ingests_pending_invoice})
-  when ingests_pending_invoice > 0 do
-    %InvoiceUser{user_id: user.id}
+  when ingests_pending_invoice > 10 do # TODO: Make price configurable
+    amount = div(ingests_pending_invoice, 10)
+    %InvoiceUser{user_id: user.id, amount: amount, ingests_pending_invoice: amount * 10}
     |> CommandHandler.handle
   end
 
@@ -54,7 +55,7 @@ defmodule InjectDetect.Invoicer do
 
   def schedule_send_invoices do
     # Process.send_after(self(), :send_invoices, 1 * 60 * 60 * 1000)
-    Process.send_after(self(), :send_invoices, 5 * 1000)
+    Process.send_after(self(), :send_invoices, 5 * 1000) # TODO: Make interval configurable
   end
 
 
