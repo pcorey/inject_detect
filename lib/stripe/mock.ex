@@ -11,6 +11,11 @@ defmodule Stripe.Mock do
   end
 
 
+  def create_invoiceitem(customer_id, amount) do
+    {:ok, %{"id" => "invoiceitem_12345"}}
+  end
+
+
   def add_default_token(customer_id, stripe_token) do
     {:ok, %{"id" => "customer_12345"}}
   end

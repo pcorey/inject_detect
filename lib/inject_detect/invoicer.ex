@@ -2,6 +2,9 @@ defmodule InjectDetect.Invoicer do
   use GenServer
 
 
+  alias InjectDetect.Command.InvoiceUser
+  alias InjectDetect.CommandHandler
+
   def start_link do
     GenServer.start_link(__MODULE__, :ok)
   end
@@ -20,9 +23,13 @@ defmodule InjectDetect.Invoicer do
   end
 
 
-  def invoice_user(user) do
-    IO.puts("invoicing user #{user.id}")
+  def invoice_user(user = %{ingests_pending_invoice: ingests_pending_invoice})
+  when ingests_pending_invoice > 0 do
+    %InvoiceUser{user_id: user.id}
+    |> CommandHandler.handle
   end
+
+  def invoice_user(user), do: :ok
 
 
   def send_invoices({:ok, state}) do

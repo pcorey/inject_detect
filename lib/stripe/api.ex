@@ -33,6 +33,14 @@ defmodule Stripe.API do
   end
 
 
+  def create_invoiceitem(customer_id, amount) do
+    post("invoiceitems", [customer: customer_id,
+                          amount: amount,
+                          currency: "usd",
+                          description: "Ingested queries"])
+  end
+
+
   def add_token(customer_id, stripe_token) do
     post("customers/#{customer_id}", [source: stripe_token])
   end
