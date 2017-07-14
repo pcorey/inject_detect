@@ -13,7 +13,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.InvoiceUser do
   end
 
 
-  def handle_create_invoiceitem(error, _error) do
+  def handle_create_invoiceitem(error, _user) do
     IO.puts("Unable to create invoiceitem: #{inspect error}")
     InjectDetect.error("Unable to create invoiceitem")
   end
