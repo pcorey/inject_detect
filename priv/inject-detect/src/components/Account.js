@@ -56,7 +56,13 @@ class Account extends React.Component {
                                     </p>
                                     <AccountSubscription />
                                 </div>
-                              : <p className="instructions">No card.</p>
+                              : <p className="instructions">
+                                    You haven't added a payment method to your account. Be sure to add a payment method before your trail runs out to avoid interruptions in service. Read about
+                                    {' '}
+                                    <a href="#">our pricing and billing</a>
+                                    {' '}
+                                    for more information.
+                                </p>
                         : <p className="instructions">
                               Your account is decativated. Inject Detect is no longer monitoring your applications for NoSQL Injection attacks. To re-activate your account,
                               {' '}
