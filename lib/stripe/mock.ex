@@ -11,7 +11,7 @@ defmodule Stripe.Mock do
   end
 
 
-  def create_invoiceitem(customer_id, amount) do
+  def create_invoiceitem(customer_id, amount, ingests) do
     {:ok, %{"id" => "invoiceitem_12345"}}
   end
 
@@ -32,6 +32,11 @@ defmodule Stripe.Mock do
 
   def get_subscription(subscription_id) do
     {:ok, [%{"id" => "subscription_12345"}]}
+  end
+
+
+  def get_invoice(invoice_id) do
+    {:ok, [%{"id" => "invoice_12345"}]}
   end
 
 

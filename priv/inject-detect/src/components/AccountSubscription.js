@@ -14,18 +14,27 @@ class AccountSubscription extends React.Component {
 
         return (
             <p className="instructions">
-                The current billing amount for your month-to-date usage is
+                So far this month, we've processed
                 {' '}
-                <strong>${(_.get(user, 'subscription.amount') / 100).toFixed(2)}</strong>
+                <strong>{_.get(user, 'invoice.ingests').toLocaleString()}</strong>
                 {' '}
-                and is scheduled for automatic payment on
+                queries on from your applications. On
                 {' '}
-                <strong>
-                    <Moment format="MM/DD">
-                        {_.get(user, 'subscription.currentPeriodEnd') * 1000}
-                    </Moment>
-                </strong>
-                .
+                <strong><Moment date={_.get(user, 'invoice.periodEnding') * 1000} format="MMMM DD, YYYY" /></strong>
+                {' '}
+                we'll be charging
+                {' '}
+                <strong>${(_.get(user, 'invoice.amountDue') / 100).toFixed(2)}</strong>
+                {' '}
+                to your account
+                {_.get(user, 'invoice.endingBalance')
+                    ? <span>
+                          , leaving your account balance at
+                          {' '}
+                          <strong>$${(user.invoice.endingBalance / 100).toFixed(2)}</strong>
+                          .
+                      </span>
+                    : <span>.</span>}
             </p>
         );
     }
@@ -35,10 +44,13 @@ export default graphql(gql`
     query {
         user {
             id
-            subscription {
+            invoice {
                 id
-                currentPeriodEnd
-                amount
+                total
+                amountDue
+                periodEnd
+                endingBalance
+                ingests
             }
         }
     }

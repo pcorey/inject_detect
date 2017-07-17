@@ -27,7 +27,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.InvoiceUser do
   def handle_for_user(nil), do: InjectDetect.error("User not found.")
 
   def handle_for_user(user, command) do
-    Stripe.create_invoiceitem(user.customer_id, command.amount)
+    Stripe.create_invoiceitem(user.customer_id, command.amount, command.ingests_pending_invoice)
     |> handle_create_invoiceitem(user, command)
   end
 

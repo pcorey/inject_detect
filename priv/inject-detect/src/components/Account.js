@@ -44,7 +44,7 @@ class Account extends React.Component {
                         ? user.stripeToken
                               ? <div>
                                     <p className="instructions">
-                                        Your account is active, and we're actively monitoring all of your applications for NoSQL Injection attacks! The payment method we have on file for your account is a card ending in
+                                        Your account is active, and we're currently monitoring all of your applications for NoSQL Injection attacks. The payment method we have on file for your account is a card ending in
                                         {' '}
                                         <strong>{user.stripeToken.card.last4}</strong>
                                         , expiring on
@@ -63,13 +63,16 @@ class Account extends React.Component {
                                     {' '}
                                     for more information.
                                 </p>
-                        : <p className="instructions">
-                              Your account is decativated. Inject Detect is no longer monitoring your applications for NoSQL Injection attacks. To re-activate your account,
-                              {' '}
-                              <strong>update your payment method</strong>
-                              {' '}
-                              below.
-                          </p>}
+                        : <div>
+                              <p className="instructions">
+                                  Your account is decativated. Inject Detect is no longer monitoring your applications for NoSQL Injection attacks. To re-activate your account,
+                                  {' '}
+                                  <strong>update your payment method</strong>
+                                  {' '}
+                                  below.
+                              </p>
+                              <AccountSubscription />
+                          </div>}
                 </div>
 
                 <div className="sixteen wide column" style={{ marginTop: 0 }}>

@@ -25,17 +25,27 @@ defmodule InjectDetect.Schema.Types do
     field :card, :stripe_card
   end
 
-  object :stripe_subscription do
-    field :id, :string
-    field :current_period_end, :integer do
-      resolve fn (subscription, _, _) -> {:ok, subscription["current_period_end"]} end
+  object :stripe_invoice do
+    field :id, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["id"]} end
     end
-    # TODO: Replace with :stripe_invoice relation. Invoice holds amount, not subscription.
-    field :amount, :integer do
-      resolve fn (subscription, _, _) ->
-        amount = subscription["items"]["data"]
-        |> Enum.reduce(0, fn (item, amount) -> amount + (item["amount"] || 0) end)
-        {:ok, amount}
+    field :amount_due, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["amount_due"]} end
+    end
+    field :total, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["total"]} end
+    end
+    field :period_end, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["period_end"]} end
+    end
+    field :ending_balance, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["ending_balance"]} end
+    end
+    field :ingests, :integer do
+      resolve fn (invoice, _, _) ->
+        ingests = invoice["lines"]["data"]
+        |> Enum.reduce(0, &(&2 + (&1["metadata"]["ingests"] || 0)))
+        {:ok, ingests}
       end
     end
   end
@@ -102,26 +112,16 @@ defmodule InjectDetect.Schema.Types do
     field :subscribed, :boolean
     field :stripe_token, :stripe_token
     field :applications, list_of(:application)
-    field :subscription, :stripe_subscription do
+    field :invoice, :stripe_invoice do
       resolve fn
         (user, _, _) ->
-          case Stripe.get_subscription(user.subscription_id) do
-            {:ok, subscription} ->
-              IO.puts("subscription #{inspect subscription}")
-              {:ok, subscription}
-            _ -> InjectDetect.error("Unable to resolve subscription.")
+          case Stripe.get_invoice(user.customer_id) do
+            {:ok, invoice} ->
+              {:ok, invoice}
+            _ -> InjectDetect.error("Unable to resolve invoice.")
           end
       end
     end
-    # field :charges, list_of(:stripe_charge) do
-    #   resolve fn
-    #     (user, _, _) ->
-    #       case Stripe.get_charges(user.customer_id) do
-    #         {:ok, charges} -> {:ok, charges}
-    #         _ -> InjectDetect.error("Unable to resolve charges.")
-    #       end
-    #   end
-    # end
   end
 
 end

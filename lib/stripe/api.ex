@@ -33,11 +33,13 @@ defmodule Stripe.API do
   end
 
 
-  def create_invoiceitem(customer_id, amount) do
+  def create_invoiceitem(customer_id, amount, ingests) do
+    # TODO: Store ingested_queries in metadata to count up for given subscription period
     post("invoiceitems", [customer: customer_id,
                           amount: amount,
                           currency: "usd",
-                          description: "Ingested queries"])
+                          description: "Ingested queries",
+                          "metadata[ingests]": ingests])
   end
 
 
@@ -63,6 +65,13 @@ defmodule Stripe.API do
 
   def get_subscription(subscription_id) do
     with {:ok, %{"data" => subscription}} <- get("subscriptions/#{subscription_id}"), do: {:ok, subscription}
+  end
+
+
+  def get_invoice(customer_id) do
+    with {:ok, %{"data" => [invoice | _]}} <- get("invoices/upcoming?customer=#{customer_id}") do
+      {:ok, invoice}
+    end
   end
 
 
