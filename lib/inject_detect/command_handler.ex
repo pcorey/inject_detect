@@ -7,7 +7,7 @@ defmodule InjectDetect.CommandHandler do
     |> Map.put(:data, Map.from_struct(data))
     # Uncomment to add global optimistic lock.
     # TODO: Figure out better locking mechanism.
-    #   Maybe each command/event can have a "metadata function" that can set id/stream?
+    #       Maybe each command/event can have a "metadata function" that can set id/stream?
     # |> Map.put(:id, id)
     |> (&Ecto.Multi.insert(multi, &1, &1)).()
     |> (&store_events(events, &1, id + 1)).()
