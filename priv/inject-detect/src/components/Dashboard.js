@@ -19,6 +19,7 @@ class Dashboard extends React.Component {
         this.initProgress();
     }
 
+    // TODO: Rework to support new payment plan
     render() {
         let { loading, user } = this.props.data;
 
