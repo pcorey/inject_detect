@@ -34,7 +34,6 @@ defmodule Stripe.API do
 
 
   def create_invoiceitem(customer_id, amount, ingests) do
-    # TODO: Store ingested_queries in metadata to count up for given subscription period
     post("invoiceitems", [customer: customer_id,
                           amount: amount,
                           currency: "usd",
