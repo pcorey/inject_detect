@@ -23,17 +23,14 @@ class UnexpectedQueries extends React.Component {
                         .reverse()
                         .map(query => {
                             return (
-                                <div className="ui fluid card" key={query.id}>
+                                <div className="ui fluid unexpected-query-card card" key={query.id}>
                                     <div className="content">
                                         <div className="right floated meta">
                                             Last seen: <Moment fromNow>{query.queriedAt}</Moment>
                                             <div className="ui icon buttons">
-                                                <Link
-                                                    to={`/unexpected-query/${query.id}`}
-                                                    className="ui brand button"
-                                                    data-tooltip="See more details about this unexpected query."
-                                                    data-position="top right"
-                                                >
+                                                <Link to={`/unexpected-query/${query.id}`} className="ui brand button">
+                                                    {/* data-tooltip="See more details about this unexpected query."
+                                                        data-position="top right" */}
                                                     <i className="right arrow icon" />
                                                 </Link>
                                             </div>
