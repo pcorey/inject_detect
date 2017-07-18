@@ -82,104 +82,102 @@ class Dashboard extends React.Component {
                     </h1>
                 </div>
                 <div className="section" style={{ marginTop: 0 }}>
-                    <h3 className="ui sub header">Credits:</h3>
                     <p className="instructions">
-                        <span>
-                            Your account current has <strong>{commas(user.credits)}</strong> credits remaining.{' '}
-                        </span>
-                        {user.refill
+                        {_.get(user, 'active')
                             ? <span>
-                                  Your account is configured to automatically purchase an additional
+                                  Your account is
                                   {' '}
-                                  <strong>{commas(user.refillAmount)}</strong>
+                                  <strong>currently active</strong>
                                   {' '}
-                                  credits once it reaches
+                                  and we're actively monitoring all of your applications for NoSQL Injection attacks. Visit
                                   {' '}
-                                  <strong>{commas(user.refillTrigger)}</strong>
+                                  <Link to="/account">your account</Link>
                                   {' '}
-                                  remaining credits.
-                                  {' '}
+                                  to update your payment information, or deactivate your account.
                               </span>
                             : <span>
-                                  <strong>
-                                      Your account is not configured to automatically purchase additional credits.{' '}
-                                  </strong>
+                                  Your account is
+                                  {' '}
+                                  <strong>currently deactivated</strong>
+                                  . We are not monitoring any of your applications for NoSQL Injection attacks. Visit
+                                  {' '}
+                                  <Link to="/account">your account</Link>
+                                  {' '}
+                                  to update your payment information and reactivate your account.
                               </span>}
-                        <span>
-                            You can edit these settings or manually purchase additional credits in
-                            {' '}
-                            <Link to="/account">your account settings</Link>
-                            .
-                        </span>
                     </p>
-                    <div
-                        className="ui indicating progress"
-                        data-percent={Math.min(user.credits / user.refillAmount, 1) * 100}
-                    >
-                        <div className="bar" />
-                    </div>
                 </div>
 
                 <div className="section" style={{ width: '100%' }}>
                     <h3 className="ui sub header">Alerts:</h3>
-                    {_.isEmpty(unexpectedQueries)
-                        ? <div>
-                              <p className="instructions">
-                                  Your application hasn't made any unexpected queries. Congratulations!
-                              </p>
-                          </div>
-                        : <div>
-                              <p className="instructions">
-                                  We've detected
-                                  {' '}
-                                  {unexpectedQueries.length}
-                                  {' '}
-                                  unexpected
-                                  {' '}
-                                  {unexpectedQueries.length == 1 ? 'query' : 'queries'}
-                                  {' '}
-                                  in your application
-                                  {user.applications.length == 1 ? '' : 's'}
-                                  . These may be the result of NoSQL Injection attacks.
-                              </p>
-                              <div className="ui cards">
-                                  {unexpectedQueries.map(query => {
-                                      return (
-                                          <div key={query.id} className="ui fluid notification card">
-                                              <div className="content">
-                                                  <div className="right floated meta">
-                                                      <div className="ui icon buttons">
-                                                          <Link
-                                                              to={`/application/${query.application.id}`}
-                                                              className="ui button"
-                                                              title="See more details"
-                                                          >
-                                                              <i className="arrow right icon" />
-                                                          </Link>
-                                                      </div>
-                                                  </div>
-                                                  <p className="">
-                                                      We've detected an
-                                                      {' '}
-                                                      <strong style={{ color: '#ea5e5e', margin: 0 }}>
-                                                          unexpected query
-                                                      </strong>
-                                                      {' '}
-                                                      in
-                                                      {' '}
-                                                      <strong>{query.application.name}</strong>
-                                                      . The last time it was seen was
-                                                      {' '}
-                                                      <Moment fromNow>{query.queriedAt}</Moment>
-                                                      .
-                                                  </p>
-                                              </div>
-                                          </div>
-                                      );
-                                  })}
-                              </div>
-                          </div>}
+                    <div className="ui cards">
+                        {_.sortBy(user.applications, 'name').map(application => {
+                            if (_.isEmpty(application.unexpectedQueries)) {
+                                return (
+                                    <div key={application.id} className="ui fluid notification card">
+                                        <div className="content">
+                                            <div className="right floated meta">
+                                                <div className="ui icon buttons">
+                                                    <Link
+                                                        to={`/application/${application.id}`}
+                                                        className="ui button"
+                                                        title="See more details"
+                                                    >
+                                                        <i className="arrow right icon" />
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                            <p className="">
+                                                <strong>{application.name}</strong>
+                                                {' '}
+                                                hasn't made any new unexpected queries. Nothing new to report.
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            } else {
+                                return (
+                                    <div key={application.id} className="ui fluid notification card">
+                                        <div className="content">
+                                            <div className="right floated meta">
+                                                <div className="ui icon buttons">
+                                                    <Link
+                                                        to={`/application/${application.id}`}
+                                                        className="ui brand button"
+                                                        title="See more details"
+                                                    >
+                                                        <i className="arrow right icon" />
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                            <p className="">
+                                                <strong>{application.name}</strong>
+                                                {' '}
+                                                has made
+                                                {' '}
+                                                <strong style={{ color: '#ea5e5e', margin: 0 }}>
+                                                    {application.unexpectedQueries.length}
+                                                    {' '}
+                                                    unexpected
+                                                    {' '}
+                                                    {application.unexpectedQueries.length == 1 ? 'query' : 'queries'}
+                                                    {' '}
+                                                </strong>
+                                                as recently as
+                                                {' '}
+                                                <Moment fromNow>
+                                                    {_.sortBy(application.unexpectedQueries, 'queriedAt')[0].queriedAt}
+                                                </Moment>
+                                                .
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            }
+                        })}
+                    </div>
                 </div>
+
             </div>
         );
     }
@@ -190,6 +188,7 @@ export default graphql(
     query {
         user {
             id
+            active
             applications {
                 id
                 name
@@ -199,18 +198,10 @@ export default graphql(
                 unexpectedQueries {
                     id
                     queriedAt
-                    application {
-                        id
-                        name
-                    }
                 }
                 expectedQueries {
                     id
                     queriedAt
-                    application {
-                        id
-                        name
-                    }
                 }
             }
         }

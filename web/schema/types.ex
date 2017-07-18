@@ -44,7 +44,7 @@ defmodule InjectDetect.Schema.Types do
     field :ingests, :integer do
       resolve fn (invoice, _, _) ->
         ingests = invoice["lines"]["data"]
-        |> Enum.reduce(0, &(&2 + (&1["metadata"]["ingests"] || 0)))
+        |> Enum.reduce(0, &(&2 + String.to_integer(&1["metadata"]["ingests"] || "0")))
         {:ok, ingests}
       end
     end
