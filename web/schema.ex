@@ -46,7 +46,7 @@ defmodule InjectDetect.Schema do
     |> Lens.filter(&(&1.id == user_id))
     |> Lens.key(:applications)
     |> Lens.all
-    |> Lens.key(:unexpected_queries)
+    |> Lens.key(:queries)
     |> Lens.filter(&(&1.id == id))
     |> Lens.to_list(State.get() |> elem(1))
     |> List.first
@@ -63,7 +63,7 @@ defmodule InjectDetect.Schema do
       resolve &resolve_application/2
     end
 
-    field :unexpected_query, :query do
+    field :unexpected_query, :application_query do
       arg :id, non_null(:string)
       resolve &resolve_unexpected_query/2
     end

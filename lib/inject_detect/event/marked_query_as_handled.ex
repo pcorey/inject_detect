@@ -7,10 +7,10 @@ end
 defimpl InjectDetect.State.Reducer,
    for: InjectDetect.Event.MarkedQueryAsHandled do
 
-  alias InjectDetect.State.UnexpectedQuery
+  alias InjectDetect.State.Query
 
   def apply(event, state) do
-    UnexpectedQuery.remove(state, event.application_id, event.query_id)
+    Query.mark_as_handled(state, event.user_id, event.application_id, event.query_id)
   end
 
 end

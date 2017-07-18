@@ -41,4 +41,15 @@ defmodule InjectDetect.State.Query do
   end
 
 
+  def mark_as_handled(state, user_id, application_id, id) do
+    put_in(state, [Lens.key(:users),
+                   Lens.filter(&(&1.id == user_id)),
+                   Lens.key(:applications),
+                   Lens.filter(&(&1.id == application_id)),
+                   Lens.key(:queries),
+                   Lens.filter(&(&1.id == id)),
+                   Lens.key(:handled)], true)
+  end
+
+
 end

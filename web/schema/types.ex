@@ -50,7 +50,7 @@ defmodule InjectDetect.Schema.Types do
     # end
   end
 
-  object :detected_query do
+  object :application_query do
     field :id, :string
     field :collection, :string
     field :queried_at, :string
@@ -85,18 +85,18 @@ defmodule InjectDetect.Schema.Types do
     field :token, :string
     field :alerting, :boolean
     field :training_mode, :boolean
-    field :queries, list_of(:detected_query) do
+    field :queries, list_of(:application_query) do
       resolve fn
         (application, _, _) ->
           {:ok, application.queries}
       end
     end
-    field :unexpected_queries, list_of(:detected_query) do
+    field :unexpected_queries, list_of(:application_query) do
       resolve fn
         (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == false))}
       end
     end
-    field :expected_queries, list_of(:detected_query) do
+    field :expected_queries, list_of(:application_query) do
       resolve fn
         (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == true))}
       end

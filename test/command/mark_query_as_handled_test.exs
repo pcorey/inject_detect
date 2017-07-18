@@ -49,7 +49,12 @@ defmodule InjectDetect.MarkQueryAsHandledTest do
     |> handle(%{user_id: user.id})
 
     application = Application.find(name: "Foo Application")
-    assert length(application.queries) == 0
+    assert length(application.queries) == 1
+    assert UnexpectedQuery.find(user.id,
+                                application.id,
+                                collection: "users",
+                                type: "find",
+                                query: %{"_id" => "string"}).handled == true
   end
 
 end

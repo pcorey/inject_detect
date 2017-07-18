@@ -27,16 +27,7 @@ class Dashboard extends React.Component {
             return <div className="ui active loader" />;
         }
 
-        let expectedQueries = _.chain(user.applications).map('expectedQueries').flatten().value();
-
-        let unexpectedQueries = _.chain(user.applications)
-            .map('unexpectedQueries')
-            .flatten()
-            .sortBy('queriedAt')
-            .reverse()
-            .value();
-
-        if (_.isEmpty(expectedQueries) && _.isEmpty(unexpectedQueries)) {
+        if (_.isEmpty(_.chain(user.applications).map('queries').flatten().value())) {
             return (
                 <div className="ij-dashboard ui mobile stackable grid">
                     <div className="sixteen wide column">
@@ -112,7 +103,12 @@ class Dashboard extends React.Component {
                     <h3 className="ui sub header">Alerts:</h3>
                     <div className="ui cards">
                         {_.sortBy(user.applications, 'name').map(application => {
-                            if (_.isEmpty(application.unexpectedQueries)) {
+                            console.log('application.queries', application.queries);
+                            let unexpectedQueries = _.filter(
+                                application.queries,
+                                query => !query.expected && !query.handled
+                            );
+                            if (_.isEmpty(unexpectedQueries)) {
                                 return (
                                     <div key={application.id} className="ui fluid notification card">
                                         <div className="content">
@@ -156,17 +152,17 @@ class Dashboard extends React.Component {
                                                 has made
                                                 {' '}
                                                 <strong style={{ color: '#ea5e5e', margin: 0 }}>
-                                                    {application.unexpectedQueries.length}
+                                                    {unexpectedQueries.length}
                                                     {' '}
                                                     unexpected
                                                     {' '}
-                                                    {application.unexpectedQueries.length == 1 ? 'query' : 'queries'}
+                                                    {unexpectedQueries.length == 1 ? 'query' : 'queries'}
                                                     {' '}
                                                 </strong>
                                                 as recently as
                                                 {' '}
                                                 <Moment fromNow>
-                                                    {_.sortBy(application.unexpectedQueries, 'queriedAt')[0].queriedAt}
+                                                    {_.sortBy(unexpectedQueries, 'queriedAt')[0].queriedAt}
                                                 </Moment>
                                                 .
                                             </p>
@@ -194,14 +190,9 @@ export default graphql(
                 name
                 queries {
                     id
-                }
-                unexpectedQueries {
-                    id
                     queriedAt
-                }
-                expectedQueries {
-                    id
-                    queriedAt
+                    expected
+                    handled
                 }
             }
         }

@@ -65,9 +65,11 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
 
 
   def update_query(query, application) do
-    query
+    # Use application_id and user_id as part of id hash
+    query = query
     |> Map.put_new(:application_id, application.id)
     |> Map.put_new(:user_id, application.user_id)
+    query
     |> Map.put_new(:id, Query.hash(query))
   end
 
