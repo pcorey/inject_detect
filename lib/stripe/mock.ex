@@ -35,7 +35,7 @@ defmodule Stripe.Mock do
   end
 
 
-  def get_invoice(invoice_id) do
+  def get_invoice(customer_id) do
     {:ok, [%{"id" => "invoice_12345"}]}
   end
 

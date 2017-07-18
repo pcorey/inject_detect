@@ -68,8 +68,11 @@ defmodule Stripe.API do
 
 
   def get_invoice(customer_id) do
-    with {:ok, %{"data" => [invoice | _]}} <- get("invoices/upcoming?customer=#{customer_id}") do
+    with {:ok, invoice} <- get("invoices/upcoming?customer=#{customer_id}") do
       {:ok, invoice}
+    else
+      err -> IO.inspect(err)
+             err
     end
   end
 

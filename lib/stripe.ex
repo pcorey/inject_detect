@@ -37,9 +37,9 @@ defmodule Stripe do
   end
 
 
-  def get_invoice(invoice_id) do
+  def get_invoice(customer_id) do
     stripe_module = Application.fetch_env!(:inject_detect, :stripe_module)
-    apply(stripe_module, :get_invoice, [invoice_id])
+    apply(stripe_module, :get_invoice, [customer_id])
   end
 
 

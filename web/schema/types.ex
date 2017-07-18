@@ -41,13 +41,13 @@ defmodule InjectDetect.Schema.Types do
     field :ending_balance, :integer do
       resolve fn (invoice, _, _) -> {:ok, invoice["ending_balance"]} end
     end
-    field :ingests, :integer do
-      resolve fn (invoice, _, _) ->
-        ingests = invoice["lines"]["data"]
-        |> Enum.reduce(0, &(&2 + String.to_integer(&1["metadata"]["ingests"] || "0")))
-        {:ok, ingests}
-      end
-    end
+    # field :ingests, :integer do
+    #   resolve fn (invoice, _, _) ->
+    #     ingests = invoice["lines"]["data"]
+    #     |> Enum.reduce(0, &(&2 + String.to_integer(&1["metadata"]["ingests"] || "0")))
+    #     {:ok, ingests}
+    #   end
+    # end
   end
 
   object :detected_query do
@@ -116,9 +116,8 @@ defmodule InjectDetect.Schema.Types do
       resolve fn
         (user, _, _) ->
           case Stripe.get_invoice(user.customer_id) do
-            {:ok, invoice} ->
-              {:ok, invoice}
-            _ -> InjectDetect.error("Unable to resolve invoice.")
+            {:ok, invoice} -> {:ok, invoice}
+            _              -> InjectDetect.error("Unable to resolve invoice.")
           end
       end
     end

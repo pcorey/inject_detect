@@ -87,9 +87,9 @@ class Dashboard extends React.Component {
                             ? <span>
                                   Your account is
                                   {' '}
-                                  <strong>currently active</strong>
+                                  <strong>active</strong>
                                   {' '}
-                                  and we're actively monitoring all of your applications for NoSQL Injection attacks. Visit
+                                  and we're currently monitoring all of your applications for NoSQL Injection attacks. Visit
                                   {' '}
                                   <Link to="/account">your account</Link>
                                   {' '}
@@ -98,7 +98,7 @@ class Dashboard extends React.Component {
                             : <span>
                                   Your account is
                                   {' '}
-                                  <strong>currently deactivated</strong>
+                                  <strong>deactivated</strong>
                                   . We are not monitoring any of your applications for NoSQL Injection attacks. Visit
                                   {' '}
                                   <Link to="/account">your account</Link>

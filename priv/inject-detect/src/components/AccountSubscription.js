@@ -12,13 +12,14 @@ class AccountSubscription extends React.Component {
             return <p className="instructions">&nbsp;</p>;
         }
 
+        // TODO: Better queries calculation here
         return (
             <p className="instructions">
                 So far this month, we've processed
                 {' '}
-                <strong>{_.get(user, 'invoice.ingests').toLocaleString()}</strong>
+                <strong>{(_.get(user, 'invoice.total') * 10).toLocaleString()}</strong>
                 {' '}
-                queries on from your applications. On
+                queries made by your applications. On
                 {' '}
                 <strong><Moment date={_.get(user, 'invoice.periodEnding') * 1000} format="MMMM DD, YYYY" /></strong>
                 {' '}
@@ -50,7 +51,6 @@ export default graphql(gql`
                 amountDue
                 periodEnd
                 endingBalance
-                ingests
             }
         }
     }
