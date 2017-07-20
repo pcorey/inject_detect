@@ -1,8 +1,7 @@
 defmodule InjectDetect.RemoveExpectedQueryTest do
   use ExUnit.Case
 
-  alias InjectDetect.Command.AddCredits
-  alias InjectDetect.Command.GetStarted
+  alias InjectDetect.Command.CreateUser
   alias InjectDetect.Command.IngestQueries
   alias InjectDetect.Command.RemoveExpectedQuery
   alias InjectDetect.Command.ToggleTrainingMode
@@ -23,7 +22,7 @@ defmodule InjectDetect.RemoveExpectedQueryTest do
   end
 
   test "removes an expected query" do
-    %GetStarted{email: "email@example.com",
+    %CreateUser{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}
@@ -31,9 +30,6 @@ defmodule InjectDetect.RemoveExpectedQueryTest do
 
     user = User.find(email: "email@example.com")
     application = Application.find(name: "Foo Application")
-
-    %AddCredits{user_id: user.id, credits: 100}
-    |> handle(%{user_id: user.id})
 
     %IngestQueries{application_id: application.id,
                    queries: [%{collection: "users",
@@ -45,15 +41,14 @@ defmodule InjectDetect.RemoveExpectedQueryTest do
     %ToggleTrainingMode{application_id: application.id}
     |> handle(%{user_id: user.id})
 
-    query = ExpectedQuery.find(application.id, type: "find")
+    query = ExpectedQuery.find(user.id, application.id, type: "find")
 
     %RemoveExpectedQuery{application_id: application.id,
                          query_id: query.id}
     |> handle(%{user_id: user.id})
 
     application = Application.find(name: "Foo Application")
-    assert length(application.expected_queries) == 0
-    assert length(application.unexpected_queries) == 0
+    assert length(application.queries) == 0
   end
 
 end

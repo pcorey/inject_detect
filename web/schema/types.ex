@@ -25,34 +25,32 @@ defmodule InjectDetect.Schema.Types do
     field :card, :stripe_card
   end
 
-  object :stripe_charge do
-    field :id, :string
-    field :amount, :integer
-    field :description, :string
-    field :created, :integer
+  object :stripe_invoice do
+    field :id, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["id"]} end
+    end
+    field :amount_due, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["amount_due"]} end
+    end
+    field :total, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["total"]} end
+    end
+    field :period_end, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["period_end"]} end
+    end
+    field :ending_balance, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["ending_balance"]} end
+    end
+    # field :ingests, :integer do
+    #   resolve fn (invoice, _, _) ->
+    #     ingests = invoice["lines"]["data"]
+    #     |> Enum.reduce(0, &(&2 + String.to_integer(&1["metadata"]["ingests"] || "0")))
+    #     {:ok, ingests}
+    #   end
+    # end
   end
 
-  object :expected_query do
-    field :id, :string
-    field :collection, :string
-    field :queried_at, :string
-    field :seen, :integer
-    field :query, :string do
-      resolve fn
-        (expected_query, _, _) ->
-          {:ok, Poison.encode!(expected_query[:query])}
-      end
-    end
-    field :type, :string
-    field :application, :application do
-      resolve fn
-        (expected_query, _, _) ->
-          {:ok, InjectDetect.State.Application.find(expected_query.application_id)}
-      end
-    end
-  end
-
-  object :unexpected_query do
+  object :application_query do
     field :id, :string
     field :collection, :string
     field :queried_at, :string
@@ -87,26 +85,39 @@ defmodule InjectDetect.Schema.Types do
     field :token, :string
     field :alerting, :boolean
     field :training_mode, :boolean
-    field :unexpected_queries, list_of(:unexpected_query)
-    field :expected_queries, list_of(:expected_query)
+    field :queries, list_of(:application_query) do
+      resolve fn
+        (application, _, _) ->
+          {:ok, application.queries}
+      end
+    end
+    field :unexpected_queries, list_of(:application_query) do
+      resolve fn
+        (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == false))}
+      end
+    end
+    field :expected_queries, list_of(:application_query) do
+      resolve fn
+        (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == true))}
+      end
+    end
   end
 
   object :user do
     field :id, :id
     field :email, :string
     field :auth_token, :string
-    field :credits, :integer
-    field :refill, :boolean
-    field :refill_trigger, :integer
-    field :refill_amount, :integer
+    field :active, :boolean
+    field :locked, :boolean
+    field :subscribed, :boolean
     field :stripe_token, :stripe_token
     field :applications, list_of(:application)
-    field :charges, list_of(:stripe_charge) do
+    field :invoice, :stripe_invoice do
       resolve fn
         (user, _, _) ->
-          case Stripe.get_charges(user.customer_id) do
-            {:ok, charges} -> {:ok, charges}
-            _ -> InjectDetect.error("Unable to resolve charges.")
+          case Stripe.get_invoice(user.customer_id) do
+            {:ok, invoice} -> {:ok, invoice}
+            _              -> InjectDetect.error("Unable to resolve invoice.")
           end
       end
     end

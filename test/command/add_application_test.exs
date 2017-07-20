@@ -2,7 +2,7 @@ defmodule InjectDetect.AddApplicationTest do
   use ExUnit.Case
 
   alias InjectDetect.Command.AddApplication
-  alias InjectDetect.Command.GetStarted
+  alias InjectDetect.Command.CreateUser
   alias InjectDetect.State.Application
   alias InjectDetect.State.User
 
@@ -19,7 +19,7 @@ defmodule InjectDetect.AddApplicationTest do
   end
 
   test "adds an application" do
-    %GetStarted{email: "email@example.com",
+    %CreateUser{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}

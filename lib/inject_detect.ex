@@ -13,7 +13,8 @@ defmodule InjectDetect do
       supervisor(InjectDetect.Endpoint, []),
       supervisor(Registry, [:duplicate, InjectDetect.Listener.Registry]),
 
-      worker(InjectDetect.State, [])
+      worker(InjectDetect.State, []),
+      worker(InjectDetect.Invoicer, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

@@ -30,7 +30,7 @@ defimpl InjectDetect.Command,
     with user <- User.find(state, command.user_id),
          true <- can_send_email(user),
          application <- Application.find(state, command.application_id),
-         unexpected_query <- UnexpectedQuery.find(state, command.application_id, command.query_id)
+         unexpected_query <- UnexpectedQuery.find(state, command.user_id, command.application_id, command.query_id)
     do
       Email.unexpected_html_email(user, application, unexpected_query)
       |> InjectDetect.Mailer.deliver_later

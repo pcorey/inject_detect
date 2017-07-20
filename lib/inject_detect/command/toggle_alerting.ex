@@ -8,6 +8,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.ToggleAlerting do
   alias InjectDetect.Event.TurnedOnAlerting
   alias InjectDetect.State.Application
 
+  # TODO: Make sure that alerting is taken into account
   def toggle_alerting(application = %{user_id: user_id}, command, %{user_id: user_id}) do
     case application.alerting do
       true ->

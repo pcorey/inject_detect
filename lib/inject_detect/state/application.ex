@@ -7,10 +7,9 @@ defmodule InjectDetect.State.Application do
   def new(attrs) do
     attrs
     |> Map.put_new(:alerting, true)
-    |> Map.put_new(:expected_queries, [])
     |> Map.put_new(:ingesting_queries, true)
     |> Map.put_new(:training_mode, true)
-    |> Map.put_new(:unexpected_queries, [])
+    |> Map.put_new(:queries, [])
   end
 
   def find(attrs) do
@@ -39,13 +38,13 @@ defmodule InjectDetect.State.Application do
 
   def add_expected_query(state, user_id, application_id, query) do
     application_lens(user_id, application_id)
-    |> Lens.key(:expected_queries)
+    |> Lens.key(:queries)
     |> Lens.map(state, &([ExpectedQuery.new(query) | &1]))
   end
 
   def touch_expected_query(state, user_id, application_id, query) do
     application_lens(user_id, application_id)
-    |> Lens.key(:expected_queries)
+    |> Lens.key(:queries)
     |> Lens.filter(&(&1.id == query.id))
     |> Lens.map(state, &(%{&1 | queried_at: query.queried_at,
                                 seen: &1.seen + 1}))
@@ -53,16 +52,17 @@ defmodule InjectDetect.State.Application do
 
   def add_unexpected_query(state, user_id, application_id, query) do
     application_lens(user_id, application_id)
-    |> Lens.key(:unexpected_queries)
+    |> Lens.key(:queries)
     |> Lens.map(state, &([UnexpectedQuery.new(query) | &1]))
   end
 
   def touch_unexpected_query(state, user_id, application_id, query) do
     application_lens(user_id, application_id)
-    |> Lens.key(:unexpected_queries)
+    |> Lens.key(:queries)
     |> Lens.filter(&(&1.id == query.id))
     |> Lens.map(state, &(%{&1 | queried_at: query.queried_at,
-                                seen: &1.seen + 1}))
+                                seen: &1.seen + 1,
+                                handled: false}))
   end
 
   defp application_lens(user_id, application_id) do

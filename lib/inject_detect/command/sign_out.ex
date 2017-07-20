@@ -10,10 +10,6 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.SignOut do
     {:ok, [%SignedOut{user_id: user_id}], %{user_id: user_id}}
   end
 
-  def handle(_, _, _) do
-    {:error, %{code: :not_authorized,
-               error: "Not authorized",
-               message: "Not authorized"}}
-  end
+  def handle(_, _, _), do: InjectDetect.error("Not authorized")
 
 end

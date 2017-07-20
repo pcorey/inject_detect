@@ -1,51 +1,51 @@
 defmodule InjectDetect.State.UnexpectedQuery do
 
+
   alias InjectDetect.State
+
 
   def new(attrs) do
     attrs
     |> Map.put_new(:seen, 0)
+    |> Map.put_new(:expected, false)
+    |> Map.put_new(:handled, false)
   end
 
-  def find(application_id, %{collection: collection, query: query, type: type}) do
-    find(application_id, collection: collection, query: query, type: type)
-  end
 
-  def find(application_id, attrs) do
+  def find(user_id, application_id, attrs) do
     State.get()
     |> elem(1)
-    |> find(application_id, attrs)
+    |> find(user_id, application_id, attrs)
   end
 
-  def find(state, application_id, attrs) when is_list(attrs) do
+  def find(state, user_id, application_id, %{collection: collection, query: query, type: type}) do
+    find(state, application_id, collection: collection, query: query, type: type)
+  end
+
+  def find(state, user_id, application_id, attrs) when is_list(attrs) do
     Lens.key(:users)
-    |> Lens.all
+    |> Lens.filter(&(&1.id == user_id))
     |> Lens.key(:applications)
     |> Lens.filter(&(&1.id == application_id))
-    |> Lens.key(:unexpected_queries)
-    |> Lens.filter(fn user -> Enum.all?(attrs, fn {k, v} -> user[k] == v end) end)
+    |> Lens.key(:queries)
+    |> Lens.filter(fn query -> !query.expected && Enum.all?(attrs, fn {k, v} -> query[k] == v end) end)
     |> Lens.to_list(state)
     |> List.first
   end
 
-  def find(state, application_id, id) do
-    Lens.key(:users)
-    |> Lens.all
-    |> Lens.key(:applications)
-    |> Lens.filter(&(&1.id == application_id))
-    |> Lens.key(:unexpected_queries)
-    |> Lens.filter(&(&1.id == id))
-    |> Lens.to_list(state)
-    |> List.first
+  def find(state, user_id, application_id, id) do
+    find(state, user_id, application_id, id: id)
   end
+
 
   def remove(state, application_id, id) do
     Lens.key(:users)
     |> Lens.all
     |> Lens.key(:applications)
     |> Lens.filter(&(&1.id == application_id))
-    |> Lens.key(:unexpected_queries)
-    |> Lens.map(state, &Enum.reject(&1, fn query -> query.id == id end))
+    |> Lens.key(:queries)
+    |> Lens.map(state, &Enum.reject(&1, fn query -> !query.expected && query.id == id end))
   end
+
 
 end

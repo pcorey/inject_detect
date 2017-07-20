@@ -3,7 +3,7 @@ defmodule InjectDetect.RemoveApplicationTest do
 
   alias InjectDetect.Command.AddApplication
   alias InjectDetect.Command.RemoveApplication
-  alias InjectDetect.Command.GetStarted
+  alias InjectDetect.Command.CreateUser
   alias InjectDetect.State.Application
   alias InjectDetect.State.User
 
@@ -20,7 +20,7 @@ defmodule InjectDetect.RemoveApplicationTest do
   end
 
   test "removes an application" do
-    %GetStarted{email: "email@example.com",
+    %CreateUser{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}

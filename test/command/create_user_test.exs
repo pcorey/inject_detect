@@ -1,7 +1,7 @@
-defmodule InjectDetect.GetStartedTest do
+defmodule InjectDetect.CreateUserTest do
   use ExUnit.Case
 
-  alias InjectDetect.Command.GetStarted
+  alias InjectDetect.Command.CreateUser
   alias InjectDetect.State.Application
   alias InjectDetect.State.User
 
@@ -18,7 +18,7 @@ defmodule InjectDetect.GetStartedTest do
   end
 
   test "gets a user started" do
-    %GetStarted{email: "email@example.com",
+    %CreateUser{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}
@@ -35,12 +35,12 @@ defmodule InjectDetect.GetStartedTest do
   end
 
   test "gets multiple users started" do
-    %GetStarted{email: "email@example.com",
+    %CreateUser{email: "email@example.com",
                 application_name: "Foo Application",
                 application_size: "Medium",
                 agreed_to_tos: true}
     |> handle(%{})
-    %GetStarted{email: "email2@example.com",
+    %CreateUser{email: "email2@example.com",
                 application_name: "Bar Application",
                 application_size: "Small",
                 agreed_to_tos: true}
@@ -52,7 +52,7 @@ defmodule InjectDetect.GetStartedTest do
   end
 
   test "prevents duplicate emails" do
-    command = %GetStarted{email: "email@example.com",
+    command = %CreateUser{email: "email@example.com",
                           application_name: "Foo Application",
                           application_size: "Medium",
                           agreed_to_tos: true}

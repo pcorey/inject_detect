@@ -30,7 +30,7 @@ defimpl InjectDetect.Command,
   end
 
   def handle_for_application(%{user_id: user_id}, command, %{user_id: user_id}, state) do
-    UnexpectedQuery.find(state, command.application_id, command.query_id)
+    UnexpectedQuery.find(state, user_id, command.application_id, command.query_id)
     |> handle_for_query(command.application_id)
   end
 

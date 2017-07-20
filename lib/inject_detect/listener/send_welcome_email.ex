@@ -1,9 +1,9 @@
 defmodule InjectDetect.Listener.SendWelcomeEmail do
 
   alias InjectDetect.Command.SendWelcomeEmail
-  alias InjectDetect.Event.GotStarted
+  alias InjectDetect.Event.CreatedUser
 
-  def handle(event = %GotStarted{user_id: user_id, email: email}, _context) do
+  def handle(event = %CreatedUser{user_id: user_id, email: email}, _context) do
     %SendWelcomeEmail{user_id: user_id, email: email}
     |> InjectDetect.CommandHandler.handle
   end

@@ -44,11 +44,11 @@ export const ApplicationQuery = gql`
 `;
 
 export const GetStartedMutation = gql`
-    mutation getStarted ($email: String!,
+    mutation createUser ($email: String!,
                          $applicationName: String!,
                          $referralCode: String!,
                          $agreedToTos: Boolean) {
-        getStarted(email: $email,
+        createUser(email: $email,
                    applicationName: $applicationName,
                    agreedToTos: $agreedToTos,
                    referralCode: $referralCode) {

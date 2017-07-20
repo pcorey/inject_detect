@@ -3,19 +3,15 @@ defmodule InjectDetect.Schema do
 
   alias InjectDetect.Command.{
     AddApplication,
-    GetStarted,
+    CreateUser,
     MarkQueryAsExpected,
     MarkQueryAsHandled,
-    OneTimePurchase,
     RegenerateApplicationToken,
     RemoveApplication,
     RemoveExpectedQuery,
     RequestSignInToken,
-    SetRefillAmount,
-    SetRefillTrigger,
-    SetStripeToken,
-    TurnOnRefill,
-    TurnOffRefill,
+    UpdatePaymentMethod,
+    DeactivateAccount,
     SignOut,
     Subscribe,
     Unsubscribe,
@@ -50,7 +46,7 @@ defmodule InjectDetect.Schema do
     |> Lens.filter(&(&1.id == user_id))
     |> Lens.key(:applications)
     |> Lens.all
-    |> Lens.key(:unexpected_queries)
+    |> Lens.key(:queries)
     |> Lens.filter(&(&1.id == id))
     |> Lens.to_list(State.get() |> elem(1))
     |> List.first
@@ -67,7 +63,7 @@ defmodule InjectDetect.Schema do
       resolve &resolve_application/2
     end
 
-    field :unexpected_query, :unexpected_query do
+    field :unexpected_query, :application_query do
       arg :id, non_null(:string)
       resolve &resolve_unexpected_query/2
     end
@@ -104,13 +100,13 @@ defmodule InjectDetect.Schema do
   end
 
   mutation do
-    field :get_started, type: :user do
+    field :create_user, type: :user do
       arg :email, non_null(:string)
       arg :application_name, non_null(:string)
       arg :application_size, :string
       arg :agreed_to_tos, non_null(:boolean)
       arg :referral_code, non_null(:string)
-      resolve handle(GetStarted, &user/1)
+      resolve handle(CreateUser, &user/1)
     end
 
     field :request_sign_in_token, type: :user do
@@ -126,18 +122,6 @@ defmodule InjectDetect.Schema do
     field :sign_out, type: :user do
       middleware Auth
       resolve handle(SignOut, &user/1)
-    end
-
-    field :turn_on_refill, type: :user do
-      arg :user_id, non_null(:string)
-      middleware Auth
-      resolve handle(TurnOnRefill, &user/1)
-    end
-
-    field :turn_off_refill, type: :user do
-      arg :user_id, non_null(:string)
-      middleware Auth
-      resolve handle(TurnOffRefill, &user/1)
     end
 
     field :subscribe, type: :user do
@@ -202,29 +186,15 @@ defmodule InjectDetect.Schema do
       resolve handle(RemoveApplication, &user/1)
     end
 
-    field :set_stripe_token, type: :user do
+    field :update_payment_method, type: :user do
       arg :user_id, non_null(:string)
       arg :stripe_token, non_null(:stripe_token_input)
-      resolve handle(SetStripeToken, &user/1)
+      resolve handle(UpdatePaymentMethod, &user/1)
     end
 
-    field :set_refill_amount, type: :user do
+    field :deactivate_account, type: :user do
       arg :user_id, non_null(:string)
-      arg :refill_amount, non_null(:integer)
-      resolve handle(SetRefillAmount, &user/1)
-    end
-
-    field :set_refill_trigger, type: :user do
-      arg :user_id, non_null(:string)
-      arg :refill_trigger, non_null(:integer)
-      resolve handle(SetRefillTrigger, &user/1)
-    end
-
-    field :one_time_purchase, type: :user do
-      arg :user_id, non_null(:string)
-      arg :credits, non_null(:integer)
-      arg :stripe_token, non_null(:stripe_token_input)
-      resolve handle(OneTimePurchase, &user/1)
+      resolve handle(DeactivateAccount, &user/1)
     end
 
   end

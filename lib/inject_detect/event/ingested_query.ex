@@ -7,14 +7,12 @@ defmodule InjectDetect.Event.IngestedQuery do
             user_id: nil
 end
 
-defimpl InjectDetect.State.Reducer,
-   for: InjectDetect.Event.IngestedQuery do
+defimpl InjectDetect.State.Reducer, for: InjectDetect.Event.IngestedQuery do
 
   def apply(event, state) do
-    Lens.key(:users)
-    |> Lens.filter(&(&1.id == event.user_id))
-    |> Lens.key(:credits)
-    |> Lens.map(state, &(&1 - 1))
+    update_in(state, [Lens.key(:users),
+                      Lens.filter(&(&1.id == event.user_id)),
+                      Lens.key(:ingests_pending_invoice)], &(&1 + 1))
   end
 
 end

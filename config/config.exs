@@ -12,8 +12,8 @@ config :inject_detect,
   listeners: [&InjectDetect.Listener.SendSignInEmail.handle/2,
               &InjectDetect.Listener.SendUnexpectedEmail.handle/2,
               &InjectDetect.Listener.SendWelcomeEmail.handle/2,
-              &InjectDetect.Listener.ReferralCode.handle/2,
-              &InjectDetect.Listener.RefillCredits.handle/2]
+              &InjectDetect.Listener.CreateCustomer.handle/2,
+              &InjectDetect.Listener.CreateSubscription.handle/2]
 
 # Configures the endpoint
 config :inject_detect, InjectDetect.Endpoint,

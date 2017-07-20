@@ -4,11 +4,12 @@ defmodule InjectDetect.State.ExpectedQueryTest do
   alias InjectDetect.State.Application
   alias InjectDetect.State.Base
   alias InjectDetect.State.ExpectedQuery
+  alias InjectDetect.State.Query
   alias InjectDetect.State.User
 
   test "base expected query" do
-    assert ExpectedQuery.new(%{}) == %{seen: 0}
-    assert ExpectedQuery.new(%{id: 123}) == %{id: 123, seen: 0}
+    assert ExpectedQuery.new(%{}) == %{seen: 0, expected: true, handled: false}
+    assert ExpectedQuery.new(%{id: 123}) == %{id: 123, seen: 0, expected: true, handled: false}
   end
 
   test "find by id" do
@@ -19,7 +20,7 @@ defmodule InjectDetect.State.ExpectedQueryTest do
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
     |> Application.add_expected_query(user.id, application.id, query)
-    assert ExpectedQuery.find(state, 234, 345) == ExpectedQuery.new(query)
+    assert ExpectedQuery.find(state, 123, 234, 345) == ExpectedQuery.new(query)
   end
 
   test "find by query" do
@@ -30,7 +31,7 @@ defmodule InjectDetect.State.ExpectedQueryTest do
     |> Base.add_user(user)
     |> User.add_application(user.id, application)
     |> Application.add_expected_query(user.id, application.id, query)
-    assert ExpectedQuery.find(state, 234, query: %{"_id" => "string"}) == ExpectedQuery.new(query)
+    assert ExpectedQuery.find(state, 123, 234, query: %{"_id" => "string"}) == ExpectedQuery.new(query)
   end
 
 end

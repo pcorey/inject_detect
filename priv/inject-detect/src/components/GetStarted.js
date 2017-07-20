@@ -10,7 +10,7 @@ class GetStarted extends React.Component {
         success: false
     };
 
-    getStarted(e) {
+    createUser(e) {
         e.preventDefault();
 
         this.setState({ errors: false, loading: true });
@@ -21,10 +21,10 @@ class GetStarted extends React.Component {
         let referralCode = this.refs.referralCode.value;
 
         return this.props
-            .getStarted(email, applicationName, referralCode, agreedToTos)
+            .createUser(email, applicationName, referralCode, agreedToTos)
             .then(res => {
                 this.setState({ success: true });
-                let authToken = _.get(res, 'data.getStarted.authToken');
+                let authToken = _.get(res, 'data.createUser.authToken');
                 localStorage.setItem('authToken', authToken);
                 setTimeout(() => this.setState({ redirect: true }), 1000);
             })
@@ -75,7 +75,10 @@ class GetStarted extends React.Component {
                         to keep your account secure and to improve your experience.
                     </p>
                     <p className="instructions" style={{ textAlign: 'left' }}>
-                        Next, enter a referral code if you have one. Referral codes can give you additional free credits on top of the inital 10,000 credits we give each new account!
+                        When you sign up, we'll automatically give you an account balance of
+                        {' '}
+                        <strong>$10.00</strong>
+                        , so you can try out Inject Detect with no commitment. Enter a referral code if you have one!
                     </p>
                     <p className="instructions" style={{ textAlign: 'left' }}>
                         Lastly, please be sure to read through our <a href="#">terms of service</a> before signing up.
@@ -85,7 +88,7 @@ class GetStarted extends React.Component {
                     </p>
                 </div>
                 <div className="eight wide center aligned column">
-                    <form className="ui large form" onSubmit={this.getStarted.bind(this)}>
+                    <form className="ui large form" onSubmit={this.createUser.bind(this)}>
                         <div className="ui left aligned stacked segment">
                             <div className="field">
                                 <div className="ui left icon input">
@@ -138,6 +141,7 @@ class GetStarted extends React.Component {
                                         ref="agreedToTos"
                                         required
                                     />
+                                    {/* TODO: Write TOS */}
                                     <label htmlFor="agreedToTos">I agree to <a href="#">the terms</a>.</label>
                                 </div>
                             </div>
@@ -173,7 +177,7 @@ GetStarted.propTypes = {
 
 export default graphql(GetStartedMutation, {
     props: ({ mutate }) => ({
-        getStarted: (email, applicationName, referralCode, agreedToTos) =>
+        createUser: (email, applicationName, referralCode, agreedToTos) =>
             mutate({
                 variables: {
                     email,

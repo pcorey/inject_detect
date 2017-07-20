@@ -40,6 +40,10 @@ defmodule InjectDetect.State do
      events |> List.last |> (&(if &1 do &1.id else id end)).()}
   end
 
+  def apply_events(state, events) do
+    Enum.reduce(events, state, &InjectDetect.State.Reducer.apply/2)
+  end
+
   def handle_call(:get, _, {id, state}) do
     {events, id} = get_events_since(id)
     state = Enum.reduce(events, state, &InjectDetect.State.Reducer.apply/2)
@@ -48,7 +52,7 @@ defmodule InjectDetect.State do
 
   def handle_call(:all, _, {id, state}) do
     {events, id} = get_events_since(id)
-    state = Enum.reduce(events, state, &InjectDetect.State.Reducer.apply/2)
+    state = apply_events(state, events)
     {:reply, {:ok, id, state}, {id, state}}
   end
 

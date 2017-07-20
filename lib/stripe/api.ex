@@ -21,8 +21,24 @@ defmodule Stripe.API do
   end
 
 
-  def create_customer(user_id) do
-    post("customers", [description: user_id])
+  def create_customer(user_id, email) do
+    post("customers", [email: email,
+                       account_balance: -1000, # Give the user a $10.00 credit
+                       "metadata[user_id]": user_id])
+  end
+
+
+  def create_subscription(customer_id) do
+    post("subscriptions", [customer: customer_id, plan: "inject_detect"])
+  end
+
+
+  def create_invoiceitem(customer_id, amount, ingests) do
+    post("invoiceitems", [customer: customer_id,
+                          amount: amount,
+                          currency: "usd",
+                          description: "Ingested queries",
+                          "metadata[ingests]": ingests])
   end
 
 
@@ -40,8 +56,24 @@ defmodule Stripe.API do
     post("charges", [amount: amount, currency: "usd", customer: customer_id])
   end
 
-  def get_charges(customer_id) do
-    with {:ok, %{"data" => charges}} <- get("charges?customer=#{customer_id}"), do: {:ok, charges}
+
+  def remove_card(customer_id, card_id) do
+    post("customers/#{customer_id}/sources/#{card_id}", [])
+  end
+
+
+  def get_subscription(subscription_id) do
+    with {:ok, %{"data" => subscription}} <- get("subscriptions/#{subscription_id}"), do: {:ok, subscription}
+  end
+
+
+  def get_invoice(customer_id) do
+    with {:ok, invoice} <- get("invoices/upcoming?customer=#{customer_id}") do
+      {:ok, invoice}
+    else
+      err -> IO.inspect(err)
+             err
+    end
   end
 
 
