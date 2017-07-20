@@ -19,7 +19,6 @@ class Dashboard extends React.Component {
         this.initProgress();
     }
 
-    // TODO: Rework to support new payment plan
     render() {
         let { loading, user } = this.props.data;
 
@@ -100,10 +99,9 @@ class Dashboard extends React.Component {
                 </div>
 
                 <div className="section" style={{ width: '100%' }}>
-                    <h3 className="ui sub header">Alerts:</h3>
+                    <h3 className="ui sub header">Applications:</h3>
                     <div className="ui cards">
                         {_.sortBy(user.applications, 'name').map(application => {
-                            console.log('application.queries', application.queries);
                             let unexpectedQueries = _.filter(
                                 application.queries,
                                 query => !query.expected && !query.handled
