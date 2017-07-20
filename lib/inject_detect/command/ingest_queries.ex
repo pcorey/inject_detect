@@ -14,6 +14,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   alias InjectDetect.Event.IngestedUnexpectedQuery
   alias InjectDetect.State
   alias InjectDetect.State.Application
+  alias InjectDetect.State.User
   alias InjectDetect.State.Query
 
 
@@ -74,9 +75,19 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   end
 
 
+  def handle_for_user(%{active: true, locked: false}, application, command, state) do
+    ingest_queries(application, command, state)
+  end
+
+  def handle_for_user(%{active: false}, _, _, _), do: InjectDetect.error "Account inactive"
+
+  def handle_for_user(%{locked: true}, _, _, _), do: InjectDetect.error "Account locked"
+
+
   def handle(command, _context, state) do
-    Application.find(state, command.application_id)
-    |> ingest_queries(command, state)
+    application = Application.find(state, command.application_id)
+    User.find(state, application.user_id)
+    |> handle_for_user(application, command, state)
   end
 
 end
