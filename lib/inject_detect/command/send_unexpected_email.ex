@@ -13,8 +13,9 @@ defimpl InjectDetect.Command,
   alias InjectDetect.State.UnexpectedQuery
   alias InjectDetect.State.User
 
-  def can_send_email(%{subscribed: false}), do: false
-  def can_send_email(%{sent_unexpected_at: sent_unexpected_at}) do
+  def can_send_email(%{subscribed: false}, _), do: false
+  def can_send_email(_, %{alerting: false}), do: false
+  def can_send_email(%{sent_unexpected_at: sent_unexpected_at}, _) do
     with {:ok, date, _} <- DateTime.from_iso8601(sent_unexpected_at),
          shifted <- Timex.shift(date, minutes: 10),
          :lt <- DateTime.compare(shifted, DateTime.utc_now)
@@ -24,12 +25,12 @@ defimpl InjectDetect.Command,
       _ -> false
     end
   end
-  def can_send_email(_), do: true
+  def can_send_email(_, _), do: true
 
   def handle(command, _context, state) do
     with user <- User.find(state, command.user_id),
-         true <- can_send_email(user),
          application <- Application.find(state, command.application_id),
+         true <- can_send_email(user, application),
          unexpected_query <- UnexpectedQuery.find(state, command.user_id, command.application_id, command.query_id)
     do
       Email.unexpected_html_email(user, application, unexpected_query)
