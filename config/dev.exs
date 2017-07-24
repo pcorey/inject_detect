@@ -45,3 +45,7 @@ config :inject_detect, InjectDetect.Repo,
 
 config :inject_detect, InjectDetect.Mailer,
   adapter: Bamboo.LocalAdapter
+
+config :inject_detect,
+  ingests_per_cent: 10,
+  invoice_interval: 5 * 1000 # Every 5 seconds
