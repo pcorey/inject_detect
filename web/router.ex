@@ -29,6 +29,7 @@ defmodule InjectDetect.Router do
     pipe_through :api
 
     post "/ingest", IngestController, :create
+    post "/stripe", StripeController, :webhook
   end
 
   scope "/graphiql" do
