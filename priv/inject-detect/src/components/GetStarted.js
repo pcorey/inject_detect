@@ -81,7 +81,11 @@ class GetStarted extends React.Component {
                         , so you can try out Inject Detect with no commitment. Enter a referral code if you have one!
                     </p>
                     <p className="instructions" style={{ textAlign: 'left' }}>
-                        Lastly, please be sure to read through our <a href="#">terms of service</a> before signing up.
+                        Lastly, please be sure to read through our
+                        {' '}
+                        <a href="http://www.injectdetect.com/terms/">terms of service</a>
+                        {' '}
+                        before signing up.
                     </p>
                     <p className="instructions" style={{ textAlign: 'left' }}>
                         Let's get started!
@@ -142,7 +146,9 @@ class GetStarted extends React.Component {
                                         required
                                     />
                                     {/* TODO: Write TOS */}
-                                    <label htmlFor="agreedToTos">I agree to <a href="#">the terms</a>.</label>
+                                    <label htmlFor="agreedToTos">
+                                        I agree to <a href="http://www.injectdetect.com/terms/">the terms</a>.
+                                    </label>
                                 </div>
                             </div>
 

@@ -41,7 +41,7 @@ class Dashboard extends React.Component {
                             <Link to={`/application/${user.applications[0].id}`}>first application</Link>
                             . Check out our
                             {' '}
-                            <a href="#">Getting Started</a>
+                            <a href="http://www.injectdetect.com/terms/">Getting Started</a>
                             {' '}
                             guide for instructions on getting your Meteor application up and running with your new Inject Detect account.
                         </p>
@@ -179,23 +179,23 @@ class Dashboard extends React.Component {
 
 export default graphql(
     gql`
-    query {
-        user {
-            id
-            active
-            applications {
+        query {
+            user {
                 id
-                name
-                queries {
+                active
+                applications {
                     id
-                    queriedAt
-                    expected
-                    handled
+                    name
+                    queries {
+                        id
+                        queriedAt
+                        expected
+                        handled
+                    }
                 }
             }
         }
-    }
-`,
+    `,
     {
         options: props => ({
             pollInterval: 5000

@@ -59,7 +59,7 @@ class Account extends React.Component {
                               : <p className="instructions">
                                     You haven't added a payment method to your account. Be sure to add a payment method before your trail runs out to avoid interruptions in service. Read about
                                     {' '}
-                                    <a href="#">our pricing and billing</a>
+                                    <a href="http://www.injectdetect.com/pricing/">our pricing and billing</a>
                                     {' '}
                                     for more information.
                                 </p>
