@@ -124,7 +124,7 @@ class Dashboard extends React.Component {
                                             <p className="">
                                                 <strong>{application.name}</strong>
                                                 {' '}
-                                                hasn't made any new unexpected queries. Nothing new to report.
+                                                hasn't made any new unexpected queries. Nothing new to report!
                                             </p>
                                         </div>
                                     </div>
