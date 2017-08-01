@@ -4,7 +4,7 @@ defmodule InjectDetect.Mixfile do
   def project do
     [app: :inject_detect,
      version: "0.0.1",
-     elixir: "~> 1.2",
+     elixir: "~> 1.5",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
@@ -47,7 +47,9 @@ defmodule InjectDetect.Mixfile do
      {:bamboo_smtp, "~> 1.2.1"},
      {:timex, "~> 3.0"},
      {:httpoison, "~> 0.11.1"},
-     {:stripity_stripe, "~> 1.6"}]
+     {:stripity_stripe, "~> 1.6"},
+     {:edeliver, "~> 1.4.4"},
+     {:distillery, ">= 0.8.0", warn_missing: false}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
