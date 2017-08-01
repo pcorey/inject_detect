@@ -106,6 +106,7 @@ class Dashboard extends React.Component {
                                 application.queries,
                                 query => !query.expected && !query.handled
                             );
+                            let expectedQueries = _.filter(application.queries, query => query.expected);
                             if (_.isEmpty(unexpectedQueries)) {
                                 return (
                                     <div key={application.id} className="ui fluid notification card">
@@ -124,7 +125,14 @@ class Dashboard extends React.Component {
                                             <p className="">
                                                 <strong>{application.name}</strong>
                                                 {' '}
-                                                hasn't made any new unexpected queries. Nothing new to report!
+                                                hasn't made any new unexpected queries. Last seen
+                                                {' '}
+                                                <strong>
+                                                    <Moment fromNow>
+                                                        {_.get(_.sortBy(expectedQueries, 'queriedAt')[0], 'queriedAt')}
+                                                    </Moment>
+                                                </strong>
+                                                .
                                             </p>
                                         </div>
                                     </div>
@@ -159,9 +167,11 @@ class Dashboard extends React.Component {
                                                 </strong>
                                                 as recently as
                                                 {' '}
-                                                <Moment fromNow>
-                                                    {_.sortBy(unexpectedQueries, 'queriedAt')[0].queriedAt}
-                                                </Moment>
+                                                <strong>
+                                                    <Moment fromNow>
+                                                        {_.sortBy(unexpectedQueries, 'queriedAt')[0].queriedAt}
+                                                    </Moment>
+                                                </strong>
                                                 .
                                             </p>
                                         </div>

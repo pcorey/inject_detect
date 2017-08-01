@@ -6,6 +6,12 @@ defmodule InjectDetect.IngestController do
 
   import InjectDetect.CommandHandler, only: [handle: 2]
 
+  def ingest_for_application(nil, _queries), do: {:error, "Application not found."}
+  def ingest_for_application(application, queries) do
+    %IngestQueries{application_id: application.id, queries: queries}
+    |> handle(%{})
+  end
+
   def create(conn, %{"application_token" => application_token,
                      "queries" => queries}) do
 
@@ -16,12 +22,11 @@ defmodule InjectDetect.IngestController do
     end)
 
     # TODO: Timing out on lots of requests (half way through 5000)
-    command = %IngestQueries{application_id: application.id, queries: queries}
-    case handle(command, %{}) do
+    case ingest_for_application(application, queries) do
       {:ok, _} ->
         json conn, %{ok: 100}
-      {:error, error} ->
-        json conn, %{error: error.error}
+      {:error, reason} ->
+        json conn, %{error: reason}
     end
 
   end
