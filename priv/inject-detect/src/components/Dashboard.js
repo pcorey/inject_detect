@@ -22,7 +22,7 @@ class Dashboard extends React.Component {
     render() {
         let { loading, user } = this.props.data;
 
-        if (loading) {
+        if (loading || !user) {
             return <div className="ui active loader" />;
         }
 
