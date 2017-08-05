@@ -10,6 +10,7 @@ defmodule InjectDetect.State do
   end
 
   def init(initial) do
+    # TODO: Figure out how to handle this in tests, rather than this crutch
     case Mix.env do
       :test ->
         handle_snapshot(nil, initial)
