@@ -13,7 +13,7 @@ use Mix.Config
 # which you typically run after static files are built.
 config :inject_detect, InjectDetect.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: "app.injectdetect.com", port: 80],
+  url: [host: System.get_env("HOST"), port: 80],
   server: true,
   root: ".",
   version: Mix.Project.config[:version],
@@ -21,6 +21,16 @@ config :inject_detect, InjectDetect.Endpoint,
 
 # Do not print debug messages in production
 config :logger, level: :info
+
+config :inject_detect, InjectDetect.Endpoint,
+  secret_key_base: System.get_env("SECRET_KEY_BASE")
+
+# Configure your database
+config :inject_detect, InjectDetect.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  url: System.get_env("DATABASE_URL"),
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+  ssl: true
 
 # ## SSL Support
 #
