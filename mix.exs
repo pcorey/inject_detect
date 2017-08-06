@@ -47,9 +47,7 @@ defmodule InjectDetect.Mixfile do
      {:bamboo_smtp, "~> 1.2.1"},
      {:timex, "~> 3.0"},
      {:httpoison, "~> 0.11.1"},
-     {:stripity_stripe, "~> 1.6"},
-     {:edeliver, "~> 1.4.4"},
-     {:distillery, ">= 0.8.0", warn_missing: false}]
+     {:stripity_stripe, "~> 1.6"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
