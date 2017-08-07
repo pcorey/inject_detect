@@ -10,7 +10,6 @@ defmodule InjectDetect.State do
   end
 
   def init(initial) do
-    IO.puts("DATABASE_URL #{System.get_env("DATABASE_URL")}")
     # TODO: Figure out how to handle this in tests, rather than this crutch
     case Mix.env do
       :test ->
