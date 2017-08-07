@@ -46,8 +46,6 @@ defmodule InjectDetect.Router do
     forward "/sent_emails", Bamboo.EmailPreviewPlug
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", InjectDetect do
-  #   pipe_through :api
-  # end
+  get "/*route", InjectDetect.IndexController, :get
+
 end
