@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import gql from 'graphql-tag';
 import { Button, Checkbox, Loader, Form, Icon, Input, Modal } from 'semantic-ui-react';
+import { PrismCode } from 'react-prism';
 import { Redirect } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 
@@ -109,23 +110,32 @@ class ApplicationSettings extends React.Component {
                             <hr />
 
                             <p className="instructions" style={{ marginTop: 0 }}>
-                                Your
+                                Add the following configuration block to your Meteor project's settings.json file. Read more about application configuration in our
                                 {' '}
-                                <strong>application secret</strong>
+                                <a href="http://www.injectdetect.com/education/getting-started">Getting Started</a>
                                 {' '}
-                                should be given to your Meteor plugin and is used to identify your application as it sends queries to Inject Detect:
+                                guide.
                             </p>
-
-                            <Form.Field>
-                                <Input
-                                    readOnly
-                                    type="text"
-                                    value={application.token}
-                                    icon={
-                                        <Icon name="refresh" circular link onClick={this.regenerateApplicationToken} />
-                                    }
-                                />
-                            </Form.Field>
+                            <p
+                                style={{
+                                    overflow: 'auto',
+                                    fontSize: '0.85em',
+                                    backgroundColor: '#f8f8f8',
+                                    padding: '1em'
+                                }}
+                            >
+                                <PrismCode className="structure language-javascript">{`"inject-detect": {
+    "secret": "${application.token}"
+}`}</PrismCode>
+                            </p>
+                            <p>
+                                <Button
+                                    style={{ display: 'block', margin: '0 auto' }}
+                                    onClick={this.regenerateApplicationToken}
+                                >
+                                    Regenerate Application Secret
+                                </Button>
+                            </p>
 
                             <hr />
 
@@ -135,7 +145,9 @@ class ApplicationSettings extends React.Component {
 
                             {user.applications.length > 1
                                 ? <Form.Field style={{ textAlign: 'center' }}>
-                                      <Button onClick={this.removeApplication}>Remove application</Button>
+                                      <Button className="brand" onClick={this.removeApplication}>
+                                          Remove application
+                                      </Button>
                                   </Form.Field>
                                 : null}
                         </Form>
