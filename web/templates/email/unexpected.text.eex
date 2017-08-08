@@ -1,7 +1,7 @@
 We've detected an unexpected query in your "<%= @application.name %>" application.
 
-Click here to see the structure of the unexpected query, the number of times we've detected it, and the most similar expected query was have on file for your application.
+Check your dashboard to see the structure of the unexpected queries, the number of times we've detected it, and the most similar expected query was have on file for your application.
 
-<%= InjectDetect.Endpoint.url %>/unexpected-query/<%= @unexpected_query.id %>
+<%= InjectDetect.Endpoint.url %>
 
 For more information on unexpected queries and NoSQL Injection, take a look at our FAQ and guides.
