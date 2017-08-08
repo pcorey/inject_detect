@@ -36,6 +36,13 @@ defmodule InjectDetect.State.Application do
     |> List.first
   end
 
+  def expected_queries(state, user_id, application_id) do
+    application_lens(user_id, application_id)
+    |> Lens.key(:queries)
+    |> Lens.filter(&(&1.expected == true))
+    |> Lens.to_list(state)
+  end
+
   def add_expected_query(state, user_id, application_id, query) do
     application_lens(user_id, application_id)
     |> Lens.key(:queries)

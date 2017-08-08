@@ -9,10 +9,10 @@ use Mix.Config
 config :inject_detect,
   ecto_repos: [InjectDetect.Repo],
   stripe_module: Stripe.API,
-  ingests_per_cent: 10_000,
-  invoice_interval: 1 * 60 * 60 * 1000, # Every hour
-  snapshot_interval:  5 * 60 * 1000, # Every five minutes
-  snapshot_size: 1000,
+  ingests_per_cent: String.to_integer(System.get_env("INGESTS_PER_CENT") || "#{10_000}"),
+  invoice_interval: String.to_integer(System.get_env("INVOICE_INTERVAL") || "#{1 * 60 * 60 * 1000}"), # Every hour
+  snapshot_interval: String.to_integer(System.get_env("SNAPSHOT_INTERVAL") || "#{5 * 60 * 1000}"), # Every five minutes
+  snapshot_size: String.to_integer(System.get_env("SNAPSHOT_SIZE") || "#{1_000}"),
   listeners: [&InjectDetect.Listener.SendSignInEmail.handle/2,
               &InjectDetect.Listener.SendUnexpectedEmail.handle/2,
               &InjectDetect.Listener.SendWelcomeEmail.handle/2,

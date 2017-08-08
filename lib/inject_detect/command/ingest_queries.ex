@@ -16,11 +16,15 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
   alias InjectDetect.State.Application
   alias InjectDetect.State.User
   alias InjectDetect.State.Query
+  alias InjectDetect.State.QueryComparator
 
 
   def ingest_query(nil, query, %{training_mode: false}, {state, events}) do
+    similar_query = state
+    |> Application.expected_queries(query.user_id, query.application_id)
+    |> QueryComparator.find_similar_query(query)
     new_events = [struct(IngestedQuery, query),
-                  struct(AddedUnexpectedQuery, query),
+                  struct(AddedUnexpectedQuery, Map.put_new(query, :similar_query, similar_query)),
                   struct(IngestedUnexpectedQuery, query)]
     {State.apply_events(state, new_events), events ++ new_events}
   end
