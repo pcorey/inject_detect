@@ -2,6 +2,6 @@ We've detected an unexpected query in your "<%= @application.name %>" applicatio
 
 Check your dashboard to see the structure of the unexpected queries, the number of times we've detected it, and the most similar expected query was have on file for your application.
 
-https://app.injectdetect.com/
+<%= InjectDetect.Endpoint.url %>
 
 For more information on unexpected queries and NoSQL Injection, take a look at our FAQ and guides.
