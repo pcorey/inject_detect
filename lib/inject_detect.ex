@@ -17,6 +17,12 @@ defmodule InjectDetect do
       worker(InjectDetect.Invoicer, [])
     ]
 
+    # TODO: Figure out how to handle this in tests, rather than this crutch
+    children = case Mix.env do
+      :test -> children
+      _     -> children ++ [worker(InjectDetect.Snapshotter, [])]
+    end
+
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: InjectDetect.Supervisor]

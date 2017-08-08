@@ -11,6 +11,8 @@ config :inject_detect,
   stripe_module: Stripe.API,
   ingests_per_cent: 10_000,
   invoice_interval: 1 * 60 * 60 * 1000, # Every hour
+  snapshot_interval:  5 * 60 * 1000, # Every five minutes
+  snapshot_size: 1000,
   listeners: [&InjectDetect.Listener.SendSignInEmail.handle/2,
               &InjectDetect.Listener.SendUnexpectedEmail.handle/2,
               &InjectDetect.Listener.SendWelcomeEmail.handle/2,
