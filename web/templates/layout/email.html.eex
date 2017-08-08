@@ -6,7 +6,7 @@
     <style>
     </style>
   </head>
-  <body style="font-size:18px;max-width: 600px;font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;line-height: 1.4285em;">
+  <body style="font-size:14px;max-width: 600px;font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;line-height: 1.4285em;">
     <p style="text-align: center;"><a href="http://www.injectdetect.com/"><img src="https://s3.amazonaws.com/www.injectdetect.com/logo-text.png" style="height:3em;"></a></p>
     <%= render @view_module, @view_template, assigns %>
     <p>Let me know if you have any questions or concerns,
