@@ -22,12 +22,12 @@ defmodule InjectDetect.Snapshotter do
   end
 
 
-  def take_snapshot(nil, {id, state}) do
+  def take_snapshot(nil, {:ok, id, state}) do
     %InjectDetect.Model.Snapshot{event_id: id, state: :erlang.term_to_binary(state)}
     |> InjectDetect.Repo.insert
   end
 
-  def take_snapshot(snapshot = %{event_id: old_id}, {id, state}) do
+  def take_snapshot(snapshot = %{event_id: old_id}, {:ok, id, state}) do
     size = Application.fetch_env!(:inject_detect, :snapshot_size)
     cond do
       (id - old_id) > size ->
@@ -36,6 +36,10 @@ defmodule InjectDetect.Snapshotter do
       true ->
         {:ok, snapshot}
     end
+  end
+
+  def take_snapshot(snapshot, _) do
+    {:ok, snapshot}
   end
 
 
