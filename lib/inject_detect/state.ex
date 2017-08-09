@@ -18,6 +18,7 @@ defmodule InjectDetect.State do
         InjectDetect.Model.Snapshot
         |> where([snapshot], snapshot.id > 0)
         |> order_by([snapshot], [desc: snapshot.id])
+        |> first
         |> InjectDetect.Repo.one
         |> handle_snapshot(initial)
     end
