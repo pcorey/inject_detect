@@ -115,8 +115,11 @@ defmodule InjectDetect.Schema.Types do
     field :invoice, :stripe_invoice do
       resolve fn
         (user, _, _) ->
+          IO.puts("customer_id #{inspect user.customer_id}")
           case Stripe.get_invoice(user.customer_id) do
-            {:ok, invoice} -> {:ok, invoice}
+            {:ok, invoice} ->
+              IO.puts("invoice #{inspect invoice}")
+              {:ok, invoice}
             _              -> InjectDetect.error("Unable to resolve invoice.")
           end
       end
