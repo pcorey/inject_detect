@@ -18,6 +18,7 @@ defmodule InjectDetect.Snapshotter do
     snapshot = InjectDetect.Model.Snapshot
     |> where([snapshot], snapshot.id > 0)
     |> order_by([snapshot], [desc: snapshot.id])
+    |> first()
     |> InjectDetect.Repo.one
   end
 
