@@ -21,7 +21,7 @@ class AccountSubscription extends React.Component {
                 {' '}
                 queries made by your applications. On
                 {' '}
-                <strong><Moment date={_.get(user, 'invoice.periodEnding') * 1000} format="MMMM DD, YYYY" /></strong>
+                <strong><Moment date={_.get(user, 'invoice.periodEnd') * 1000} format="MMMM DD, YYYY" /></strong>
                 {' '}
                 we'll be charging
                 {' '}
