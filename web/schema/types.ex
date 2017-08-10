@@ -36,9 +36,7 @@ defmodule InjectDetect.Schema.Types do
       resolve fn (invoice, _, _) -> {:ok, invoice["period_end"]} end
     end
     field :starting_balance, :integer do
-      resolve fn (invoice, _, _) ->
-        IO.puts("starting balance #{invoice["starting_balance"]}")
-        {:ok, invoice["starting_balance"]} end
+      resolve fn (invoice, _, _) -> {:ok, invoice["starting_balance"]} end
     end
     # field :ingests, :integer do
     #   resolve fn (invoice, _, _) ->
@@ -115,9 +113,7 @@ defmodule InjectDetect.Schema.Types do
       resolve fn
         (user, _, _) ->
           case Stripe.get_invoice(user.customer_id) do
-            {:ok, invoice} ->
-              IO.puts("invoice #{inspect invoice}")
-              {:ok, invoice}
+            {:ok, invoice} -> {:ok, invoice}
             _              -> InjectDetect.error("Unable to resolve invoice.")
           end
       end

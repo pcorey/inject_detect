@@ -13,6 +13,7 @@ class AccountSubscription extends React.Component {
         }
 
         // TODO: Better queries calculation here
+        console.log('user', user);
 
         if (_.get(user, 'invoice.startingBalance') > 0) {
             return (
