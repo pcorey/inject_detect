@@ -29,17 +29,14 @@ defmodule InjectDetect.Schema.Types do
     field :id, :integer do
       resolve fn (invoice, _, _) -> {:ok, invoice["id"]} end
     end
-    field :amount_due, :integer do
-      resolve fn (invoice, _, _) -> {:ok, invoice["amount_due"]} end
-    end
     field :total, :integer do
       resolve fn (invoice, _, _) -> {:ok, invoice["total"]} end
     end
     field :period_end, :integer do
       resolve fn (invoice, _, _) -> {:ok, invoice["period_end"]} end
     end
-    field :ending_balance, :integer do
-      resolve fn (invoice, _, _) -> {:ok, invoice["starting_balance"] + invoice["total"]} end
+    field :starting_balance, :integer do
+      resolve fn (invoice, _, _) -> {:ok, invoice["starting_balance"]} end
     end
     # field :ingests, :integer do
     #   resolve fn (invoice, _, _) ->

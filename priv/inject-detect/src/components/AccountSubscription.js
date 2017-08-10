@@ -13,6 +13,30 @@ class AccountSubscription extends React.Component {
         }
 
         // TODO: Better queries calculation here
+
+        if (_.get(user, 'invoice.startingBalance') > 0) {
+            return (
+                <p className="instructions">
+                    So far this month, we've processed
+                    {' '}
+                    <strong>{(_.get(user, 'invoice.total') * 10).toLocaleString()}</strong>
+                    {' '}
+                    queries made by your applications. On
+                    {' '}
+                    <strong><Moment date={_.get(user, 'invoice.periodEnd') * 1000} format="MMMM DD, YYYY" /></strong>
+                    {' '}
+                    we'll be charging
+                    {' '}
+                    <strong>${(_.get(user, 'invoice.total') / 100).toFixed(2)}</strong>
+                    {' '}
+                    against your account balance of
+                    {' '}
+                    <strong>${(user.invoice.startingBalance / 100).toFixed(2)}</strong>
+                    . Account usage is updated hourly.
+                </p>
+            );
+        }
+
         return (
             <p className="instructions">
                 So far this month, we've processed
@@ -25,17 +49,9 @@ class AccountSubscription extends React.Component {
                 {' '}
                 we'll be charging
                 {' '}
-                <strong>${(_.get(user, 'invoice.amountDue') / 100).toFixed(2)}</strong>
+                <strong>${(_.get(user, 'invoice.total') / 100).toFixed(2)}</strong>
                 {' '}
-                to your account
-                {_.get(user, 'invoice.endingBalance')
-                    ? <span>
-                          , leaving your account balance at
-                          {' '}
-                          <strong>$${(user.invoice.endingBalance / 100).toFixed(2)}</strong>
-                          .
-                      </span>
-                    : <span>.</span>}
+                to your account. Account usage is updated hourly.
             </p>
         );
     }
@@ -48,9 +64,9 @@ export default graphql(gql`
             invoice {
                 id
                 total
-                amountDue
                 periodEnd
-                endingBalance
+                startingBalance
+                total
             }
         }
     }
