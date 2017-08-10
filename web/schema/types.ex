@@ -36,7 +36,9 @@ defmodule InjectDetect.Schema.Types do
       resolve fn (invoice, _, _) -> {:ok, invoice["period_end"]} end
     end
     field :starting_balance, :integer do
-      resolve fn (invoice, _, _) -> {:ok, invoice["starting_balance"]} end
+      resolve fn (invoice, _, _) ->
+        IO.puts("starting balance #{invoice["starting_balance"]}")
+        {:ok, invoice["starting_balance"]} end
     end
     # field :ingests, :integer do
     #   resolve fn (invoice, _, _) ->
