@@ -29,12 +29,10 @@ class AccountSubscription extends React.Component {
                     {' '}
                     <strong>${(_.get(user, 'invoice.total') / 100).toFixed(2)}</strong>
                     {' '}
-                    (minus your current account balance of
+                    against your account balance of
                     {' '}
                     <strong>${(user.invoice.startingBalance / 100).toFixed(2)}</strong>
-                    )
-                    {' '}
-                    to your account. Account usage is updated hourly.
+                    . Account usage is updated hourly.
                 </p>
             );
         }
