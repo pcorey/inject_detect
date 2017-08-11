@@ -13,9 +13,8 @@ class AccountSubscription extends React.Component {
         }
 
         // TODO: Better queries calculation here
-        console.log('user', user);
 
-        if (_.get(user, 'invoice.startingBalance') > 0) {
+        if (_.get(user, 'invoice.startingBalance') < 0) {
             return (
                 <p className="instructions">
                     So far this month, we've processed
