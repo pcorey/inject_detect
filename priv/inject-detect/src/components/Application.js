@@ -59,7 +59,9 @@ class Application extends React.Component {
                                                   {' '}
                                                   unexpected queries made against your application. If any of the queries below seem suspicious, they may be the result of a NoSQL Injection attack. Use
                                                   {' '}
-                                                  <Link to="/">our guides and suggestions</Link>
+                                                  <a href="http://www.injectdetect.com/education/">
+                                                      our guides and suggestions
+                                                  </a>
                                                   {' '}
                                                   to track down and fix any queries in your application that may be vulnerable to NoSQL Injection attacks.
                                               </p>
