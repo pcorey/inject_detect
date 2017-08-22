@@ -62,7 +62,7 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "build-stage": "env REACT_APP_GRAPHQL_URL=\"http://inject-detect-stage.herokuapp.com/graphql\" REACT_APP_STRIPE_SECRET=\"pk_test_9Eb30CotIL95wj3aeTkTVDrL\" node scripts/build.js",
-    "build-prod": "env REACT_APP_GRAPHQL_URL=\"http://app.injectdetect.com/graphql\" REACT_APP_STRIPE_SECRET=\"pk_test_9Eb30CotIL95wj3aeTkTVDrL\" node scripts/build.js",
+    "build-prod": "env REACT_APP_GRAPHQL_URL=\"http://app.injectdetect.com/graphql\" REACT_APP_STRIPE_SECRET=\"pk_live_BPHKwMpeZoBrHUV5oMTC6qCW\" node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },
   "jest": {
