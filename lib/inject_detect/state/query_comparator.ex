@@ -12,7 +12,7 @@ defmodule InjectDetect.State.QueryComparator do
         end
     end)
   end
-  def map_to_list(key, map), do: key
+  def map_to_list(key, map), do: [key]
   def map_to_list(map), do: map_to_list(nil, map)
                             |> List.flatten
                             |> Enum.uniq

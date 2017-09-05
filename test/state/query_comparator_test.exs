@@ -25,4 +25,11 @@ defmodule InjectDetect.State.QueryComparatorTest do
     assert find_similar_query(expected_queries, query) == %{query: %{"foo" => %{"bar" => "string"}}}
   end
 
+  test "finds string similar query" do
+    expected_queries = [%{query: %{"_id" => "string"}},
+                        %{query: "string"}]
+    query = %{"_id" => %{"$gte" => "string"}}
+    assert find_similar_query(expected_queries, query) == %{query: %{"_id" => "string"}}
+  end
+
 end
