@@ -11,24 +11,24 @@ defmodule InjectDetect.State.QueryComparatorTest do
   end
 
   test "finds simple similar query" do
-    expected_queries = [%{query: %{"_id" => "string"}},
-                        %{query: %{"foo" => "number"}}]
-    query = %{"_id" => %{"$gte" => "string"}}
+    expected_queries = [%{collection: "a", type: "find", query: %{"_id" => "string"}},
+                        %{collection: "a", type: "find", query: %{"foo" => "number"}}]
+    query = %{collection: "a", type: "find", query: %{"_id" => %{"$gte" => "string"}}}
     assert find_similar_query(expected_queries, query) == %{"_id" => "string"}
   end
 
   test "finds another similar query" do
-    expected_queries = [%{query: %{"_id" => "string"}},
-                        %{query: %{"foo" => "number"}},
-                        %{query: %{"foo" => %{"bar" => "string"}}}]
-    query = %{"foo" => %{"bar" => %{"$lt" => "string"}}}
+    expected_queries = [%{collection: "a", type: "find", query: %{"_id" => "string"}},
+                        %{collection: "a", type: "find", query: %{"foo" => "number"}},
+                        %{collection: "a", type: "find", query: %{"foo" => %{"bar" => "string"}}}]
+    query = %{collection: "a", type: "find", query: %{"foo" => %{"bar" => %{"$lt" => "string"}}}}
     assert find_similar_query(expected_queries, query) == %{"foo" => %{"bar" => "string"}}
   end
 
   test "finds string similar query" do
-    expected_queries = [%{query: %{"_id" => "string"}},
-                        %{query: "string"}]
-    query = %{"_id" => %{"$gte" => "string"}}
+    expected_queries = [%{collection: "a", type: "find", query: %{"_id" => "string"}},
+                        %{collection: "a", type: "find", query: "string"}]
+    query = %{collection: "a", type: "find", query: %{"_id" => %{"$gte" => "string"}}}
     assert find_similar_query(expected_queries, query) == %{"_id" => "string"}
   end
 
