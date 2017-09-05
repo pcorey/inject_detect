@@ -90,7 +90,7 @@ defmodule InjectDetect.Schema.Types do
     end
     field :unexpected_queries, list_of(:application_query) do
       resolve fn
-        (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == false))}
+        (application, _, _) -> {:ok, Enum.filter(application.queries, &(&1.expected == false && !&1.handled))}
       end
     end
     field :expected_queries, list_of(:application_query) do
