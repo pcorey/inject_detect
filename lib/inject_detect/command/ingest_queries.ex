@@ -44,7 +44,7 @@ defimpl InjectDetect.Command, for: InjectDetect.Command.IngestQueries do
 
   def ingest_query(%{expected: false}, query, _application, {state, events}) do
     new_events = [struct(IngestedQuery, query),
-                  struct(IngestedExpectedQuery, query)]
+                  struct(IngestedUnexpectedQuery, query)]
     {State.apply_events(state, new_events), events ++ new_events}
   end
 
