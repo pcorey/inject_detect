@@ -13,7 +13,7 @@ use Mix.Config
 # which you typically run after static files are built.
 config :inject_detect, InjectDetect.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: System.get_env("HOST"), port: 80],
+  url: [scheme: "https", host: System.get_env("HOST"), port: 443],
   server: true,
   root: ".",
   version: Mix.Project.config[:version],
