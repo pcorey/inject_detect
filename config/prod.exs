@@ -16,7 +16,8 @@ config :inject_detect, InjectDetect.Endpoint,
   url: [host: System.get_env("HOST"), port: 80],
   server: true,
   root: ".",
-  version: Mix.Project.config[:version]
+  version: Mix.Project.config[:version],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]]
   # cache_static_manifest: "priv/static/manifest.json"
 
 # Do not print debug messages in production
